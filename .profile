@@ -59,6 +59,11 @@ if [ -e "$_target_path" ]; then
   export PATH="$PATH:$_target_path"
 fi
 
+_target_path="$HOME/.rbenv/bin"
+if [ -e "$_target_path" ]; then
+  export PATH="$PATH:$_target_path"
+fi
+
 _target_path="$HOME/.rbenv"
 if [ -e "$_target_path" ]; then
   export PATH="$PATH:$_target_path"
