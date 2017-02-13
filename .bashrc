@@ -74,13 +74,13 @@ if [[ $unamestr == 'Darwin' ]]; then
 elif [[ $unamestr == 'CYGWIN' ]]; then
   VIMPATH="/cygdrive/c/vim74-kaoriya-win64"
   # PROMPT='%B%{$fg[red]%}%n %{$reset_color%}%b%F{5}[%f%{$fg[green]%}%B%~%b%F{5}]%f$(vcs_echo)${new_line}%(!.%F{red}#%f.$)%b '
-  alias ls='ls --color' #GNU version ls
+  alias ls='ls --color=auto' #GNU version ls
   gvim(){
     $VIMPATH/gvim.exe $(cygpath -aw $*) &
   }
 elif [[ $unamestr == 'Linux' ]]; then
   # PROMPT='%B%{$fg[red]%}%n %{$reset_color%}%b$(get_vim_state)%F{5}[%f%{$fg[green]%}%B%~%b%F{5}]%f$(vcs_echo)${new_line}%(!.%F{red}#%f.$)%b '
-  alias ls='ls --color' #GNU version ls
+  alias ls='ls --color=auto' #GNU version ls
 fi
 
 #--------------------
