@@ -97,6 +97,7 @@ alias ..4="cd ../../../.."
 alias ..5="cd ../../../../.."
 alias g='git'
 alias gr='grep'
+alias gm='git commit -m '
 
 #remove control character
 alias rmcc='perl -pe '"'"'s/\e([^\[\]]|\[.*?[a-zA-Z]|\].*?\a)//g'"'"' | col -b'
@@ -104,7 +105,6 @@ alias rmccal='ls *.log | while read f;do cat "$f" | rmcc > /tmp/tmpfile && cat /
 
 #git add modified files
 alias git-add-modified='git status | grep modified | awk '\''{print "git add "$NF}'\'
-alias gm='git commit -m '
 alias up="cd ..; ls"
 
 alias tmclean='tmux ls | grep -v attached | awk "\$0=\$1" | tr -d ":" | xargs -I@ echo tmux kill-session -t @ | zsh'
