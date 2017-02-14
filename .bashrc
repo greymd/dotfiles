@@ -245,7 +245,7 @@ docker-ubuntu () {
 }
 
 docker-php () {
-    docker run -d -p 8080:80 -v `pwd`:/var/www/html php:7.0-apache
+  docker run -d -p 8080:80 -v "$(pwd)":/var/www/html php:7.0-apache
 }
 
 runche() {
