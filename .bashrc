@@ -226,6 +226,10 @@ docker-clean () {
   docker ps -a -q | xargs docker rm
 }
 
+docker-rmnone() {
+    docker images | grep '<none>' | awk '{print $3}' | xargs docker rmi
+}
+
 docker-killall () {
   docker ps -q | xargs docker kill
 }
@@ -624,4 +628,16 @@ sslcert-gen() {
     # Common Name (eg, your name or your server's hostname) []:healthcheck.com
     # Email Address []:
     openssl x509 -req -days 365 -in server.csr -signkey server.key -out server.crt
+}
+
+# Vim-Oneliner
+# Usage example:
+# $ seq 5 | vo +'g/^/m0'
+# 5
+# 4
+# 3
+# 2
+# 1
+vo () {
+        vim -es <(cat) "$@" '+%p|q!'
 }
