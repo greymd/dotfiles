@@ -32,6 +32,14 @@ zplug load
 #--------------------
 # Zsh Properies
 #--------------------
+
+# Prompot appearance
+new_line='
+'
+PROMPT='
+$(get_vim_state)%F{5}[%f%{$fg[green]%}%B%~%b%F{5}]%f$(vcs_echo)${new_line}%(!.%F{red}#%f.$)%b '
+
+
 #補完機能を使用する
 autoload -U compinit promptinit colors && colors
 compinit

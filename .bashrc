@@ -7,11 +7,6 @@ SKEL_PROJECT_DIR="$HOME/.zsh/project-skel/"
 ###################################
 unamestr=$(uname | grep -oiE '(Darwin|CYGWIN|Linux)')
 
-new_line='
-'
-PROMPT='
-$(get_vim_state)%F{5}[%f%{$fg[green]%}%B%~%b%F{5}]%f$(vcs_echo)${new_line}%(!.%F{red}#%f.$)%b '
-
 if [[ $unamestr == 'Darwin' ]]; then
   VIMPATH="/Applications/MacVim.app/Contents/MacOS"
   alias ls='ls -G' #BSD version ls
@@ -59,9 +54,10 @@ if [[ $unamestr == 'Darwin' ]]; then
     done
   }
 
+  # Maven for old java
   gmvn(){
     JAVA_HOME="/System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Home"
-    mvn --settings ~/.m2/g_settings.xml "$@"
+    mvn --settings $HOME/.m2/g_settings.xml "$@"
   }
 
   unix2time () {
@@ -89,6 +85,7 @@ alias l='ls -CF'
 alias ll='ls -al'
 alias grep='grep --color=auto'
 alias shuf='gshuf'
+alias factor='gfactor'
 alias ..="cd .."
 alias ..2="cd ../.."
 alias ..3="cd ../../.."
@@ -108,7 +105,6 @@ alias up="cd ..; ls"
 
 alias tmclean='tmux ls | grep -v attached | awk "\$0=\$1" | tr -d ":" | xargs -I@ echo tmux kill-session -t @ | zsh'
 alias psum='tr "\n" " " | perl -anle "print eval join \"+\", @F"'
-alias factor='gfactor'
 
 # SSL dump alias
 # usage $ ssl-client url:port
