@@ -76,11 +76,7 @@ if [ -e "$_target_path" ]; then
 fi
 
 if [[ -s "$HOME/.nvm/nvm.sh" ]]; then
-	source ~/.nvm/nvm.sh
+	source "$HOME/.nvm/nvm.sh"
 	nvm alias default v4.2.2 > /dev/null
-fi
-
-if $(type aws &> /dev/null); then
-	source /usr/local/bin/aws_zsh_completer.sh
 fi
 
