@@ -390,12 +390,14 @@ if dein#tap("neosnippet")
   let g:neosnippet#enable_snipmate_compatibility = 1
   let g:neosnippet#disable_runtime_snippets = {'_' : 1}
   let g:neosnippet#snippets_directory = []
-  if dein#tap("vim-octopress-snippets")
-    let g:neosnippet#snippets_directory += ['~/.vim/bundle/vim-octopress-snippets/neosnippets']
+  if dein#tap("neosnippet-snippets")
+    let g:neosnippet#snippets_directory += ['~/.cache/dein/repos/github.com/Shougo/neosnippet-snippets/neosnippets']
   endif
-  let g:neosnippet#snippets_directory += ['~/.vim/bundle/neosnippet-snippets/neosnippets']
+  if dein#tap("vim-octopress-snippets")
+    let g:neosnippet#snippets_directory += ['~/.cache/dein/repos/github.com/rcmdnk/vim-octopress-snippets/neosnippets']
+  endif
   if dein#tap("vim-snippets")
-    let g:neosnippet#snippets_directory += ['~/.vim/bundle/vim-snippets/snippets']
+    let g:neosnippet#snippets_directory += ['~/.cache/dein/repos/github.com/honza/vim-snippets/snippets']
   endif
 endif
 
