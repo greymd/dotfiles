@@ -2,32 +2,56 @@
 source $HOME/.bashrc
 
 #--------------------
-# zplug
+# antigen
+# (because zplug does not work on docker)
+# Ref: issue https://github.com/zplug/zplug/issues/272
 #--------------------
-source ~/.zplug/init.zsh
+source $HOME/reps/zsh-users/antigen/antigen.zsh
 
-zplug "b4b4r07/enhancd", use:init.sh
-zplug "zsh-users/zsh-syntax-highlighting", defer:2
-# zplug "zsh-users/zsh-autosuggestions"
-zplug "zsh-users/zsh-completions"
-zplug "greymd/cureutils"
+antigen use oh-my-zsh
+
+antigen bundle "b4b4r07/enhancd"
+antigen bundle "zsh-users/zsh-syntax-highlighting"
+# antigen bundle "zsh-users/zsh-autosuggestions"
+antigen bundle "zsh-users/zsh-completions"
+antigen bundle "greymd/cureutils"
 # Load docker completions
 # It clonse too large repositories.
 # zplug "greymd/docker-zsh-completion"
 
 export TTCP_ID="grethlen"
 export TTCP_PASSWORD="hogehoge"
-zplug "greymd/ttcopy"
+antigen bundle "greymd/ttcopy"
 
-# # Install plugins if there are plugins that have not been installed
-# if ! zplug check --verbose; then
-#     printf "Install? [y/N]: "
-#     if read -q; then
-#         echo; zplug install
-#     fi
-# fi
+antigen apply
 
-zplug load
+#--------------------
+# zplug
+#--------------------
+# source ~/.zplug/init.zsh
+# 
+# zplug "b4b4r07/enhancd", use:init.sh
+# zplug "zsh-users/zsh-syntax-highlighting", defer:2
+# # zplug "zsh-users/zsh-autosuggestions"
+# zplug "zsh-users/zsh-completions"
+# zplug "greymd/cureutils"
+# # Load docker completions
+# # It clonse too large repositories.
+# # zplug "greymd/docker-zsh-completion"
+# 
+# export TTCP_ID="grethlen"
+# export TTCP_PASSWORD="hogehoge"
+# zplug "greymd/ttcopy"
+# 
+# # # Install plugins if there are plugins that have not been installed
+# # if ! zplug check --verbose; then
+# #     printf "Install? [y/N]: "
+# #     if read -q; then
+# #         echo; zplug install
+# #     fi
+# # fi
+# 
+# zplug load
 
 #--------------------
 # Zsh Properies
