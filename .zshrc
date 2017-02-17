@@ -2,6 +2,98 @@
 source $HOME/.bashrc
 
 #--------------------
+# Incremental Search
+# (This settings should be earlyer than antigen)
+#--------------------
+# Enable the incremental search during typing
+autoload history-search-end
+zle -N history-beginning-search-backward-end history-search-end
+zle -N history-beginning-search-forward-end history-search-end
+
+#--------------------
+# Command Line Stack
+# (This settings should be earlyer than antigen)
+#--------------------
+# Ref: https://gist.github.com/yukirin/7067299
+autoload -Uz add-zsh-hook
+
+local p_buffer_stack=""
+local -a buffer_stack_arr
+
+function make_p_buffer_stack()
+{
+  if [[ ! $#buffer_stack_arr > 0 ]]; then
+    p_buffer_stack=""
+    return
+  fi
+  p_buffer_stack="%F{cyan}<stack:$buffer_stack_arr>%f"
+}
+
+function show_buffer_stack()
+{
+  local cmd_str_len=$#LBUFFER
+  [[ cmd_str_len > 10 ]] && cmd_str_len=10
+  buffer_stack_arr=("[$LBUFFER[1,${cmd_str_len}]]" $buffer_stack_arr)
+  make_p_buffer_stack
+  zle push-line-or-edit
+  zle reset-prompt
+}
+
+function check_buffer_stack()
+{
+  [[ $#buffer_stack_arr > 0 ]] && shift buffer_stack_arr
+  make_p_buffer_stack
+}
+
+zle -N show_buffer_stack
+bindkey "^Q" show_buffer_stack
+add-zsh-hook precmd check_buffer_stack
+
+RPROMPT='${p_buffer_stack}'
+
+#--------------------
+# History
+#--------------------
+# History size
+export HISTFILE=~/.zsh_history
+export HISTSIZE=1000000
+export SAVEHIST=1000000
+
+#ヒストリの一覧を読みやすい形に変更
+HISTTIMEFORMAT="[%Y/%M/%D %H:%M:%S] "
+
+
+#--------------------
+# Key bindings
+# (This settings should be earlyer than antigen)
+#--------------------
+#入力途中の履歴補完
+bindkey "^P" history-beginning-search-backward-end
+bindkey "^N" history-beginning-search-forward-end
+
+#インクリメンタルサーチの設定
+bindkey "^R" history-incremental-search-backward
+bindkey "^S" history-incremental-search-forward
+
+#履歴のインクリメンタル検索でワイルドカード利用可能
+bindkey '^R' history-incremental-pattern-search-backward
+bindkey '^S' history-incremental-pattern-search-forward
+
+#C-Uで行頭まで削除
+bindkey "^U" backward-kill-line
+
+# C-^ で一つ上のディレクトリへ
+function cdup() {
+  echo
+  cd ..
+  zle reset-prompt
+}
+
+zle -N cdup
+bindkey '^^' cdup
+
+
+#--------------------
 # antigen
 # (because zplug does not work on docker)
 # Ref: issue https://github.com/zplug/zplug/issues/272
@@ -25,89 +117,32 @@ antigen bundle "greymd/ttcopy"
 
 antigen apply
 
-#--------------------
-# zplug
-#--------------------
-# source ~/.zplug/init.zsh
-# 
-# zplug "b4b4r07/enhancd", use:init.sh
-# zplug "zsh-users/zsh-syntax-highlighting", defer:2
-# # zplug "zsh-users/zsh-autosuggestions"
-# zplug "zsh-users/zsh-completions"
-# zplug "greymd/cureutils"
-# # Load docker completions
-# # It clonse too large repositories.
-# # zplug "greymd/docker-zsh-completion"
-# 
-# export TTCP_ID="grethlen"
-# export TTCP_PASSWORD="hogehoge"
-# zplug "greymd/ttcopy"
-# 
-# # # Install plugins if there are plugins that have not been installed
-# # if ! zplug check --verbose; then
-# #     printf "Install? [y/N]: "
-# #     if read -q; then
-# #         echo; zplug install
-# #     fi
-# # fi
-# 
-# zplug load
 
 #--------------------
-# Zsh Properies
+# Completion
 #--------------------
-
-# Prompot appearance
-new_line='
-'
-PROMPT='
-$(get_vim_state)%F{5}[%f%{$fg[green]%}%B%~%b%F{5}]%f$(vcs_echo)${new_line}%(!.%F{red}#%f.$)%b '
-
-
-#補完機能を使用する
+# Enable completion feature
 autoload -U compinit promptinit colors && colors
 compinit
 zstyle ':completion::complete:*' use-cache true
-#zstyle ':completion:*:default' menu select true
 zstyle ':completion:*:default' menu select=1
 
-#大文字、小文字を区別せず補完する
+# Upper and lower casee are recognized as same characters when completion.
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
 
-#補完でカラーを使用する
+# 補完でカラーを使用する
 autoload colors
 zstyle ':completion:*' list-colors "${LS_COLORS}"
 
-#kill の候補にも色付き表示
+# kill の候補にも色付き表示
 zstyle ':completion:*:*:kill:*:processes' list-colors '=(#b) #([%0-9]#)*=0=01;31'
 
-#コマンドにsudoを付けても補完
+# コマンドにsudoを付けても補完
 zstyle ':completion:*:sudo:*' command-path /usr/local/sbin /usr/local/bin /usr/sbin /usr/bin /sbin /bin /usr/X11R6/bin
 
-#zsh内蔵エディタを使う
+# zsh内蔵エディタを使う
 autoload -U zcalc
 autoload zed
-
-#C-Uで行頭まで削除
-bindkey "^U" backward-kill-line
-
-# C-^ で一つ上のディレクトリへ
-function cdup() {
-  echo
-  cd ..
-  zle reset-prompt
-}
-
-zle -N cdup
-bindkey '^^' cdup
-
-#ヒストリーサイズ設定
-export HISTFILE=~/.zsh_history
-export HISTSIZE=1000000
-export SAVEHIST=1000000
-
-#ヒストリの一覧を読みやすい形に変更
-HISTTIMEFORMAT="[%Y/%M/%D %H:%M:%S] "
 
 #補完リストが多いときに尋ねない
 LISTMAX=0
@@ -115,7 +150,13 @@ LISTMAX=0
 #"|,:"を単語の一部とみなさない
 WORDCHARS="$WORDCHARS|:"
 
-#http://www.ayu.ics.keio.ac.jp/~mukai/translate/zshoptions.html
+# Use Vim like key bindings during completion.
+zmodload zsh/complist
+bindkey -M menuselect 'h' vi-backward-char
+bindkey -M menuselect 'j' vi-down-line-or-history
+bindkey -M menuselect 'k' vi-up-line-or-history
+bindkey -M menuselect 'l' vi-forward-char
+
 #タブキーの連打で自動的にメニュー補完
 setopt AUTO_MENU
 #/foo/barでいきなりcd
@@ -245,77 +286,12 @@ setopt COMPLETE_IN_WORD
 setopt NO_TIFY
 #改行が存在しない標準出力がある場合、自動的に特殊文字で改行する。
 setopt prompt_cr prompt_sp
-#絵文字で存在しない改行を表す
+
+# If there is not a new line at the end of the output,
+# Shows emoji "END" at the end of the result.
 END_MARK=$'\xf0\x9f\x94\x9a'
 export PROMPT_EOL_MARK="%K{3}$END_MARK %K%{$reset_color%}"
 
-###################################
-####### Incremental Search  #######
-###################################
-#入力途中の履歴補完を有効化する
-autoload history-search-end
-zle -N history-beginning-search-backward-end history-search-end
-zle -N history-beginning-search-forward-end history-search-end
-
-#入力途中の履歴補完
-bindkey "^P" history-beginning-search-backward-end
-bindkey "^N" history-beginning-search-forward-end
-
-#インクリメンタルサーチの設定
-bindkey "^R" history-incremental-search-backward
-bindkey "^S" history-incremental-search-forward
-
-#履歴のインクリメンタル検索でワイルドカード利用可能
-bindkey '^R' history-incremental-pattern-search-backward
-bindkey '^S' history-incremental-pattern-search-forward
-
-
-###################################
-####### Command Line Stack  #######
-###################################
-# Ref: https://gist.github.com/yukirin/7067299
-autoload -Uz add-zsh-hook
-
-local p_buffer_stack=""
-local -a buffer_stack_arr
-
-function make_p_buffer_stack()
-{
-  if [[ ! $#buffer_stack_arr > 0 ]]; then
-    p_buffer_stack=""
-    return
-  fi
-  p_buffer_stack="%F{cyan}<stack:$buffer_stack_arr>%f"
-}
-
-function show_buffer_stack()
-{
-  local cmd_str_len=$#LBUFFER
-  [[ cmd_str_len > 10 ]] && cmd_str_len=10
-  buffer_stack_arr=("[$LBUFFER[1,${cmd_str_len}]]" $buffer_stack_arr)
-  make_p_buffer_stack
-  zle push-line-or-edit
-  zle reset-prompt
-}
-
-function check_buffer_stack()
-{
-  [[ $#buffer_stack_arr > 0 ]] && shift buffer_stack_arr
-  make_p_buffer_stack
-}
-
-zle -N show_buffer_stack
-bindkey "^Q" show_buffer_stack
-add-zsh-hook precmd check_buffer_stack
-
-RPROMPT='${p_buffer_stack}'
-
-# 補完候補のメニュー選択で、矢印キーの代わりにhjklで移動出来るようにする。
-zmodload zsh/complist
-bindkey -M menuselect 'h' vi-backward-char
-bindkey -M menuselect 'j' vi-down-line-or-history
-bindkey -M menuselect 'k' vi-up-line-or-history
-bindkey -M menuselect 'l' vi-forward-char
 
 ##################################
 ###### Git related Settings ######
@@ -377,3 +353,42 @@ function zle-line-init zle-keymap-select {
 }
 zle -N zle-line-init
 zle -N zle-keymap-select
+
+#--------------------
+# Zsh Appearance
+#--------------------
+
+# Prompot appearance
+new_line='
+'
+PROMPT='
+$(get_vim_state)%F{5}[%f%{$fg[green]%}%B%~%b%F{5}]%f$(vcs_echo)${new_line}%(!.%F{red}#%f.$)%b '
+
+
+#--------------------
+# zplug
+#--------------------
+# source ~/.zplug/init.zsh
+# 
+# zplug "b4b4r07/enhancd", use:init.sh
+# zplug "zsh-users/zsh-syntax-highlighting", defer:2
+# # zplug "zsh-users/zsh-autosuggestions"
+# zplug "zsh-users/zsh-completions"
+# zplug "greymd/cureutils"
+# # Load docker completions
+# # It clonse too large repositories.
+# # zplug "greymd/docker-zsh-completion"
+# 
+# export TTCP_ID="grethlen"
+# export TTCP_PASSWORD="hogehoge"
+# zplug "greymd/ttcopy"
+# 
+# # # Install plugins if there are plugins that have not been installed
+# # if ! zplug check --verbose; then
+# #     printf "Install? [y/N]: "
+# #     if read -q; then
+# #         echo; zplug install
+# #     fi
+# # fi
+# 
+# zplug load
