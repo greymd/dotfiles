@@ -235,8 +235,7 @@ docker-ex () {
 }
 
 docker-dev () {
-  docker run -it --rm greymd/dev /bin/bash
-  # apt-get -y update && apt-get -y install curl
+  docker run -v $(pwd):/work -it --rm greymd/dev /bin/zsh
 }
 
 docker-ubuntu () {
