@@ -111,9 +111,9 @@ antigen bundle "greymd/cureutils"
 # It clonse too large repositories.
 # zplug "greymd/docker-zsh-completion"
 
-export TTCP_ID="grethlen"
-export TTCP_PASSWORD="hogehoge"
-antigen bundle "greymd/ttcopy"
+# export TTCP_ID="grethlen"
+# export TTCP_PASSWORD="hogehoge"
+# antigen bundle "greymd/ttcopy"
 
 antigen apply
 
@@ -364,6 +364,8 @@ new_line='
 PROMPT='
 $(get_vim_state)%F{5}[%f%{$fg[green]%}%B%~%b%F{5}]%f$(vcs_echo)${new_line}%(!.%F{red}#%f.$)%b '
 
+# Simple one
+# PROMPT='%F{5}%f%{$fg[green]%}%B%~%b%F{5}%f%(!.%F{red}#%f.$)%b '
 
 #--------------------
 # zplug
