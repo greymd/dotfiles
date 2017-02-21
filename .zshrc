@@ -107,13 +107,7 @@ antigen bundle "zsh-users/zsh-syntax-highlighting"
 # antigen bundle "zsh-users/zsh-autosuggestions"
 antigen bundle "zsh-users/zsh-completions"
 antigen bundle "greymd/cureutils"
-# Load docker completions
-# It clonse too large repositories.
-# zplug "greymd/docker-zsh-completion"
-
-# export TTCP_ID="grethlen"
-# export TTCP_PASSWORD="hogehoge"
-# antigen bundle "greymd/ttcopy"
+antigen bundle "greymd/docker-zsh-completion"
 
 antigen apply
 
