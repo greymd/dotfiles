@@ -235,7 +235,11 @@ docker-ex () {
 }
 
 docker-dev () {
-  docker run -v $(pwd):/work -it --rm greymd/dev /bin/zsh
+  if [[ $1 =~ ^-v$ ]]; then
+    docker run -v $(pwd):/work -it --rm greymd/dev /bin/zsh
+  else
+    docker run -it --rm greymd/dev /bin/zsh
+  fi
 }
 
 docker-ubuntu () {
