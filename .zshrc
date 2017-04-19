@@ -108,6 +108,7 @@ antigen bundle "zsh-users/zsh-syntax-highlighting"
 antigen bundle "zsh-users/zsh-completions"
 antigen bundle "greymd/cureutils"
 antigen bundle "greymd/docker-zsh-completion"
+antigen bundle "greymd/tmux-xpanes"
 
 antigen apply
 

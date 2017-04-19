@@ -1,6 +1,7 @@
 REPOSITORY_DIR="$HOME/reps"
 USER_BIN="$HOME/bin"
 SKEL_PROJECT_DIR="$HOME/.zsh/project-skel/"
+export PS1="$ "
 
 ###################################
 #### Depending on the platform ####
@@ -103,7 +104,6 @@ alias rmccal='ls *.log | while read f;do cat "$f" | rmcc > /tmp/tmpfile && cat /
 alias git-add-modified='git status | grep modified | awk '\''{print "git add "$NF}'\'
 alias up="cd ..; ls"
 
-alias tmclean='tmux ls | grep -v attached | awk "\$0=\$1" | tr -d ":" | xargs -I@ echo tmux kill-session -t @ | zsh'
 alias psum='tr "\n" " " | perl -anle "print eval join \"+\", @F"'
 
 # SSL dump alias
@@ -423,6 +423,10 @@ holidays() {
   curl -Lso- goo.gl/Ynbsm9
 }
 
+today() {
+    curl -Lso- goo.gl/Ynbsm9 | grep "$(date +%F)" -B 5 -A 25
+}
+
 melos () {
   curl -so- 'http://www.aozora.gr.jp/cards/000035/files/1567_14913.html' | xmllint --html --xpath '/html/body/div[3]' - 2>/dev/null | nkf -w -Lu | sed -r 's/<[^>]*>//g;s/（.*）//g;s/( 「|」|　)//g' | awk NF
 }
@@ -482,7 +486,7 @@ sazae-janken () {
 }
 
 dolen () {
-    curl -so- 'http://www.gaitameonline.com/rateaj/getrate' | jq '.quotes[] | select(.currencyPairCode == "USDJPY")'
+    curl -L -so- 'http://www.gaitameonline.com/rateaj/getrate' | jq '.quotes[] | select(.currencyPairCode == "USDJPY")'
 }
 
 mynumbers () {
@@ -617,8 +621,9 @@ hex2dec() {
 }
 
 sslcert-gen() {
+    local _domain=${1:-healthcheck.com}
     openssl genrsa -rand <(cat /dev/urandom | LANG=C tr -dc '[:alnum:]' | fold -w 10 | head -n 100) -out server.key 1024
-    echo "JP\nTokyo\nMachida City\nMachida, Inc.\nTech\nhealthcheck.com\n\n\n\n" | openssl req -new -key server.key -out server.csr
+    echo "JP\nTokyo\nMachida City\nMachida, Inc.\nTech\n$_domain\n\n\n\n" | openssl req -new -key server.key -out server.csr
     # Country Name (2 letter code) [XX]:JP
     # State or Province Name (full name) []:Tokyo
     # Locality Name (eg, city) [Default City]:Setagaya-ku
@@ -626,7 +631,7 @@ sslcert-gen() {
     # Organizational Unit Name (eg, section) []:Tech
     # Common Name (eg, your name or your server's hostname) []:healthcheck.com
     # Email Address []:
-    openssl x509 -req -days 365 -in server.csr -signkey server.key -out server.crt
+    openssl x509 -req -days 65535 -in server.csr -signkey server.key -out server.crt
 }
 
 # Vim-Oneliner
@@ -639,4 +644,20 @@ sslcert-gen() {
 # 1
 vo () {
         vim -es <(cat) "$@" '+%p|q!'
+}
+
+tmux-clean () {
+    tmux ls | grep -v attached | awk "\$0=\$1" | tr -d ":" | xargs -I@ echo tmux kill-session -t @ | sh
+}
+
+# From https://gist.github.com/gin135/f22a44b372d5b9e8b413d963aa68ae15
+train-kanto () {
+    curl -s http://traininfo.jreast.co.jp/train_info/kanto.aspx |
+    nkf -Lu |
+    grep -A 1 'text-tit-xlarge' |
+    sed '/acess_i/s/.*alt="\([^"]*\)".*/\1/' |
+    sed 's/<[^>]*>//g' |
+    tr -d -- '- ' |
+    awk NF=NF |
+    xargs -n 2
 }

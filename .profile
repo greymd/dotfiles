@@ -24,9 +24,9 @@ if (type vim &> /dev/null) ;then
   export EDITOR=vim
 fi
 
-if [ -e $ECLIPSE_HOME/eclimd ] && [ $(ps alx | grep 'eclimd$' | grep -c .) -eq 0 ]; then
-  nohup $ECLIPSE_HOME/eclimd &
-fi
+# if [ -e $ECLIPSE_HOME/eclimd ] && [ $(ps alx | grep 'eclimd$' | grep -c .) -eq 0 ]; then
+#   nohup $ECLIPSE_HOME/eclimd &
+# fi
 
 if (type fasd &> /dev/null) ;then
   eval "$(fasd --init auto)"

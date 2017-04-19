@@ -164,6 +164,9 @@ call dein#add('evanmiller/nginx-vim-syntax')
 " gradle syntax
 call dein#add('tfnico/vim-gradle')
 
+" groovy
+call dein#add('greymd/gre-vim-snippets')
+
 " For Java IDE
 " Ref: http://www.lucianofiandesio.com/vim-configuration-for-happy-java-coding
 call dein#add('Yggdroot/indentLine')
@@ -203,7 +206,7 @@ set t_Co=256
 " Set default file encoding utf-8
 set encoding=utf-8
 " Set proper encoding by tring multiple encoding continuously
-set fileencodings=iso-2022-jp,euc-jp,sjis,utf-8
+set fileencodings=utf-8,iso-2022-jp,euc-jp,sjis
 " Newline type
 set fileformats=unix,mac,dos
 
@@ -223,6 +226,9 @@ set autoindent
 " set noexpandtab
 set expandtab
 set shiftwidth=4
+
+" In case of ruby, use 2 spaces
+autocmd Filetype ruby,bash,html setlocal ts=2 sts=2 sw=2
 
 "行末とtabを表示する
 set list
@@ -398,6 +404,9 @@ if dein#tap("neosnippet")
   endif
   if dein#tap("vim-snippets")
     let g:neosnippet#snippets_directory += ['~/.cache/dein/repos/github.com/honza/vim-snippets/snippets']
+  endif
+  if dein#tap('gre-vim-snippets')
+    let g:neosnippet#snippets_directory += ['~/.cache/dein/repos/github.com/greymd/gre-vim-snippets/snippets']
   endif
 endif
 
