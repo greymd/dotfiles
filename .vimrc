@@ -21,9 +21,15 @@ let os=GetRunningOS()
 if &compatible
   set nocompatible
 endif
-set runtimepath+=~/.cache/dein/repos/github.com/Shougo/dein.vim
 
-call dein#begin(expand('~/.cache/dein'))
+if os=="win"
+  set runtimepath+=~\.cache\dein\repos\github.com\Shougo\dein.vim
+  call dein#begin(expand('~\.cache\dein'))
+else
+  set runtimepath+=~/.cache/dein/repos/github.com/Shougo/dein.vim
+  call dein#begin(expand('~/.cache/dein'))
+endif
+
 
 call dein#add('Shougo/dein.vim')
 call dein#add('Shougo/neocomplete.vim',{
@@ -169,11 +175,13 @@ call dein#add('greymd/gre-vim-snippets')
 
 " For Java IDE
 " Ref: http://www.lucianofiandesio.com/vim-configuration-for-happy-java-coding
+if os!="win" " In case of windows, layout gets broken...
 call dein#add('Yggdroot/indentLine')
   " vertical line indentation
   let g:indentLine_color_term = 239
   let g:indentLine_color_gui = '#09AA08'
   let g:indentLine_char = '│'
+endif
 
 " Sushibar
 " call dein#add('pocke/sushibar.vim')
@@ -393,17 +401,29 @@ endif
 
 " Tell Neosnippet about the other snippets
 if dein#tap("neosnippet")
-  let g:neosnippet#enable_snipmate_compatibility = 1
-  let g:neosnippet#disable_runtime_snippets = {'_' : 1}
-  let g:neosnippet#snippets_directory = []
-  if dein#tap("neosnippet-snippets")
-    let g:neosnippet#snippets_directory += ['~/.cache/dein/repos/github.com/Shougo/neosnippet-snippets/neosnippets']
-  endif
-  if dein#tap("vim-octopress-snippets")
-    let g:neosnippet#snippets_directory += ['~/.cache/dein/repos/github.com/rcmdnk/vim-octopress-snippets/neosnippets']
-  endif
-  if dein#tap("vim-snippets")
-    let g:neosnippet#snippets_directory += ['~/.cache/dein/repos/github.com/honza/vim-snippets/snippets']
+    let g:neosnippet#enable_snipmate_compatibility = 1
+    let g:neosnippet#disable_runtime_snippets = {'_' : 1}
+    let g:neosnippet#snippets_directory = []
+  if os=="win"
+    if dein#tap("neosnippet-snippets")
+      let g:neosnippet#snippets_directory += ['~\.cache\dein\repos\github.com\Shougo\neosnippet-snippets\neosnippets']
+    endif
+    if dein#tap("vim-octopress-snippets")
+      let g:neosnippet#snippets_directory += ['~\.cache\dein\repos\github.com\rcmdnk\vim-octopress-snippets\neosnippets']
+    endif
+    if dein#tap("vim-snippets")
+      let g:neosnippet#snippets_directory += ['~\.cache\dein\repos\github.com\honza\vim-snippets\snippets']
+    endif
+  else
+    if dein#tap("neosnippet-snippets")
+      let g:neosnippet#snippets_directory += ['~/.cache/dein/repos/github.com/Shougo/neosnippet-snippets/neosnippets']
+    endif
+    if dein#tap("vim-octopress-snippets")
+      let g:neosnippet#snippets_directory += ['~/.cache/dein/repos/github.com/rcmdnk/vim-octopress-snippets/neosnippets']
+    endif
+    if dein#tap("vim-snippets")
+      let g:neosnippet#snippets_directory += ['~/.cache/dein/repos/github.com/honza/vim-snippets/snippets']
+    endif
   endif
   if dein#tap('gre-vim-snippets')
     let g:neosnippet#snippets_directory += ['~/.cache/dein/repos/github.com/greymd/gre-vim-snippets/snippets']
@@ -428,10 +448,18 @@ let g:NeoComplCache_EnableUnderbarCompletion = 1
 let g:NeoComplCache_MinSyntaxLength = 3
 " Set manual completion length.
 let g:NeoComplCache_ManualCompletionStartLength = 0
-let g:neocomplcache_dictionary_filetype_lists = {
+
+if os=="win"
+  let g:neocomplcache_dictionary_filetype_lists = {
+    \ 'default'    : '',
+    \ 'perl'       : '~\.vim\dict\perl.dict'
+    \ }
+else
+  let g:neocomplcache_dictionary_filetype_lists = {
     \ 'default'    : '',
     \ 'perl'       : '~/.vim/dict/perl.dict'
     \ }
+endif
 
 " #################################
 " ######### Project.vim ###########

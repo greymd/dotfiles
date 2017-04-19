@@ -356,11 +356,18 @@ zle -N zle-keymap-select
 # Prompot appearance
 new_line='
 '
-PROMPT='
-$(get_vim_state)%F{5}[%f%{$fg[green]%}%B%~%b%F{5}]%f$(vcs_echo)${new_line}%(!.%F{red}#%f.$)%b '
-
-# Simple one
-# PROMPT='%F{5}%f%{$fg[green]%}%B%~%b%F{5}%f%(!.%F{red}#%f.$)%b '
+# unamestr is defined in .bashrc
+if [[ $unamestr == 'Darwin' ]]; then
+  PROMPT='
+  $(get_vim_state)%F{5}[%f%{$fg[green]%}%B%~%b%F{5}]%f$(vcs_echo)${new_line}%(!.%F{red}#%f.$)%b '
+elif [[ $unamestr == 'CYGWIN' ]]; then
+  # Simple one
+  # Above prompt is too heavy for cygwin...
+  PROMPT='%F{5}%f%{$fg[green]%}%B%~%b%F{5}%f%(!.%F{red}#%f.$)%b '
+elif [[ $unamestr == 'Linux' ]]; then
+  # Simple one
+  PROMPT='%F{5}%f%{$fg[green]%}%B%~%b%F{5}%f%(!.%F{red}#%f.$)%b '
+fi
 
 #--------------------
 # zplug
