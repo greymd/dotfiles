@@ -90,8 +90,10 @@ endif
 
 call dein#add('Lokaltog/vim-easymotion')
 
-" Related to Markdown (http://qiita.com/uedatakeshi/items/31761b87ba8ecbaf2c1e)
+" for /Tabular
 call dein#add('godlygeek/tabular')
+
+" Related to Markdown (http://qiita.com/uedatakeshi/items/31761b87ba8ecbaf2c1e)
 call dein#add('plasticboy/vim-markdown')
 call dein#add('kannokanno/previm')
 call dein#add('tyru/open-browser.vim',{
@@ -601,6 +603,7 @@ if os=="mac"
 endif
 
 " Disable auto folding
+let g:vim_markdown_conceal = 0
 let g:vim_markdown_folding_disabled=1
 
 " ###
