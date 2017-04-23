@@ -15,6 +15,19 @@ function! GetRunningOS()
 endfunction
 let os=GetRunningOS()
 
+function! IsBoW()
+  " win32yank.exe is required (https://github.com/equalsraf/win32yank).
+  let executeCmd="grep -q Microsoft /proc/version && which win32yank.exe &> /dev/null"
+  echo system(executeCmd)
+  return v:shell_error=="0" ? 1 : 0
+endfunction
+
+if IsBoW() && os=="linux"
+    " This is bash on windows.
+    " Share clipboard with windows native env.
+    vmap <C-c> :w !win32yank.exe -i<CR><CR>
+endif
+
 " ###############################
 " ########## dein.vim ###########
 " ###############################
