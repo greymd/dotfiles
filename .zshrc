@@ -282,11 +282,6 @@ setopt NO_TIFY
 #改行が存在しない標準出力がある場合、自動的に特殊文字で改行する。
 setopt prompt_cr prompt_sp
 
-# If there is not a new line at the end of the output,
-# Shows emoji "END" at the end of the result.
-END_MARK=$'\xf0\x9f\x94\x9a'
-export PROMPT_EOL_MARK="%K{3}$END_MARK %K%{$reset_color%}"
-
 
 ##################################
 ###### Git related Settings ######
@@ -358,6 +353,10 @@ new_line='
 '
 # unamestr is defined in .bashrc
 if [[ $unamestr == 'Darwin' ]]; then
+  # If there is not a new line at the end of the output,
+  # Shows emoji "END" at the end of the result.
+  END_MARK=$'\xf0\x9f\x94\x9a'
+  export PROMPT_EOL_MARK="%K{3}$END_MARK %K%{$reset_color%}"
   PROMPT='
 $(get_vim_state)%F{5}[%f%{$fg[green]%}%B%~%b%F{5}]%f$(vcs_echo)${new_line}%(!.%F{red}#%f.$)%b '
 elif [[ $unamestr == 'CYGWIN' ]]; then
