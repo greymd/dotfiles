@@ -661,3 +661,8 @@ train-kanto () {
     awk NF=NF |
     xargs -n 2
 }
+
+### Added by the Bluemix CLI
+if [ ! -z $BASH_VERSION ];then
+    source /usr/local/Bluemix/bx/bash_autocomplete
+fi

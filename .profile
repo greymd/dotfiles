@@ -67,7 +67,7 @@ fi
 _target_path="$HOME/.rbenv"
 if [ -e "$_target_path" ]; then
   export PATH="$PATH:$_target_path"
-  eval "$(rbenv init -)"
+  eval "$(rbenv init - zsh)"
 fi
 
 _target_path="$HOME/.egison/bin"
@@ -75,8 +75,12 @@ if [ -e "$_target_path" ]; then
   export PATH="$PATH:$_target_path"
 fi
 
+_target_path="$HOME/.bluemix/kubeconfig.sh"
+if [ -e "$_target_path" ]; then
+    source "$_target_path"
+fi
+
 if [[ -s "$HOME/.nvm/nvm.sh" ]]; then
 	source "$HOME/.nvm/nvm.sh"
 	nvm alias default v4.2.2 > /dev/null
 fi
-
