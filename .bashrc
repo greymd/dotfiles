@@ -663,6 +663,6 @@ train-kanto () {
 }
 
 ### Added by the Bluemix CLI
-if [ ! -z $BASH_VERSION ];then
+if [ ! -z $BASH_VERSION ] && [ -e "/usr/local/Bluemix/bx/bash_autocomplete" ] ;then
     source /usr/local/Bluemix/bx/bash_autocomplete
 fi
