@@ -1,7 +1,7 @@
 REPOSITORY_DIR="$HOME/reps"
 USER_BIN="$HOME/bin"
 SKEL_PROJECT_DIR="$HOME/.zsh/project-skel/"
-export PS1="$ "
+export PS1="\W \$ "
 
 ###################################
 #### Depending on the platform ####
