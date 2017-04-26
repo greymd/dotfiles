@@ -397,4 +397,6 @@ fi
 # zplug load
 
 ### Added by the Bluemix CLI
-source /usr/local/Bluemix/bx/zsh_autocomplete
+if [ -e "/usr/local/Bluemix/bx/zsh_autocomplete" ]; then
+    source /usr/local/Bluemix/bx/zsh_autocomplete
+fi
