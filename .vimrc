@@ -111,6 +111,7 @@ call dein#add('plasticboy/vim-markdown')
 call dein#add('kannokanno/previm')
 call dein#add('tyru/open-browser.vim',{
             \ 'lazy': 1})
+call dein#add('dhruvasagar/vim-table-mode')
 
 " Node.js Express environment (http://qiita.com/ko2ic/items/daaef529c1dfdb94adbb#vim)
 call dein#add('heavenshell/vim-jsdoc' , {
