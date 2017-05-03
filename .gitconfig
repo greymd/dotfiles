@@ -7,5 +7,6 @@
 	excludesfile = ~/.gitignore_global
 	autocrlf = input
 	safecrlf = false
+	editor = vim
 [push]
 	default = matching
