@@ -301,7 +301,7 @@ function vcs_echo {
   branch="$vcs_info_msg_0_"
   if   [[ -n "$vcs_info_msg_1_" ]]; then color=${fg[green]} #staged
   elif [[ -n "$vcs_info_msg_2_" ]]; then color=${fg[red]} #unstaged
-  elif [[ -n `echo "$st" | grep "^Untracked"` ]]; then color=${fg[blue]} # untracked
+  elif [[ -n `echo "$st" | grep "^Untracked"` ]]; then color=${fg[yellow]} # untracked
   else color=${fg[cyan]}
   fi
   echo "%{$color%}%F{5}[git:%f%{$branch%}%F{5}]%f%{$reset_color%}" | sed -e s/@/"%F{yellow}@%f%{$color%}"/
@@ -364,37 +364,14 @@ elif [[ $unamestr == 'CYGWIN' ]]; then
   # Above prompt is too heavy for cygwin...
   PROMPT='%F{5}%f%{$fg[green]%}%B%~%b%F{5}%f%(!.%F{red}#%f.$)%b '
 elif [[ $unamestr == 'Linux' ]]; then
-  # Simple one
-  PROMPT='%F{5}%f%{$fg[green]%}%B%~%b%F{5}%f%(!.%F{red}#%f.$)%b '
+  if grep -q Microsoft /proc/version ;then
+    PROMPT='
+$(get_vim_state)%F{5}[%f%{$fg[green]%}%B%~%b%F{5}]%f$(vcs_echo)${new_line}%(!.%F{red}#%f.$)%b '
+  else
+    # Simple one
+    PROMPT='%F{5}%f%{$fg[green]%}%B%~%b%F{5}%f%(!.%F{red}#%f.$)%b '
+  fi
 fi
-
-#--------------------
-# zplug
-#--------------------
-# source ~/.zplug/init.zsh
-# 
-# zplug "b4b4r07/enhancd", use:init.sh
-# zplug "zsh-users/zsh-syntax-highlighting", defer:2
-# # zplug "zsh-users/zsh-autosuggestions"
-# zplug "zsh-users/zsh-completions"
-# zplug "greymd/cureutils"
-# # Load docker completions
-# # It clonse too large repositories.
-# # zplug "greymd/docker-zsh-completion"
-# 
-# export TTCP_ID="grethlen"
-# export TTCP_PASSWORD="hogehoge"
-# zplug "greymd/ttcopy"
-# 
-# # # Install plugins if there are plugins that have not been installed
-# # if ! zplug check --verbose; then
-# #     printf "Install? [y/N]: "
-# #     if read -q; then
-# #         echo; zplug install
-# #     fi
-# # fi
-# 
-# zplug load
 
 ### Added by the Bluemix CLI
 if [ -e "/usr/local/Bluemix/bx/zsh_autocomplete" ]; then
