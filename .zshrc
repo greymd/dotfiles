@@ -304,45 +304,46 @@ function vcs_echo {
   elif [[ -n `echo "$st" | grep "^Untracked"` ]]; then color=${fg[yellow]} # untracked
   else color=${fg[cyan]}
   fi
-  echo "%{$color%}%F{5}[git:%f%{$branch%}%F{5}]%f%{$reset_color%}" | sed -e s/@/"%F{yellow}@%f%{$color%}"/
+  echo "%{$color%}%F{5}[git:%f%{$branch%}%{$reset_color%}%F{5}]%f" | sed -e s/@/"%F{yellow}@%f%{$color%}"/
 }
 
-###################################
-####### Vi related Settings #######
-###################################
-
-function echo_red {
-	echo -ne "\033[31m$1\033[0m"
-}
-
-function echo_blue {
-	echo -ne "\033[34m$1\033[0m"
-}
-
-#enable Vi mode
-bindkey -v
-set editing-mode vi
-set blink-matching-paren on
-
-# Please refer to man zshcontrib
-autoload edit-command-line
-zle -N edit-command-line
-bindkey -M vicmd v edit-command-line
-
-function get_vim_state {
-  case $KEYMAP in
-    vicmd) echo "%F{5}[%f$(echo_red "N")%F{5}]%f" ;;
-    viins|main) echo "%F{5}[%f$(echo_blue "I")%F{5}]%f" ;;
-  esac
-}
-
-function zle-line-init zle-keymap-select {
-  # RPS1=$(get_vim_state)
-  # RPS2=$RPS1
-    zle reset-prompt
-}
-zle -N zle-line-init
-zle -N zle-keymap-select
+#  Disable as of 2017/05/08
+#  ###################################
+#  ####### Vi related Settings #######
+#  ###################################
+#  
+#  function echo_red {
+#  	echo -ne "\033[31m$1\033[0m"
+#  }
+#  
+#  function echo_blue {
+#  	echo -ne "\033[34m$1\033[0m"
+#  }
+#  
+#  #enable Vi mode
+#  bindkey -v
+#  set editing-mode vi
+#  set blink-matching-paren on
+#  
+#  # Please refer to man zshcontrib
+#  autoload edit-command-line
+#  zle -N edit-command-line
+#  bindkey -M vicmd v edit-command-line
+#  
+#  function get_vim_state {
+#    case $KEYMAP in
+#      vicmd) echo "%F{5}[%f$(echo_red "N")%F{5}]%f" ;;
+#      viins|main) echo "%F{5}[%f$(echo_blue "I")%F{5}]%f" ;;
+#    esac
+#  }
+#  
+#  function zle-line-init zle-keymap-select {
+#    # RPS1=$(get_vim_state)
+#    # RPS2=$RPS1
+#      zle reset-prompt
+#  }
+#  zle -N zle-line-init
+#  zle -N zle-keymap-select
 
 #--------------------
 # Zsh Appearance
@@ -357,8 +358,8 @@ if [[ $unamestr == 'Darwin' ]]; then
   # Shows emoji "END" at the end of the result.
   END_MARK=$'\xf0\x9f\x94\x9a'
   export PROMPT_EOL_MARK="%K{3}$END_MARK %K%{$reset_color%}"
-  PROMPT='
-$(get_vim_state)%F{5}[%f%{$fg[green]%}%B%~%b%F{5}]%f$(vcs_echo)${new_line}%(!.%F{red}#%f.$)%b '
+  PROMPT='${new_line}%{$fg[green]%}%B%~%b $(vcs_echo)${new_line}%(!.%F{red}#%f.$)%b '
+  # RPROMPT="git:"
 elif [[ $unamestr == 'CYGWIN' ]]; then
   # Simple one
   # Above prompt is too heavy for cygwin...
@@ -366,7 +367,7 @@ elif [[ $unamestr == 'CYGWIN' ]]; then
 elif [[ $unamestr == 'Linux' ]]; then
   if grep -q Microsoft /proc/version ;then
     PROMPT='
-$(get_vim_state)%F{5}[%f%{$fg[green]%}%B%~%b%F{5}]%f$(vcs_echo)${new_line}%(!.%F{red}#%f.$)%b '
+%F{5}[%f%{$fg[green]%}%B%~%b%F{5}]%f$(vcs_echo)${new_line}%(!.%F{red}#%f.$)%b '
   else
     # Simple one
     PROMPT='%F{5}%f%{$fg[green]%}%B%~%b%F{5}%f%(!.%F{red}#%f.$)%b '
