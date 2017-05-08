@@ -366,15 +366,9 @@ elif [[ $unamestr == 'CYGWIN' ]]; then
   PROMPT='%F{5}%f%{$fg[green]%}%B%~%b%F{5}%f%(!.%F{red}#%f.$)%b '
 elif [[ $unamestr == 'Linux' ]]; then
   if grep -q Microsoft /proc/version ;then
-    PROMPT='
-%F{5}[%f%{$fg[green]%}%B%~%b%F{5}]%f$(vcs_echo)${new_line}%(!.%F{red}#%f.$)%b '
+    PROMPT='${new_line}%{$fg[green]%}%B%~%b $(vcs_echo)${new_line}%(!.%F{red}#%f.$)%b '
   else
     # Simple one
-    PROMPT='%F{5}%f%{$fg[green]%}%B%~%b%F{5}%f%(!.%F{red}#%f.$)%b '
+    PROMPT='${new_line}%{$fg[green]%}%B%~%b $(vcs_echo)${new_line}%(!.%F{red}#%f.$)%b '
   fi
-fi
-
-### Added by the Bluemix CLI
-if [ -e "/usr/local/Bluemix/bx/zsh_autocomplete" ]; then
-    source /usr/local/Bluemix/bx/zsh_autocomplete
 fi
