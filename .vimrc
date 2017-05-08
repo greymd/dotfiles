@@ -252,7 +252,7 @@ set expandtab
 set shiftwidth=4
 
 " In case of ruby, use 2 spaces
-autocmd Filetype ruby,bash,html setlocal ts=2 sts=2 sw=2
+autocmd Filetype ruby,sh,html setlocal ts=2 sts=2 sw=2
 
 "行末とtabを表示する
 set list
