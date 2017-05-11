@@ -223,7 +223,7 @@ docker-clean () {
 }
 
 docker-rmnone() {
-    docker images | grep '<none>' | awk '{print $3}' | xargs docker rmi
+  docker images --filter "dangling=true" -q | xargs docker rmi
 }
 
 docker-killall () {
@@ -231,7 +231,7 @@ docker-killall () {
 }
 
 docker-ex () {
-    docker exec -it "$1" /bin/bash
+    docker exec -it "$1" sh
 }
 
 docker-dev () {
@@ -661,8 +661,3 @@ train-kanto () {
     awk NF=NF |
     xargs -n 2
 }
-
-### Added by the Bluemix CLI
-if [ ! -z $BASH_VERSION ] && [ -e "/usr/local/Bluemix/bx/bash_autocomplete" ] ;then
-    source /usr/local/Bluemix/bx/bash_autocomplete
-fi

@@ -1,3 +1,4 @@
+# zmodload zsh/zprof && zprof
 source "$HOME/.profile"
 
 _target_path="$HOME/.zsh/completion"

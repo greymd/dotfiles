@@ -174,11 +174,14 @@ antigen apply
 # Completion
 #--------------------
 # Enable completion feature
-autoload -U compinit promptinit colors && colors
-compinit
+autoload -U promptinit colors && colors
+
+## Skip following procedures because compinit is already loaded by antigen
+# autoload -U compinit
+# compinit
+
 zstyle ':completion::complete:*' use-cache true
 zstyle ':completion:*:default' menu select=1
-
 # Upper and lower casee are recognized as same characters when completion.
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
 
@@ -202,12 +205,12 @@ LISTMAX=0
 #"|,:"を単語の一部とみなさない
 WORDCHARS="$WORDCHARS|:"
 
-# Use Vim like key bindings during completion.
-zmodload zsh/complist
-bindkey -M menuselect 'h' vi-backward-char
-bindkey -M menuselect 'j' vi-down-line-or-history
-bindkey -M menuselect 'k' vi-up-line-or-history
-bindkey -M menuselect 'l' vi-forward-char
+# # Use Vim like key bindings during completion.
+# zmodload zsh/complist
+# bindkey -M menuselect 'h' vi-backward-char
+# bindkey -M menuselect 'j' vi-down-line-or-history
+# bindkey -M menuselect 'k' vi-up-line-or-history
+# bindkey -M menuselect 'l' vi-forward-char
 
 #タブキーの連打で自動的にメニュー補完
 setopt AUTO_MENU
@@ -429,3 +432,7 @@ elif [[ $unamestr == 'Linux' ]]; then
     PROMPT='${new_line}%{$fg[green]%}%B%~%b $(vcs_echo)${new_line}%(!.%F{red}#%f.$)%b '
   fi
 fi
+
+# if (which zprof > /dev/null) ;then
+#       zprof | less
+# fi
