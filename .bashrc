@@ -661,3 +661,12 @@ train-kanto () {
     awk NF=NF |
     xargs -n 2
 }
+
+# --------------------
+# Bash completion
+# --------------------
+if [ -f "${REPOSITORY_DIR}/scop/bash-completion/bash_completion" ] && [ -n "$BASH_VERSION" ]; then
+  . ${REPOSITORY_DIR}/scop/bash-completion/bash_completion
+fi
+
+
