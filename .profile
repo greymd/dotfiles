@@ -12,6 +12,7 @@ elif [[ $unamestr == 'CYGWIN' ]]; then
 elif [[ $unamestr == 'Linux' ]]; then
   # Do nothing for now
   echo "" > /dev/null
+  export ECLIPSE_HOME="$HOME/eclipse"
 fi
 
 ##
@@ -27,6 +28,12 @@ fi
 # if [ -e $ECLIPSE_HOME/eclimd ] && [ $(ps alx | grep 'eclimd$' | grep -c .) -eq 0 ]; then
 #   nohup $ECLIPSE_HOME/eclimd &
 # fi
+
+if [ -e $ECLIPSE_HOME/eclimd ]; then
+  alias eclim-start="nohup $ECLIPSE_HOME/eclimd > /dev/null 2>&1 &"
+  alias eclim-stop="$ECLIPSE_HOME/eclim -command shutdown"
+  alias eclim-status='ps alx | grep -q "eclimd$" && echo "eclim is running ("$(ps alx | grep "eclimd$" | cut -d" " -f2)")" || echo "eclim is not unning"'
+fi
 
 if (type fasd &> /dev/null) ;then
   eval "$(fasd --init auto)"
