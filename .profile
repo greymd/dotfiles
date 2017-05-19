@@ -30,7 +30,7 @@ fi
 # fi
 
 if [ -e $ECLIPSE_HOME/eclimd ]; then
-  alias eclim-start="nohup $ECLIPSE_HOME/eclimd > /dev/null 2>&1 &"
+  alias eclim-start="$ECLIPSE_HOME/eclimd -b &> /dev/null"
   alias eclim-stop="$ECLIPSE_HOME/eclim -command shutdown"
   alias eclim-status='ps alx | grep -q "eclimd$" && echo "eclim is running ("$(ps alx | grep "eclimd$" | cut -d" " -f2)")" || echo "eclim is not unning"'
 fi
