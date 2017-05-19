@@ -236,9 +236,9 @@ docker-ex () {
 
 docker-dev () {
   if [[ $1 =~ ^-v$ ]]; then
-    docker run -v $(pwd):/work -it --rm greymd/dev /bin/zsh
+    docker run -v $(pwd):/work -it greymd/dev /bin/zsh
   else
-    docker run -it --rm greymd/dev /bin/zsh
+    docker run -it greymd/dev /bin/zsh
   fi
 }
 
@@ -338,6 +338,16 @@ pt-vim(){
 }
 pt-gvim(){
   ptt "$@" | gvim -c '%!nkf' -c ':AnsiEsc' -c ':w `=tempname()`' -
+}
+
+# Open multiple files with vim from pt result.
+pt-vx(){
+  type xpanes &> /dev/null
+  if [ $? -ne 0 ]; then
+    echo "xpanes is required" >&2
+    return 1
+  fi
+  awk -F: '{print "vim -c \":norm G"$2"G\" \""$1"\"; exit"}' | xpanes -e
 }
 
 recgrep2subl()
