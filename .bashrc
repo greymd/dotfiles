@@ -347,7 +347,10 @@ pt-vx(){
     echo "xpanes is required" >&2
     return 1
   fi
-  awk -F: '{print "vim -c \":norm G"$2"G\" \""$1"\"; exit"}' | xpanes -e
+  awk -F: '{print $1,$2}' \
+    | awk '{a[$1]=a[$1]" "$2}END{for(k in a){print k,a[k]}}' \
+    | awk '{printf "vim"; for(i=2;i<=NF;i++){printf " -c \":norm G"$i"G\" "$1;} print "; exit"}' \
+    | xpanes -e
 }
 
 recgrep2subl()

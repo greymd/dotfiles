@@ -39,6 +39,11 @@ if (type fasd &> /dev/null) ;then
   eval "$(fasd --init auto)"
 fi
 
+_target_path="$HOME/bin"
+if [ -e "$_target_path" ]; then
+  export PATH="$_target_path:$PATH"
+fi
+
 _target_path="$HOME/.config"
 if [ -e "$_target_path" ]; then
   # XDG Base Directory for nvim aand so on
@@ -61,12 +66,12 @@ if [ -e "$_target_path" ]; then
   export PATH="$PATH:$_target_path"
 fi
 
-_target_path="$HOME/bin"
+_target_path="$HOME/.rbenv/bin"
 if [ -e "$_target_path" ]; then
   export PATH="$PATH:$_target_path"
 fi
 
-_target_path="$HOME/.rbenv/bin"
+_target_path="$HOME/.composer/vendor/bin"
 if [ -e "$_target_path" ]; then
   export PATH="$PATH:$_target_path"
 fi
@@ -81,6 +86,8 @@ _target_path="$HOME/.egison/bin"
 if [ -e "$_target_path" ]; then
   export PATH="$PATH:$_target_path"
 fi
+
+[[ -e ~/.phpbrew/bashrc ]] && source ~/.phpbrew/bashrc
 
 # _target_path="$HOME/.bluemix/kubeconfig.sh"
 # if [ -e "$_target_path" ]; then

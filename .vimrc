@@ -146,11 +146,14 @@ set statusline+=%*
 let g:syntastic_javascript_checkers = ['eslint'] "Use ESLint
 let g:syntastic_mode_map = {
       \ 'mode': 'active',
-      \ 'active_filetypes': ['javascript','ruby'],
+      \ 'active_filetypes': ['javascript','ruby', 'php'],
       \ 'passive_filetypes': ['tex']
       \ }
-" Need: $ gem i rubocop
+" Requred: $ gem i rubocop
 let g:syntastic_ruby_checkers = ['rubocop']
+" Requred: composer global require "squizlabs/php_codesniffer=*"
+let g:syntastic_php_checkers = ['phpcs']
+let g:syntastic_php_phpcs_args="--standard=psr2"
 
 " Earthquake detection
 " call dein#add('haya14busa/eew.vim')
@@ -189,6 +192,11 @@ call dein#add('tfnico/vim-gradle')
 
 " groovy
 call dein#add('greymd/gre-vim-snippets')
+
+" json
+call dein#add('elzr/vim-json')
+" In json, do not hide quotation (http://yuzuemon.hatenablog.com/entry/2015/01/15/035759)
+let g:vim_json_syntax_conceal = 0
 
 " For Java IDE
 " Ref: http://www.lucianofiandesio.com/vim-configuration-for-happy-java-coding
