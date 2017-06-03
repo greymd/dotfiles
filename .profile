@@ -25,6 +25,8 @@ if (type vim &> /dev/null) ;then
   export EDITOR=vim
 fi
 
+[[ -e ~/.phpbrew/bashrc ]] && source ~/.phpbrew/bashrc
+
 # if [ -e $ECLIPSE_HOME/eclimd ] && [ $(ps alx | grep 'eclimd$' | grep -c .) -eq 0 ]; then
 #   nohup $ECLIPSE_HOME/eclimd &
 # fi
@@ -89,8 +91,6 @@ _target_path="$HOME/.egison/bin"
 if [ -e "$_target_path" ]; then
   export PATH="$PATH:$_target_path"
 fi
-
-[[ -e ~/.phpbrew/bashrc ]] && source ~/.phpbrew/bashrc
 
 # _target_path="$HOME/.bluemix/kubeconfig.sh"
 # if [ -e "$_target_path" ]; then
