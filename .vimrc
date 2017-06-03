@@ -187,6 +187,9 @@ call dein#add('neo4j-contrib/cypher-vim-syntax')
 " nginx syntax
 call dein#add('evanmiller/nginx-vim-syntax')
 
+" e-mail header syntax
+call dein#add('greymd/headers.vim')
+
 " gradle syntax
 call dein#add('tfnico/vim-gradle')
 
