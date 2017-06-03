@@ -44,6 +44,9 @@ if [ -e "$_target_path" ]; then
   export PATH="$_target_path:$PATH"
 fi
 
+# Activate tmuxvm
+[ -e "$HOME/.config/tmuxvm/bin" ] && export PATH="$HOME/.config/tmuxvm/bin:$PATH"
+
 _target_path="$HOME/.config"
 if [ -e "$_target_path" ]; then
   # XDG Base Directory for nvim aand so on
@@ -94,7 +97,6 @@ fi
 #     source "$_target_path"
 # fi
 
-# if [[ -s "$HOME/.nvm/nvm.sh" ]]; then
-#   source "$HOME/.nvm/nvm.sh"
-#   nvm alias default v4.2.2 > /dev/null
-# fi
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && [ -n "$BASH_VERSION" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
