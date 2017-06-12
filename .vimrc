@@ -211,6 +211,10 @@ call dein#add('Yggdroot/indentLine')
   let g:indentLine_char = '│'
 endif
 
+" To use Eclim comfortably... with :BD
+call dein#add('qpkorr/vim-bufkill')
+
+
 " Sushibar
 " call dein#add('pocke/sushibar.vim')
 
@@ -546,6 +550,8 @@ let g:airline_symbols.linenr = '¶'
 let g:airline_symbols.branch = '⎇'
 let g:airline_symbols.paste = '∥'
 let g:airline_symbols.whitespace = 'Ξ'
+" Show filename only
+let g:airline#extensions#tabline#fnamemod = ':t'
 
 " Configures for hl-matchit
 let g:hl_matchit_enable_on_vim_startup = 1
