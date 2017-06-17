@@ -268,7 +268,7 @@ set expandtab
 set shiftwidth=4
 
 " In case of ruby, use 2 spaces
-autocmd Filetype ruby,sh,html setlocal ts=2 sts=2 sw=2
+autocmd Filetype ruby,sh,html,c setlocal ts=2 sts=2 sw=2
 
 "行末とtabを表示する
 set list
@@ -563,11 +563,31 @@ let g:hl_matchit_allow_ft = 'html\|vim\|ruby'
 " Automatically change current directory in accordance with Vimfiler
 let g:vimfiler_enable_auto_cd = 1
 let g:vimfiler_as_default_explorer = 1
-let g:vimfiler_edit_action="-split -simple -winwidth=35 -no-quit"
+
+" let g:vimfiler_edit_action="-split -simple -winwidth=35 -no-quit"
+" call vimfiler#custom#profile('default', 'context', {
+"       \ 'safe' : 0,
+"       \ 'edit_action' : 'open',
+"       \ })
+
+"" From: http://spacevim.org/use-vim-as-a-java-ide/
 call vimfiler#custom#profile('default', 'context', {
-      \ 'safe' : 0,
-      \ 'edit_action' : 'open',
-      \ })
+            \ 'explorer' : 1,
+            \ 'winwidth' : 30,
+            \ 'winminwidth' : 30,
+            \ 'toggle' : 1,
+            \ 'columns' : 'type',
+            \ 'auto_expand': 1,
+            \ 'direction' : 'rightbelow',
+            \ 'parent': 0,
+            \ 'explorer_columns' : 'type',
+            \ 'status' : 1,
+            \ 'safe' : 0,
+            \ 'split' : 1,
+            \ 'hidden': 1,
+            \ 'no_quit' : 1,
+            \ 'force_hide' : 0,
+            \ })
 
 " #######################################
 " ########## Tab Improvement ############
@@ -589,6 +609,8 @@ map <silent> gX :tabclose<CR>
 " #######################################
 " カーソル位置の単語をgrep検索
 nnoremap <silent> ,cg :<C-u>Unite grep:. -buffer-name=search-buffer<CR><C-R><C-W>
+" 手動での検索は Unite grep:.
+" 検索した結果を再度開くには :UniteResume
 
 " unite for native grep
 " use external grep
