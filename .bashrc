@@ -15,6 +15,7 @@ if [[ $unamestr == 'Darwin' ]]; then
   alias egison-euler="egison -l $REPOSITORY_DIR/project-euler/lib/math/project-euler.egi -l $REPOSITORY_DIR/prime-numbers/lib/math/prime-numbers.egi"
   alias p='pbcopy'
   alias jshell='/Library/Java/JavaVirtualMachines/jdk-9.jdk/Contents/Home/bin/jshell'
+  alias factor='gfactor'
 
   cdf () {
       target=`osascript -e 'tell application "Finder" to if (count of Finder windows) > 0 then get POSIX path of (target of front Finder window as text)'`
@@ -86,7 +87,6 @@ alias l='ls -CF'
 alias ll='ls -al'
 alias grep='grep --color=auto'
 alias shuf='gshuf'
-alias factor='gfactor'
 alias ..="cd .."
 alias ..2="cd ../.."
 alias ..3="cd ../../.."
@@ -462,7 +462,7 @@ transfer() {
 
 primes() {
     local _factor="gfactor"
-    if ( type factor &> /dev/nul ); then
+    if ( type factor &> /dev/null ); then
         _factor="factor"
     fi
   yes | awk '$0=NR+1' | $_factor | awk '$0*=!$3'
