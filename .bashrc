@@ -461,10 +461,12 @@ transfer() {
 }
 
 primes() {
-    local _factor="gfactor"
-    if ( type factor &> /dev/null ); then
-        _factor="factor"
-    fi
+  local _factor=""
+  if ( type gfactor &> /dev/null ); then
+      _factor="gfactor"
+  else ( type factor &> /dev/null )
+      _factor="factor"
+  fi
   yes | awk '$0=NR+1' | $_factor | awk '$0*=!$3'
 }
 
