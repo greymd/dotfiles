@@ -213,6 +213,20 @@ gradle-springboot () {
     # RunTest: gradle test
 }
 
+gradle-test () {
+  local _case="${1}"
+  if [ -z "$_case" ]; then
+    gradle test --tests "*"
+  else
+    local _args=($(echo "$@" | xargs -n 1 | sed 's/^/--tests */'))
+    gradle test "${_args[@]}"
+  fi
+}
+
+javadoc-src () {
+  javadoc -d "$(pwd)/html" -sourcepath "$(pwd)/src/main/java/" -subpackages .
+}
+
 #--------------------
 # Docker
 #--------------------

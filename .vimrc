@@ -573,12 +573,12 @@ let g:vimfiler_as_default_explorer = 1
 "" From: http://spacevim.org/use-vim-as-a-java-ide/
 call vimfiler#custom#profile('default', 'context', {
             \ 'explorer' : 1,
-            \ 'winwidth' : 30,
+            \ 'winwidth' : 50,
             \ 'winminwidth' : 30,
             \ 'toggle' : 1,
             \ 'columns' : 'type',
             \ 'auto_expand': 1,
-            \ 'direction' : 'rightbelow',
+            \ 'direction' : 'leftbelow',
             \ 'parent': 0,
             \ 'explorer_columns' : 'type',
             \ 'status' : 1,
@@ -607,8 +607,22 @@ map <silent> gX :tabclose<CR>
 " #######################################
 " ############# unite.vim ###############
 " #######################################
+" insert modeで開始
+let g:unite_enable_start_insert = 1
+
+" 大文字小文字を区別しない
+let g:unite_enable_ignore_case = 1
+let g:unite_enable_smart_case = 1
+
+" grep検索
+nnoremap <silent> ,g  :<C-u>Unite grep:. -buffer-name=search-buffer<CR>
+
 " カーソル位置の単語をgrep検索
 nnoremap <silent> ,cg :<C-u>Unite grep:. -buffer-name=search-buffer<CR><C-R><C-W>
+
+" grep検索結果の再呼出
+nnoremap <silent> ,r  :<C-u>UniteResume search-buffer<CR>
+
 " 手動での検索は Unite grep:.
 " 検索した結果を再度開くには :UniteResume
 
@@ -638,8 +652,8 @@ let g:extra_whitespace_ignored_filetypes = ["unite", "mkd", "vimfiler"]
 " ######### Original commands ###########
 " #######################################
 :command! Utex :Unite -vertical -winwidth=35 -no-quit outline
-:command! Ide  :VimFiler -split -simple -winwidth=35 -no-quit
-:command! IdeBig  :VimFiler -split -simple -winwidth=60 -no-quit
+" :command! Ide  :VimFiler -split -simple -winwidth=35 -no-quit
+:command! Ide :VimFiler -split -simple -winwidth=60 -no-quit
 " Open with temporary file.
 :command! Wtmp :w `=tempname()`
 " Shortcut command to change file name[http://d.hatena.ne.jp/fuenor/20100115/1263551230]
