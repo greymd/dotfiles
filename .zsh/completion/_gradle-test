@@ -1,0 +1,6 @@
+#compdef gradle-test
+
+_gradle-test () {
+    local _tests=$(find src/test/ -type f | grep "Test.java$" | xargs -n1 basename | sed 's/.java$//' | xargs)
+    _arguments "*:*:($_tests)"
+}
