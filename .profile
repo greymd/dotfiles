@@ -27,6 +27,12 @@ fi
 
 [[ -e ~/.phpbrew/bashrc ]] && source ~/.phpbrew/bashrc
 
+__add_path () {
+  local _target_path="$1"
+  if [ -e "$_target_path" ]; then
+    export PATH="$PATH:$_target_path"
+  fi
+}
 # if [ -e $ECLIPSE_HOME/eclimd ] && [ $(ps alx | grep 'eclimd$' | grep -c .) -eq 0 ]; then
 #   nohup $ECLIPSE_HOME/eclimd &
 # fi
@@ -42,10 +48,6 @@ if (type fasd &> /dev/null) ;then
   eval "$(fasd --init auto)"
 fi
 
-_target_path="$HOME/bin"
-if [ -e "$_target_path" ]; then
-  export PATH="$_target_path:$PATH"
-fi
 
 # Activate tmuxvm
 [ -e "$HOME/.config/tmuxvm/bin" ] && export PATH="$HOME/.config/tmuxvm/bin:$PATH"
@@ -62,41 +64,21 @@ if [ -e "$_target_path" ]; then
   export PATH=$GOPATH/bin:$PATH
 fi
 
-_target_path="$HOME/.embulk/bin"
-if [ -e "$_target_path" ]; then
-    export PATH="$PATH:$_target_path"
-fi
-
-_target_path="$HOME/.cabal/bin"
-if [ -e "$_target_path" ]; then
-  export PATH="$PATH:$_target_path"
-fi
-
-_target_path="$HOME/.rbenv/bin"
-if [ -e "$_target_path" ]; then
-  export PATH="$PATH:$_target_path"
-fi
-
-_target_path="$HOME/.composer/vendor/bin"
-if [ -e "$_target_path" ]; then
-  export PATH="$PATH:$_target_path"
-fi
-
 _target_path="$HOME/.rbenv"
 if [ -e "$_target_path" ]; then
   export PATH="$PATH:$_target_path"
   eval "$(rbenv init - zsh)"
 fi
 
-_target_path="$HOME/.egison/bin"
-if [ -e "$_target_path" ]; then
-  export PATH="$PATH:$_target_path"
-fi
-
-# _target_path="$HOME/.bluemix/kubeconfig.sh"
-# if [ -e "$_target_path" ]; then
-#     source "$_target_path"
-# fi
+__add_path "$HOME/bin"
+__add_path "$HOME/.embulk/bin"
+__add_path "$HOME/.cabal/bin"
+__add_path "$HOME/.rbenv/bin"
+__add_path "$HOME/.composer/vendor/bin"
+__add_path "$HOME/.egison/bin"
+# __add_path "/usr/local/opt/icu4c/bin"
+# __add_path "/usr/local/opt/icu4c/sbin"
+__add_path "/usr/local/Cellar/node/8.1.3/bin"
 
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
