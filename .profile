@@ -64,14 +64,9 @@ if [ -e "$_target_path" ]; then
   export PATH=$GOPATH/bin:$PATH
 fi
 
-_target_path="$HOME/.rbenv"
-if [ -e "$_target_path" ]; then
-  export PATH="$PATH:$_target_path"
-  eval "$(rbenv init - zsh)"
-fi
 
 __add_path "$HOME/bin"
-__add_path "/usr/games/bin"
+__add_path "/usr/games"
 __add_path "$HOME/.embulk/bin"
 __add_path "$HOME/.cabal/bin"
 __add_path "$HOME/.rbenv/bin"
@@ -80,6 +75,12 @@ __add_path "$HOME/.egison/bin"
 # __add_path "/usr/local/opt/icu4c/bin"
 # __add_path "/usr/local/opt/icu4c/sbin"
 __add_path "/usr/local/Cellar/node/8.1.3/bin"
+
+_target_path="$HOME/.rbenv"
+if [ -e "$_target_path" ]; then
+  export PATH="$PATH:$_target_path"
+  eval "$(rbenv init - zsh)"
+fi
 
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
