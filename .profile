@@ -71,6 +71,7 @@ if [ -e "$_target_path" ]; then
 fi
 
 __add_path "$HOME/bin"
+__add_path "/usr/games/bin"
 __add_path "$HOME/.embulk/bin"
 __add_path "$HOME/.cabal/bin"
 __add_path "$HOME/.rbenv/bin"
