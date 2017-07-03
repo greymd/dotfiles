@@ -697,5 +697,3 @@ train-kanto () {
 if [ -f "${REPOSITORY_DIR}/scop/bash-completion/bash_completion" ] && [ -n "$BASH_VERSION" ]; then
   . ${REPOSITORY_DIR}/scop/bash-completion/bash_completion
 fi
-
-
