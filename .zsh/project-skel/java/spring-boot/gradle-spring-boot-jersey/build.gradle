@@ -27,6 +27,7 @@ targetCompatibility = 1.8
 dependencies {
     compile "org.springframework.boot:spring-boot-starter-jersey"
     compile "org.springframework.boot:spring-boot-devtools"
+    compile "org.springframework:springloaded:1.2.7.RELEASE"
     // tag::tests[]
     testCompile("org.springframework.boot:spring-boot-starter-test")
     // end::tests[]
