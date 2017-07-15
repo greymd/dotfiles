@@ -227,10 +227,12 @@ javadoc-src () {
   javadoc -d "$(pwd)/html" -sourcepath "$(pwd)/src/main/java/" -subpackages .
 }
 
+
 #--------------------
 # Docker
 #--------------------
 alias dcure="docker run -e LANG=ja_JP.UTF-8 -it --rm cureutils/ruby2.2.0 cure"
+alias dockviz="docker run -it --rm -v /var/run/docker.sock:/var/run/docker.sock nate/dockviz"
 
 docker-clean () {
   docker ps -a -q | xargs docker rm
@@ -432,6 +434,11 @@ egi-conv () {
   xargs -n $1
 }
 
+sed-conv () {
+  local _NF=$1
+  sed -n 'H;'$_NF',${g;s/\n/ /g;p};'$(($_NF-1))',${x;s/[^\n]*\n//;h}'
+}
+
 urlenc() {
   od -An -tx1 | awk 'NF{OFS="%";$1=$1;print "%"$0}' | tr '[:lower:]' '[:upper:]'
 }
@@ -447,7 +454,7 @@ usedportof()
 }
 
 holidays() {
-  curl -Lso- goo.gl/Ynbsm9
+  curl -Lso- goo.gl/Ynbsm9 | awk 1
 }
 
 today() {

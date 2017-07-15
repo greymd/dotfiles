@@ -1,3 +1,9 @@
+__add_path () {
+  if [ -e "$1" ]; then
+    export PATH="$1:$PATH"
+  fi
+}
+
 unamestr=$(uname | grep -oiE '(Darwin|CYGWIN|Linux)')
 
 if [[ $unamestr == 'Darwin' ]]; then
@@ -6,6 +12,7 @@ if [[ $unamestr == 'Darwin' ]]; then
   ##nvm use v0.10.35 > /dev/null
   export JAVA_HOME=$(/usr/libexec/java_home -v 1.8)
   export ECLIPSE_HOME="/Applications/Eclipse.app/Contents/Eclipse"
+  __add_path "/usr/local/Cellar/node/8.1.3/bin"
 elif [[ $unamestr == 'CYGWIN' ]]; then
   # Do nothing for now
   echo "" > /dev/null
@@ -13,6 +20,7 @@ elif [[ $unamestr == 'Linux' ]]; then
   # Do nothing for now
   echo "" > /dev/null
   export ECLIPSE_HOME="$HOME/eclipse"
+  __add_path "/usr/games"
 fi
 
 ##
@@ -27,12 +35,6 @@ fi
 
 [[ -e ~/.phpbrew/bashrc ]] && source ~/.phpbrew/bashrc
 
-__add_path () {
-  local _target_path="$1"
-  if [ -e "$_target_path" ]; then
-    export PATH="$PATH:$_target_path"
-  fi
-}
 # if [ -e $ECLIPSE_HOME/eclimd ] && [ $(ps alx | grep 'eclimd$' | grep -c .) -eq 0 ]; then
 #   nohup $ECLIPSE_HOME/eclimd &
 # fi
@@ -50,11 +52,11 @@ fi
 
 
 # Activate tmuxvm
-[ -e "$HOME/.config/tmuxvm/bin" ] && export PATH="$HOME/.config/tmuxvm/bin:$PATH"
+__add_path "$HOME/.config/tmuxvm/bin"
 
 _target_path="$HOME/.config"
 if [ -e "$_target_path" ]; then
-  # XDG Base Directory for nvim aand so on
+  # XDG Base Directory for nvim and so on
   export XDG_CONFIG_HOME="$HOME/.config"
 fi
 
@@ -64,24 +66,38 @@ if [ -e "$_target_path" ]; then
   export PATH=$GOPATH/bin:$PATH
 fi
 
-
 __add_path "$HOME/bin"
-__add_path "/usr/games"
 __add_path "$HOME/.embulk/bin"
 __add_path "$HOME/.cabal/bin"
-__add_path "$HOME/.rbenv/bin"
 __add_path "$HOME/.composer/vendor/bin"
 __add_path "$HOME/.egison/bin"
 # __add_path "/usr/local/opt/icu4c/bin"
 # __add_path "/usr/local/opt/icu4c/sbin"
-__add_path "/usr/local/Cellar/node/8.1.3/bin"
 
-_target_path="$HOME/.rbenv"
-if [ -e "$_target_path" ]; then
-  export PATH="$PATH:$_target_path"
-  eval "$(rbenv init - zsh)"
+#--------------------
+# rbenv command lasy-load
+#--------------------
+__add_path "$HOME/.rbenv/bin"
+__add_path "$HOME/.rbenv/shims"
+
+rbenv () {
+  unset -f rbenv
+  eval "$(rbenv init - $(basename $SHELL))"
+  rbenv "$@"
+}
+
+#--------------------
+# nvm command lasy-load
+#--------------------
+_node_version="$HOME/.nvm/alias/default"
+if [ -s "$_node_version" ];then
+  __add_path "$HOME/.nvm/versions/node/$(cat $_node_version)/bin"
 fi
 
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && [ -n "$BASH_VERSION" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+nvm() {
+    unset -f nvm
+    export NVM_DIR="$HOME/.nvm"
+    [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm
+    [ -s "$NVM_DIR/bash_completion" ] && [ -n "$BASH_VERSION" ] && . "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+    nvm "$@"
+}
