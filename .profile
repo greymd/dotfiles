@@ -43,7 +43,7 @@ if [ -e $ECLIPSE_HOME/eclimd ]; then
   ECLIMPS="org.eclim.applicatio[n]"
   alias eclim-start="$ECLIPSE_HOME/eclimd -b &> /dev/null"
   alias eclim-stop="$ECLIPSE_HOME/eclim -command shutdown"
-  alias eclim-status='ps alx | grep -qE "'$ECLIMPS'" && echo "eclim is running ("$(ps alx | grep -E "'$ECLIMPS'" | cut -d" " -f2)")" || echo "eclim is not unning"'
+  alias eclim-status='ps alx | grep -qE "'$ECLIMPS'" && echo "eclim is running ("$(ps ax -o pid,command | grep -E "'$ECLIMPS'" | awk "{print \$1}")")" || echo "eclim is not unning"'
 fi
 
 if (type fasd &> /dev/null) ;then
