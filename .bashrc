@@ -16,7 +16,6 @@ if [[ $unamestr == 'Darwin' ]]; then
   alias p='pbcopy'
   alias jshell='/Library/Java/JavaVirtualMachines/jdk-9.jdk/Contents/Home/bin/jshell'
   alias factor='gfactor'
-  export JAVA_HOME=$(/usr/libexec/java_home -v 1.8)
   export ECLIPSE_HOME="/Applications/Eclipse.app/Contents/Eclipse"
 
   cdf () {
@@ -213,10 +212,24 @@ nvm() {
 #--------------------
 alias jrepl="java -jar $USER_BIN/bin/javarepl-dev.build.jar"
 
-_target_path="$HOME/.sdkman/bin/sdkman-init.sh"
-if [ -e "$_target_path" ];then
-  source "$_target_path"
-fi
+export JAVA_HOME="$HOME/.sdkman/candidates/java/current/"
+__add_path "$HOME/.sdkman/candidates/java/current/bin"
+__add_path "$HOME/.sdkman/candidates/maven/current/bin"
+__add_path "$HOME/.sdkman/candidates/ant/current/bin"
+__add_path "$HOME/.sdkman/candidates/gradle/current/bin"
+
+# lazy load for sdkman
+SDKMAN_DIR="$HOME/.sdkman"
+sdk () {
+  unset -f sdk
+  _target_path="$SDKMAN_DIR/bin/sdkman-init.sh"
+  if [ -s "$_target_path" ];then
+    source "$_target_path"
+    sdk "$@"
+  else
+    echo 'sdkman is not found.' 1>&2
+  fi
+}
 
 mvn-instant() {
   local _name=${1:-$(faker-cli --hacker noun | tr -d '[ "]')}
