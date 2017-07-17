@@ -57,9 +57,8 @@ if [[ $unamestr == 'Darwin' ]]; then
     done
   }
 
-  # Maven for old java
+  # Maven for specific settings
   gmvn(){
-    JAVA_HOME="/System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Home"
     mvn --settings $HOME/.m2/g_settings.xml "$@"
   }
 
