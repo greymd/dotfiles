@@ -213,6 +213,11 @@ nvm() {
 #--------------------
 alias jrepl="java -jar $USER_BIN/bin/javarepl-dev.build.jar"
 
+_target_path="$HOME/.sdkman/bin/sdkman-init.sh"
+if [ -e "$_target_path" ];then
+  source "$_target_path"
+fi
+
 mvn-instant() {
   local _name=${1:-$(faker-cli --hacker noun | tr -d '[ "]')}
   local _artifactId=$(echo $_name | sed 's/^./\U&/')
@@ -351,10 +356,11 @@ docker-ex () {
 }
 
 docker-dev () {
+  local _cmd='nohup Xvfb :1 -screen 0 1024x768x24 &> /dev/null & tmux -2'
   if [[ $1 =~ ^-v$ ]]; then
-    docker run -v $(pwd):/work -it greymd/dev /bin/zsh
+    docker run -v $(pwd):/work -it greymd/dev /bin/zsh -c "$_cmd"
   else
-    docker run -it greymd/dev /bin/zsh
+    docker run -it greymd/dev /bin/zsh -c "$_cmd"
   fi
 }
 
