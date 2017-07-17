@@ -265,6 +265,10 @@ task execute(type:JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
 }
 
+test {
+    testLogging.showStandardStreams = true
+}
+
 jar {
   doFirst {
     from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
