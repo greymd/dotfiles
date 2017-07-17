@@ -1,6 +1,6 @@
-REPOSITORY_DIR="$HOME/reps"
 USER_BIN="$HOME/bin"
 SKEL_PROJECT_DIR="$HOME/.zsh/project-skel/"
+# __GRE_REPOSITORY_DIR environment variable is defined on .profile.
 export PS1="\W \$ "
 
 ###################################
@@ -12,10 +12,12 @@ if [[ $unamestr == 'Darwin' ]]; then
   VIMPATH="/Applications/MacVim.app/Contents/MacOS"
   alias ls='ls -G' #BSD version ls
   alias updatedb='sudo /usr/libexec/locate.updatedb'
-  alias egison-euler="egison -l $REPOSITORY_DIR/project-euler/lib/math/project-euler.egi -l $REPOSITORY_DIR/prime-numbers/lib/math/prime-numbers.egi"
+  alias egison-euler="egison -l $__GRE_REPOSITORY_DIR/project-euler/lib/math/project-euler.egi -l $__GRE_REPOSITORY_DIR/prime-numbers/lib/math/prime-numbers.egi"
   alias p='pbcopy'
   alias jshell='/Library/Java/JavaVirtualMachines/jdk-9.jdk/Contents/Home/bin/jshell'
   alias factor='gfactor'
+  export JAVA_HOME=$(/usr/libexec/java_home -v 1.8)
+  export ECLIPSE_HOME="/Applications/Eclipse.app/Contents/Eclipse"
 
   cdf () {
       target=`osascript -e 'tell application "Finder" to if (count of Finder windows) > 0 then get POSIX path of (target of front Finder window as text)'`
@@ -78,6 +80,16 @@ elif [[ $unamestr == 'CYGWIN' ]]; then
   }
 elif [[ $unamestr == 'Linux' ]]; then
   alias ls='ls --color=auto' #GNU version ls
+  export ECLIPSE_HOME="$HOME/eclipse"
+fi
+
+#--------------------
+# Editor
+#--------------------
+# Set default editor as vim not vi. This is used to edit commit message of git.
+export EDITOR=vi
+if (type vim &> /dev/null) ;then
+  export EDITOR=vim
 fi
 
 #--------------------
@@ -123,6 +135,78 @@ alias pict-format="column -s$'\t' -t | tee >(sed -n '1,1p') | sed '1,1d' | sort"
 alias h2-cli='java -cp /Applications/h2/bin/h2-1.4.191.jar org.h2.tools.Shell -url jdbc:h2:./data -user sa'
 alias 蒸着="sudo -s"
 alias octave='octave --no-gui'
+
+#--------------------
+# Update PATH variable
+#--------------------
+__add_path () {
+  if [ -e "$1" ]; then
+    export PATH="$1:${PATH}"
+  fi
+}
+
+_target_path="$HOME/.config"
+if [ -e "$_target_path" ]; then
+  # XDG Base Directory for nvim and so on
+  export XDG_CONFIG_HOME="$HOME/.config"
+fi
+
+#--------------------
+# Import various commands
+#--------------------
+__add_path "$HOME/bin"
+__add_path "$HOME/.config/tmuxvm/bin" # Activate tmuxvm
+__add_path "$HOME/.embulk/bin"
+__add_path "$HOME/.cabal/bin"
+__add_path "$HOME/.composer/vendor/bin"
+__add_path "$HOME/.egison/bin"
+__add_path "/usr/games" # For Ubuntu
+# __add_path "/usr/local/opt/icu4c/bin"
+# __add_path "/usr/local/opt/icu4c/sbin"
+
+#--------------------
+# Go
+#--------------------
+_target_path="$HOME/.go"
+if [ -e "$_target_path" ]; then
+  export GOPATH="$_target_path"
+  export PATH=$GOPATH/bin:$PATH
+fi
+
+#--------------------
+# PHP
+#--------------------
+[[ -e ~/.phpbrew/bashrc ]] && source ~/.phpbrew/bashrc
+
+#--------------------
+# Ruby
+#--------------------
+__add_path "$HOME/.rbenv/bin"
+__add_path "$HOME/.rbenv/shims"
+
+# lazy load for rbenv
+rbenv () {
+  unset -f rbenv
+  eval "$(rbenv init - $(basename $SHELL))"
+  rbenv "$@"
+}
+
+#--------------------
+# Node.js
+#--------------------
+_node_version="$HOME/.nvm/alias/default"
+if [ -s "$_node_version" ];then
+  __add_path "$HOME/.nvm/versions/node/$(cat $_node_version)/bin"
+fi
+
+# nvm command lasy-load
+nvm() {
+    unset -f nvm
+    export NVM_DIR="$HOME/.nvm"
+    [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm
+    [ -s "$NVM_DIR/bash_completion" ] && [ -n "$BASH_VERSION" ] && . "$NVM_DIR/bash_completion"
+    nvm "$@"
+}
 
 #--------------------
 # Java
@@ -226,6 +310,22 @@ gradle-test () {
 javadoc-src () {
   javadoc -d "$(pwd)/html" -sourcepath "$(pwd)/src/main/java/" -subpackages .
 }
+
+
+#--------------------
+# Eclipse
+#--------------------
+if [ -e $ECLIPSE_HOME/eclimd ]; then
+  ECLIMPS="org.eclim.applicatio[n]"
+  alias eclim-screen='if ( type Xvfb &> /dev/null ) && ! ( ps alx | grep -wq "[X]vfb" ) ;then nohup Xvfb :1 -screen 0 1024x768x24 &> /dev/null & fi'
+  alias eclim-start="$ECLIPSE_HOME/eclimd -b &> /dev/null"
+  alias eclim-stop="$ECLIPSE_HOME/eclim -command shutdown"
+  alias eclim-status='ps alx | grep -qE "'$ECLIMPS'" && echo "eclim is running ("$(ps ax -o pid,command | grep -E "'$ECLIMPS'" | awk "{print \$1}")")" || echo "eclim is not unning"'
+fi
+
+if (type fasd &> /dev/null) ;then
+  eval "$(fasd --init auto)"
+fi
 
 
 #--------------------
@@ -697,10 +797,3 @@ train-kanto () {
     awk NF=NF |
     xargs -n 2
 }
-
-# --------------------
-# Bash completion
-# --------------------
-if [ -f "${REPOSITORY_DIR}/scop/bash-completion/bash_completion" ] && [ -n "$BASH_VERSION" ]; then
-  . ${REPOSITORY_DIR}/scop/bash-completion/bash_completion
-fi
