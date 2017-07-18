@@ -99,7 +99,6 @@ bindkey '^^' cdup
 # Ref: issue https://github.com/zplug/zplug/issues/272
 #--------------------
 source $HOME/reps/zsh-users/antigen/antigen.zsh
-
 antigen use oh-my-zsh
 
 antigen bundle "b4b4r07/enhancd"
@@ -109,6 +108,7 @@ antigen bundle "zsh-users/zsh-completions"
 antigen bundle "greymd/cureutils"
 antigen bundle "greymd/docker-zsh-completion"
 antigen bundle "greymd/tmux-xpanes"
+antigen bundle "nobeans/zsh-sdkman"
 
 antigen apply
 
