@@ -16,6 +16,7 @@ if [[ $unamestr == 'Darwin' ]]; then
   alias p='pbcopy'
   alias jshell='/Library/Java/JavaVirtualMachines/jdk-9.jdk/Contents/Home/bin/jshell'
   alias factor='gfactor'
+  alias shuf='gshuf'
   export ECLIPSE_HOME="/Applications/Eclipse.app/Contents/Eclipse"
 
   cdf () {
@@ -96,7 +97,6 @@ fi
 alias l='ls -CF'
 alias ll='ls -al'
 alias grep='grep --color=auto'
-alias shuf='gshuf'
 alias ..="cd .."
 alias ..2="cd ../.."
 alias ..3="cd ../../.."
