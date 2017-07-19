@@ -372,7 +372,7 @@ docker-ex () {
 }
 
 docker-dev () {
-  local _cmd='nohup Xvfb :1 -screen 0 1024x768x24 &> /dev/null & tmux -2'
+  local _cmd='nohup Xvfb :1 -screen 0 1024x768x24 &> /dev/null & /home/docker/eclipse/eclimd -b &> /dev/null && tmux -2'
   if [[ $1 =~ ^-v$ ]]; then
     docker run -v $(pwd):/work -it greymd/dev /bin/zsh -c "$_cmd"
   else
