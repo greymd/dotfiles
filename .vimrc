@@ -203,13 +203,14 @@ let g:vim_json_syntax_conceal = 0
 
 " For Java IDE
 " Ref: http://www.lucianofiandesio.com/vim-configuration-for-happy-java-coding
-if os!="win" " In case of windows, layout gets broken...
+" if os=="mac" || os=="linux" " In case of windows, layout gets broken...
 call dein#add('Yggdroot/indentLine')
   " vertical line indentation
   let g:indentLine_color_term = 239
   let g:indentLine_color_gui = '#09AA08'
-  let g:indentLine_char = '│'
-endif
+  " let g:indentLine_char = '│'
+  let g:indentLine_char = '|'
+" endif
 
 " To use Eclim comfortably... with :BD
 call dein#add('qpkorr/vim-bufkill')
