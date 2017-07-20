@@ -425,7 +425,7 @@ elif [[ $unamestr == 'CYGWIN' ]]; then
   # Above prompt is too heavy for cygwin...
   PROMPT='%F{5}%f%{$fg[green]%}%B%~%b%F{5}%f%(!.%F{red}#%f.$)%b '
 elif [[ $unamestr == 'Linux' ]]; then
-  if grep -q Microsoft /proc/version ;then
+  if grep -q Microsoft /proc/version 2> /dev/null ;then
     PROMPT='${new_line}%{$fg[green]%}%B%~%b $(vcs_echo)${new_line}%(!.%F{red}#%f.$)%b '
   else
     # Simple one

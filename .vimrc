@@ -17,7 +17,7 @@ let os=GetRunningOS()
 
 function! IsBoW()
   " win32yank.exe is required (https://github.com/equalsraf/win32yank).
-  let executeCmd="grep -q Microsoft /proc/version && which win32yank.exe &> /dev/null"
+  let executeCmd="grep -q Microsoft /proc/version 2> /dev/null && which win32yank.exe &> /dev/null"
   echo system(executeCmd)
   return v:shell_error=="0" ? 1 : 0
 endfunction

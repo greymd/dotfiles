@@ -126,7 +126,7 @@ alias ssld-csr='openssl req -text -noout -in'
 # usage $ ssl-cacert-dump filename
 alias ssld-cacert='keytool -v -list -storepass changeit -keystore'
 alias fuck='eval $(thefuck $(fc -ln -1 | tail -n 1)); fc -R'
-alias pt='pt -i'
+# alias pt='pt -i'
 
 # Ref: http://qiita.com/greymd/items/ad18aa44d4159067a627
 alias pict-format="column -s$'\t' -t | tee >(sed -n '1,1p') | sed '1,1d' | sort"
@@ -356,7 +356,7 @@ alias docker-cure="docker run -e LANG=ja_JP.UTF-8 -it --rm cureutils/ruby2.2.0 c
 alias dockviz="docker run -it --rm -v /var/run/docker.sock:/var/run/docker.sock nate/dockviz"
 
 # For Bash on Windows
-if (grep -q Microsoft /proc/version) ;then
+if (grep -q Microsoft /proc/version 2> /dev/null ) ;then
   # alias docker="docker -H tcp://localhost:2375 --tlsverify --tlscacert /mnt/c/Users/$USER/.docker/machine/certs/ca.pem  --tlscert /mnt/c/Users/$USER/.docker/machine/certs/cert.pem --tlskey /mnt/c/Users/$USER/.docker/machine/certs/key.pem"
   alias docker="docker -H tcp://localhost:2375"
 fi
@@ -485,7 +485,7 @@ pt-gvim(){
 }
 
 # Open multiple files with vim from pt result.
-pt-vx(){
+pt-xpanes(){
   type xpanes &> /dev/null
   if [ $? -ne 0 ]; then
     echo "xpanes is required" >&2
