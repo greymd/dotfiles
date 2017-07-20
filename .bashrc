@@ -217,6 +217,10 @@ __add_path "$HOME/.sdkman/candidates/maven/current/bin"
 __add_path "$HOME/.sdkman/candidates/ant/current/bin"
 __add_path "$HOME/.sdkman/candidates/gradle/current/bin"
 
+jex () {
+  javac $1 && java ${1%.java}
+}
+
 # lazy load for sdkman
 SDKMAN_DIR="$HOME/.sdkman"
 sdk () {
