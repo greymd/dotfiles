@@ -346,12 +346,37 @@ if [ -e $ECLIPSE_HOME/eclimd ]; then
   alias eclim-start="$ECLIPSE_HOME/eclimd -b &> /dev/null"
   alias eclim-stop="$ECLIPSE_HOME/eclim -command shutdown"
   alias eclim-status='ps alx | grep -qE "'$ECLIMPS'" && echo "eclim is running ("$(ps ax -o pid,command | grep -E "'$ECLIMPS'" | awk "{print \$1}")")" || echo "eclim is not unning"'
-  eclim-prj () {
-    if [[ $1 == "-d" ]];then
-      vim -c ":ProjectCreate ../$(basename "$PWD")/ -n java" -c "q!" "$PWD"
-    else
-      vim -c ":ProjectDelete $(basename "$PWD")" -c "q!" "$PWD"
-    fi
+  eclim-ls () {
+    vim -u "$HOME/.vimrc" -e +"redir>>/dev/stdout | :call eclim#project#util#ProjectList(1) | redir END" -scq! | awk NF
+  }
+
+  eclim-ping () {
+    vim -u "$HOME/.vimrc" -e +"redir>>/dev/stdout | :PingEclim | redir END" -scq! | awk NF
+  }
+
+  eclim-pclose () {
+    local _def=$(basename "$PWD")
+    local _prj="${1:-$_def}"
+    vim -u "$HOME/.vimrc" -e +"redir>>/dev/stdout | :call eclim#project#util#ProjectClose('$_prj') | redir END" -scq! | awk NF
+  }
+
+  eclim-popen () {
+    local _def=$(basename "$PWD")
+    local _prj="${1:-$_def}"
+    vim -u "$HOME/.vimrc" -e +"redir>>/dev/stdout | :call eclim#project#util#ProjectOpen('$_prj') | redir END" -scq! | awk NF
+  }
+
+  # Project Delete
+  eclim-pdelete () {
+    local _def=$(basename "$PWD")
+    local _prj="${1:-$_def}"
+    vim -u "$HOME/.vimrc" -e +"redir>>/dev/stdout | :call eclim#project#util#ProjectDelete('$_prj') | redir END" -scq! | awk NF
+  }
+  # Project Create
+  eclim-pcreate () {
+    local _def="../$(basename "$PWD")/"
+    local _prj="${1:-$_def}"
+    vim -u "$HOME/.vimrc" -e +"redir>>/dev/stdout | :call eclim#project#util#ProjectCreate('$_prj -n java') | redir END" -scq! | awk NF
   }
 fi
 
