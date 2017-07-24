@@ -346,6 +346,13 @@ if [ -e $ECLIPSE_HOME/eclimd ]; then
   alias eclim-start="$ECLIPSE_HOME/eclimd -b &> /dev/null"
   alias eclim-stop="$ECLIPSE_HOME/eclim -command shutdown"
   alias eclim-status='ps alx | grep -qE "'$ECLIMPS'" && echo "eclim is running ("$(ps ax -o pid,command | grep -E "'$ECLIMPS'" | awk "{print \$1}")")" || echo "eclim is not unning"'
+  eclim-prj () {
+    if [[ $1 == "-d" ]];then
+      vim -c ":ProjectCreate ../$(basename "$PWD")/ -n java" -c "q!" "$PWD"
+    else
+      vim -c ":ProjectDelete $(basename "$PWD")" -c "q!" "$PWD"
+    fi
+  }
 fi
 
 if (type fasd &> /dev/null) ;then
@@ -382,12 +389,17 @@ docker-ex () {
 }
 
 docker-dev () {
-  local _cmd='nohup Xvfb :1 -screen 0 1024x768x24 &> /dev/null & /home/docker/eclipse/eclimd -b &> /dev/null && tmux -2'
-  if [[ $1 =~ ^-v$ ]]; then
-    docker run -v $(pwd):/work -it greymd/dev /bin/zsh -c "$_cmd"
-  else
-    docker run -it greymd/dev /bin/zsh -c "$_cmd"
+  local _cmd='tmux -2'
+  local _opts="-it greymd/dev"
+  if [[ "$1" =~ v ]]; then
+    # Mount current volume
+    _opts="-v $(pwd):/work ${_opts}"
   fi
+  if [[ "$1" =~ j ]]; then
+    # Java mode
+    _cmd='nohup Xvfb :1 -screen 0 1024x768x24 &> /dev/null & /home/docker/eclipse/eclimd -b &> /dev/null && tmux -2'
+  fi
+  docker run $_opts /bin/zsh -c "$_cmd"
 }
 
 docker-ubuntu () {
