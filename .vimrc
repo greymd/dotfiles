@@ -318,6 +318,10 @@ noremap <leader>o :Unite outline -start-insert<cr>
 autocmd FileType java nnoremap <silent> <buffer> <leader>i :JavaImport<cr>
 " Space + d
 autocmd FileType java nnoremap <silent> <buffer> <leader>d :JavaDocSearch -x declarations<cr>
+autocmd FileType java nnoremap <silent> <buffer> <leader>sa :JavaSearch -i -x all<cr>
+autocmd FileType java nnoremap <silent> <buffer> <leader>sd :JavaSearch -i -x declarations<cr>
+autocmd FileType java nnoremap <silent> <buffer> <leader>si :JavaSearch -i -x implementors<cr>
+autocmd FileType java nnoremap <silent> <buffer> <leader>sr :JavaSearch -i -x references<cr>
 " :JavaSearch -t all -x references
 " :JavaSearch -t all -x declarations
 " CTRL-^ -- open previous buffer
@@ -604,6 +608,15 @@ nnoremap <c-w>gF gf
 map <silent> gC :tablast <bar> tabnew<CR>
 " Close tab with `gX`
 map <silent> gX :tabclose<CR>
+
+" #######################################
+" ######## Buffer Improvement ###########
+" #######################################
+" Ref: http://ivxi.hatenablog.com/entry/2013/05/23/163825
+nnoremap <silent> gL :bprevious<CR>
+nnoremap <silent> gl :bnext<CR>
+" Use vim-bufkill
+nnoremap <silent> gK :BD<CR>
 
 " #######################################
 " ############# unite.vim ###############
