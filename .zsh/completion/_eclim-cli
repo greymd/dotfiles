@@ -1,0 +1,33 @@
+#compdef eclim-pclose eclim-popen eclim-pdelete eclim-pcreate eclim-vim
+
+_eclim-pdelete () {
+  __eclim-projects
+}
+
+_eclim-vim () {
+  __eclim-projects
+}
+
+_eclim-popen () {
+  __eclim-projects
+}
+
+_eclim-pclose () {
+  __eclim-projects
+}
+
+__eclim-projects (){
+    projects=()
+    while read project ; do
+        projects=("$project" "${projects[@]}")
+    done < <(__eclim-list)
+    _describe -t projects 'projects' projects
+}
+
+__eclim-list (){
+  vim -u "$HOME/.vimrc" -e +"redir>>/dev/stdout | :call eclim#project#util#ProjectList(1) | redir END" -scq! \
+    | awk NF \
+    | awk '{print $1":"$3" -- "$5}'
+}
+
+

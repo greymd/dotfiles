@@ -350,6 +350,15 @@ if [ -e $ECLIPSE_HOME/eclimd ]; then
     vim -u "$HOME/.vimrc" -e +"redir>>/dev/stdout | :call eclim#project#util#ProjectList(1) | redir END" -scq! | awk NF
   }
 
+  eclim-vim () {
+    local _prj="${1}"
+    if [[ -z "$_prj" ]]; then
+      echo "Project name is required" >&2
+      exit 1
+    fi
+    vim -u "$HOME/.vimrc" "$(eclim-ls | grep -E "^$_prj" | head -n 1 | awk '{$1="";$2="";$3="";$4="";print $0}' | awk '$1=$1')"
+  }
+
   eclim-ping () {
     vim -u "$HOME/.vimrc" -e +"redir>>/dev/stdout | :PingEclim | redir END" -scq! | awk NF
   }
@@ -372,6 +381,7 @@ if [ -e $ECLIPSE_HOME/eclimd ]; then
     local _prj="${1:-$_def}"
     vim -u "$HOME/.vimrc" -e +"redir>>/dev/stdout | :call eclim#project#util#ProjectDelete('$_prj') | redir END" -scq! | awk NF
   }
+
   # Project Create
   eclim-pcreate () {
     local _def="../$(basename "$PWD")/"
