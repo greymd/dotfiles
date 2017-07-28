@@ -172,6 +172,19 @@ if [ -e "$_target_path" ]; then
 fi
 
 #--------------------
+# Python
+#--------------------
+export PYENV_ROOT="$HOME/.pyenv"
+__add_path "$PYENV_ROOT/bin"
+
+# pyenv lazy-load
+pyenv () {
+  unset -f pyenv
+  eval "$(pyenv init -)"
+  pyenv "$@"
+}
+
+#--------------------
 # PHP
 #--------------------
 [[ -e ~/.phpbrew/bashrc ]] && source ~/.phpbrew/bashrc
@@ -346,48 +359,6 @@ if [ -e $ECLIPSE_HOME/eclimd ]; then
   alias eclim-start="$ECLIPSE_HOME/eclimd -b &> /dev/null"
   alias eclim-stop="$ECLIPSE_HOME/eclim -command shutdown"
   alias eclim-status='ps alx | grep -qE "'$ECLIMPS'" && echo "eclim is running ("$(ps ax -o pid,command | grep -E "'$ECLIMPS'" | awk "{print \$1}")")" || echo "eclim is not unning"'
-  eclim-ls () {
-    vim -u "$HOME/.vimrc" -e +"redir>>/dev/stdout | :call eclim#project#util#ProjectList(1) | redir END" -scq! | awk NF
-  }
-
-  eclim-vim () {
-    local _prj="${1}"
-    if [[ -z "$_prj" ]]; then
-      echo "Project name is required" >&2
-      exit 1
-    fi
-    vim -u "$HOME/.vimrc" "$(eclim-ls | grep -E "^$_prj" | head -n 1 | awk '{$1="";$2="";$3="";$4="";print $0}' | awk '$1=$1')"
-  }
-
-  eclim-ping () {
-    vim -u "$HOME/.vimrc" -e +"redir>>/dev/stdout | :PingEclim | redir END" -scq! | awk NF
-  }
-
-  eclim-pclose () {
-    local _def=$(basename "$PWD")
-    local _prj="${1:-$_def}"
-    vim -u "$HOME/.vimrc" -e +"redir>>/dev/stdout | :call eclim#project#util#ProjectClose('$_prj') | redir END" -scq! | awk NF
-  }
-
-  eclim-popen () {
-    local _def=$(basename "$PWD")
-    local _prj="${1:-$_def}"
-    vim -u "$HOME/.vimrc" -e +"redir>>/dev/stdout | :call eclim#project#util#ProjectOpen('$_prj') | redir END" -scq! | awk NF
-  }
-
-  # Project Delete
-  eclim-pdelete () {
-    local _def=$(basename "$PWD")
-    local _prj="${1:-$_def}"
-    vim -u "$HOME/.vimrc" -e +"redir>>/dev/stdout | :call eclim#project#util#ProjectDelete('$_prj') | redir END" -scq! | awk NF
-  }
-
-  # Project Create
-  eclim-pcreate () {
-    local _def="../$(basename "$PWD")/"
-    local _prj="${1:-$_def}"
-    vim -u "$HOME/.vimrc" -e +"redir>>/dev/stdout | :call eclim#project#util#ProjectCreate('$_prj -n java') | redir END" -scq! | awk NF
-  }
 fi
 
 if (type fasd &> /dev/null) ;then

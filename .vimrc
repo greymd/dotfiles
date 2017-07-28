@@ -195,6 +195,8 @@ call dein#add('tfnico/vim-gradle')
 
 " groovy
 call dein#add('greymd/gre-vim-snippets')
+" egison
+call dein#add('greymd/vim-egison-snippets')
 
 " json
 call dein#add('elzr/vim-json')
@@ -316,6 +318,7 @@ noremap <leader>o :Unite outline -start-insert<cr>
 " <C-x><C-u> is trigger of auto completion.
 " Space + i
 autocmd FileType java nnoremap <silent> <buffer> <leader>i :JavaImport<cr>
+autocmd FileType java nnoremap <silent> <buffer> <leader>I :JavaImportOrganize<cr>
 " Space + d
 autocmd FileType java nnoremap <silent> <buffer> <leader>d :JavaDocSearch -x declarations<cr>
 autocmd FileType java nnoremap <silent> <buffer> <leader>sa :JavaSearch -i -x all<cr>
@@ -441,30 +444,39 @@ if dein#tap("neosnippet")
     let g:neosnippet#enable_snipmate_compatibility = 1
     let g:neosnippet#disable_runtime_snippets = {'_' : 1}
     let g:neosnippet#snippets_directory = []
-  if os=="win"
-    if dein#tap("neosnippet-snippets")
-      let g:neosnippet#snippets_directory += ['~\.cache\dein\repos\github.com\Shougo\neosnippet-snippets\neosnippets']
+    if os=="win"
+        if dein#tap("neosnippet-snippets")
+            let g:neosnippet#snippets_directory += ['~\.cache\dein\repos\github.com\Shougo\neosnippet-snippets\neosnippets']
+        endif
+        if dein#tap("vim-octopress-snippets")
+            let g:neosnippet#snippets_directory += ['~\.cache\dein\repos\github.com\rcmdnk\vim-octopress-snippets\neosnippets']
+        endif
+        if dein#tap("vim-snippets")
+            let g:neosnippet#snippets_directory += ['~\.cache\dein\repos\github.com\honza\vim-snippets\snippets']
+        endif
+        if dein#tap('gre-vim-snippets')
+            let g:neosnippet#snippets_directory += ['~\.cache\dein\repos\github.com\greymd\gre-vim-snippets\snippets']
+        endif
+        if dein#tap('vim-egison-snippets')
+            let g:neosnippet#snippets_directory += ['~\.cache\dein\repos\github.com\greymd\vim-egison-snippets\snippets']
+        endif
+    else
+        if dein#tap("neosnippet-snippets")
+            let g:neosnippet#snippets_directory += ['~/.cache/dein/repos/github.com/Shougo/neosnippet-snippets/neosnippets']
+        endif
+        if dein#tap("vim-octopress-snippets")
+            let g:neosnippet#snippets_directory += ['~/.cache/dein/repos/github.com/rcmdnk/vim-octopress-snippets/neosnippets']
+        endif
+        if dein#tap("vim-snippets")
+            let g:neosnippet#snippets_directory += ['~/.cache/dein/repos/github.com/honza/vim-snippets/snippets']
+        endif
+        if dein#tap('gre-vim-snippets')
+            let g:neosnippet#snippets_directory += ['~/.cache/dein/repos/github.com/greymd/gre-vim-snippets/snippets']
+        endif
+        if dein#tap('vim-egison-snippets')
+            let g:neosnippet#snippets_directory += ['~/.cache/dein/repos/github.com/greymd/vim-egison-snippets/snippets']
+        endif
     endif
-    if dein#tap("vim-octopress-snippets")
-      let g:neosnippet#snippets_directory += ['~\.cache\dein\repos\github.com\rcmdnk\vim-octopress-snippets\neosnippets']
-    endif
-    if dein#tap("vim-snippets")
-      let g:neosnippet#snippets_directory += ['~\.cache\dein\repos\github.com\honza\vim-snippets\snippets']
-    endif
-  else
-    if dein#tap("neosnippet-snippets")
-      let g:neosnippet#snippets_directory += ['~/.cache/dein/repos/github.com/Shougo/neosnippet-snippets/neosnippets']
-    endif
-    if dein#tap("vim-octopress-snippets")
-      let g:neosnippet#snippets_directory += ['~/.cache/dein/repos/github.com/rcmdnk/vim-octopress-snippets/neosnippets']
-    endif
-    if dein#tap("vim-snippets")
-      let g:neosnippet#snippets_directory += ['~/.cache/dein/repos/github.com/honza/vim-snippets/snippets']
-    endif
-  endif
-  if dein#tap('gre-vim-snippets')
-    let g:neosnippet#snippets_directory += ['~/.cache/dein/repos/github.com/greymd/gre-vim-snippets/snippets']
-  endif
 endif
 
 " #################################
