@@ -349,16 +349,12 @@ javadoc-src () {
   javadoc -d "$(pwd)/html" -sourcepath "$(pwd)/src/main/java/" -subpackages .
 }
 
-
 #--------------------
 # Eclipse
 #--------------------
 if [ -e $ECLIPSE_HOME/eclimd ]; then
   ECLIMPS="org.eclim.applicatio[n]"
   alias eclim-screen='if ( type Xvfb &> /dev/null ) && ! ( ps alx | grep -wq "[X]vfb" ) ;then nohup Xvfb :1 -screen 0 1024x768x24 &> /dev/null & fi'
-  alias eclim-start="$ECLIPSE_HOME/eclimd -b &> /dev/null"
-  alias eclim-stop="$ECLIPSE_HOME/eclim -command shutdown"
-  alias eclim-status='ps alx | grep -qE "'$ECLIMPS'" && echo "eclim is running ("$(ps ax -o pid,command | grep -E "'$ECLIMPS'" | awk "{print \$1}")")" || echo "eclim is not unning"'
 fi
 
 if (type fasd &> /dev/null) ;then
