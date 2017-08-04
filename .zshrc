@@ -79,6 +79,9 @@ bindkey "^S" history-incremental-search-forward
 bindkey '^R' history-incremental-pattern-search-backward
 bindkey '^S' history-incremental-pattern-search-forward
 
+# Ctrl + U has same behavior as bash.
+bindkey '^U' backward-kill-line
+
 # C-^ で一つ上のディレクトリへ
 function cdup() {
   echo
@@ -97,6 +100,9 @@ bindkey '^^' cdup
 #--------------------
 source $HOME/reps/zsh-users/antigen/antigen.zsh
 antigen use oh-my-zsh
+
+# Use oh-my-zsh plugins
+antigen bundle heroku
 
 antigen bundle "b4b4r07/enhancd"
 antigen bundle "zsh-users/zsh-syntax-highlighting"
