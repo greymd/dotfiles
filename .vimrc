@@ -62,14 +62,7 @@ call dein#add("tomasr/molokai")
 call dein#add("Shougo/unite.vim")
 call dein#add("Shougo/unite-outline")
 call dein#add('Shougo/vimfiler')
-call dein#add('Shougo/vimproc.vim', { 'build' : {
-\     'windows' : 'tools\\update-dll-mingw',
-\     'cygwin' : 'make -f make_cygwin.mak',
-\     'mac' : 'make -f make_mac.mak',
-\     'linux' : 'make',
-\     'unix' : 'gmake',
-\    }})
-
+call dein#add('Shougo/vimproc.vim', {'build' : 'make'})
 call dein#add('t9md/vim-choosewin')
 call dein#add('soh335/vim-symfony')
 call dein#add('petdance/vim-perl')
