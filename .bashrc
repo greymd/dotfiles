@@ -353,7 +353,6 @@ javadoc-src () {
 # Eclipse
 #--------------------
 if [ -e $ECLIPSE_HOME/eclimd ]; then
-  ECLIMPS="org.eclim.applicatio[n]"
   alias eclim-screen='if ( type Xvfb &> /dev/null ) && ! ( ps alx | grep -wq "[X]vfb" ) ;then nohup Xvfb :1 -screen 0 1024x768x24 &> /dev/null & fi'
 fi
 

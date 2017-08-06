@@ -80,6 +80,9 @@ call dein#add('rking/ag.vim')
 call dein#add('alpicola/vim-egison')
 call dein#add('CORDEA/vim-glue')
 call dein#add('bronson/vim-trailing-whitespace')
+call dein#add('greymd/oscyank.vim')
+noremap <leader>y :Oscyank<cr>
+
 
 " MultiCursors
 call dein#add('terryma/vim-multiple-cursors')
