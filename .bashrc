@@ -398,8 +398,18 @@ docker-dev () {
   fi
   if [[ "$1" =~ j ]]; then
     # Java mode
-    _cmd='nohup Xvfb :1 -screen 0 1024x768x24 &> /dev/null & /home/docker/eclipse/eclimd -b &> /dev/null && tmux -2'
+    # _cmd='nohup Xvfb :1 -screen 0 1024x768x24 &> /dev/null & /home/docker/eclipse/eclimd -b &> /dev/null && tmux -2'
+    _cmd='nohup Xvfb :1 -screen 0 1024x768x24 &> /dev/null & tmux -2'
   fi
+  if [[ "$1" =~ m ]]; then
+    # Import Maven settings
+    _opts="-v $HOME/.m2:/home/docker/.m2 ${_opts}"
+  fi
+  if [[ "$1" =~ s ]]; then
+    # Import SSH settings
+    _opts="-v $HOME/.ssh:/home/docker/.ssh ${_opts}"
+  fi
+  echo "command: docker run $_opts /bin/zsh -c \"$_cmd\""
   docker run $_opts /bin/zsh -c "$_cmd"
 }
 
