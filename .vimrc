@@ -81,7 +81,6 @@ call dein#add('alpicola/vim-egison')
 call dein#add('CORDEA/vim-glue')
 call dein#add('bronson/vim-trailing-whitespace')
 call dein#add('greymd/oscyank.vim')
-noremap <leader>y :Oscyank<cr>
 
 
 " MultiCursors
@@ -306,6 +305,7 @@ noremap <leader>( i(<ESC>ea)<ESC>
 noremap <leader>" i"<ESC>ea"<ESC>
 noremap <leader>' i'<ESC>ea'<ESC>
 noremap <leader>o :Unite outline -start-insert<cr>
+noremap <leader>y :Oscyank<cr>
 
 " #######################################
 " ################ eclim ################
