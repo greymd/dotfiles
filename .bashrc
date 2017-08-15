@@ -14,7 +14,6 @@ if [[ $unamestr == 'Darwin' ]]; then
   alias updatedb='sudo /usr/libexec/locate.updatedb'
   alias egison-euler="egison -l $__GRE_REPOSITORY_DIR/project-euler/lib/math/project-euler.egi -l $__GRE_REPOSITORY_DIR/prime-numbers/lib/math/prime-numbers.egi"
   alias p='pbcopy'
-  alias jshell='/Library/Java/JavaVirtualMachines/jdk-9.jdk/Contents/Home/bin/jshell'
   alias factor='gfactor'
   alias shuf='gshuf'
   export ECLIPSE_HOME="/Applications/Eclipse.app/Contents/Eclipse"
@@ -222,7 +221,7 @@ nvm() {
 #--------------------
 # Java
 #--------------------
-alias jrepl="java -jar $USER_BIN/bin/javarepl-dev.build.jar"
+alias jrepl="java -jar $HOME/bin/javarepl-dev.build.jar"
 
 export JAVA_HOME="$HOME/.sdkman/candidates/java/current/"
 __add_path "$HOME/.sdkman/candidates/java/current/bin"
@@ -232,6 +231,40 @@ __add_path "$HOME/.sdkman/candidates/gradle/current/bin"
 
 jex () {
   javac $1 && java ${1%.java}
+}
+
+_jshell () {
+  "$HOME/.sdkman/candidates/java/9ea13-zulu/bin/jshell" "$@"
+}
+
+jshell () {
+  local _opts=
+  local _tmpfile="${TMPDIR:-/tmp}/imports"
+  if [[ -s "${PWD}/.classpath" ]]; then
+    # Load jar files.
+    _opts="$_opts --class-path $(cat "${PWD}/.classpath" | grep -Po 'classpathentry sourcepath.* path="\K[^"]*(?=")' | sort | uniq | tr '\n' ':' | sed 's/:$//')"
+  fi
+
+# Load all the import statement under src directory.
+# Behavior is unstable and it is temporarily disabled.
+  if [[ -e "${PWD}/src" ]]; then
+    find ${PWD}/src -type f | grep 'java$' | xargs cat | grep '^import .*;' | sort | uniq > "$_tmpfile"
+    _opts="$_opts --startup $_tmpfile"
+  fi
+
+  if [[ -n "$_opts" ]];then
+    _jshell $_opts "$@"
+  else
+    _jshell "$@"
+  fi
+}
+
+jarls () {
+  if [[ -s "${PWD}/.classpath" ]]; then
+    cat "${PWD}/.classpath" | grep -Po 'classpathentry sourcepath.* path="\K[^"]*(?=")' | sort | uniq
+  else
+    echo ".class file does not exist." >&2
+  fi
 }
 
 # lazy load for sdkman
@@ -598,9 +631,78 @@ urlenc() {
   od -An -tx1 | awk 'NF{OFS="%";$1=$1;print "%"$0}' | tr '[:lower:]' '[:upper:]'
 }
 
+# Numeric character refernce to string
+# echo '&#x78BA;&#x8A8D;' | ncr2str
+ncrhex2str () {
+  perl -MHTML::Entities -pe 'decode_entities($_);' 2>/dev/null
+}
+
+str2ncrhex () {
+  iconv -f UTF-8 -t UTF-16BE | od -tx1 -An | tr -dc 'a-zA-Z0-9' | fold -w 4 | sed 's/^/\&#x/;s/$/;/' | tr -d \\n
+}
+
+
 # String to Unicode Escapse Sequence
 str2ues () {
-    nkf -w16B0 | od -tx1 -An | tr -dc '[:alnum:]' | fold -w 4 | sed 's/^/\\u/g' | tr -d '\n' | awk 1
+  nkf -w16B0 | od -tx1 -An | tr -dc '[:alnum:]' | fold -w 4 | sed 's/^/\\u/g' | tr -d '\n' | awk 1
+}
+
+# Example
+# printf "%s" '\u3046\u3093\u3053\u000a' | ues2str
+# But just echo command supports UES. It might not be the necessary feature.
+ues2str () {
+  sed -r "s/\\\\u(....)/\&#x\1;/g" | ncrhex2str
+}
+
+# Ref: http://qiita.com/ryo0301/items/7c7b3571d71b934af3f8
+camel2snake () {
+  sed 's/\([a-z0-9]\)\([A-Z]\)/\1_\L\2/g'
+}
+
+camel2pascal () {
+  sed -r 's/(^|_)(.)/\U\2\E/g'
+}
+
+snake2camel () {
+  sed -r 's/_(.)/\U\1\E/g'
+}
+
+snake2pascal () {
+  sed -r 's/(^|_)(.)/\U\2\E/g'
+}
+
+pascal2camel () {
+  sed -r -e 's/^([A-Z])/\L\1\E/'
+}
+
+pascal2snake () {
+  sed -r -e 's/^([A-Z])/\L\1\E/' -e 's/([A-Z])/_\L\1\E/g'
+}
+
+is_camel () {
+  grep -E '^[a-z]+([A-Z][a-z0-9]+)+'
+}
+
+is_snake () {
+  grep -E '^[a-z]+(_[a-z0-9]+)+'
+}
+
+is_pascal () {
+  grep -E '^([A-Z][a-z0-9]+)+'
+}
+
+# Generate regular expression for camel, snake and pascal cases.
+# $ csp_cases "hogeHoge"
+# (hoge_hoge|hogeHoge|HogeHoge)
+csp_cases () {
+  local _pat="$1"
+  # convert all the petterns to snake case in any case.
+  _pat=$(echo "$_pat" | camel2snake)
+  _pat=$(echo "$_pat" | pascal2snake)
+  local _snake="$_pat"
+  local _camel="$(echo "$_pat" | snake2camel)"
+  local _pascal="$(echo "$_pat" | snake2pascal)"
+  echo "($_snake|$_camel|$_pascal)"
 }
 
 usedportof()
@@ -803,12 +905,12 @@ dec2hex () {
 
 # 16 -> 2
 hex2bin () {
-    BC_LINE_LENGTH=0 cat | sed 's/^/obase=2;ibase=16;/' | bc | while read i;do echo $i ;done
+    BC_LINE_LENGTH=0 cat | tr '[:lower:]' '[:upper:]' | sed 's/^/obase=2;ibase=16;/' | bc | while read i;do echo $i ;done
 }
 
 # 16 -> 10
 hex2dec() {
-    BC_LINE_LENGTH=0 cat | sed 's/^/obase=10;ibase=16;/' | bc | while read i;do echo $i ;done
+    BC_LINE_LENGTH=0 cat | tr '[:lower:]' '[:upper:]' | sed 's/^/obase=10;ibase=16;/' | bc | while read i;do echo $i ;done
 }
 
 sslcert-gen() {

@@ -112,6 +112,7 @@ antigen bundle "greymd/cureutils"
 antigen bundle "greymd/docker-zsh-completion"
 antigen bundle "greymd/tmux-xpanes"
 antigen bundle "greymd/eclim-cli"
+antigen bundle "greymd/confl"
 antigen bundle "nobeans/zsh-sdkman"
 
 antigen apply
