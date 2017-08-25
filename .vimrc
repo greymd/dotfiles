@@ -235,6 +235,10 @@ set undodir=~/.vim/undo/
 " collect all the backup files to one place
 set backupdir=~/.vim/backup/
 
+" Enable mouse dragging in the tmux
+set mouse=a
+set ttymouse=xterm2
+
 " ******************** Basic settings ********************
 " Use OS clipboard as the register when yank something
 set clipboard+=unnamed
