@@ -1,5 +1,10 @@
 USER_BIN="$HOME/bin"
 SKEL_PROJECT_DIR="$HOME/.zsh/project-skel/"
+
+export HISTSIZE=1000000
+export HISTFILESIZE=1000000
+export SAVEHIST=1000000
+
 # __GRE_REPOSITORY_DIR environment variable is defined on .profile.
 export PS1="\W \$ "
 
