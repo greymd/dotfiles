@@ -139,13 +139,16 @@ set statusline+=%#warningmsg# "Format of error message.
 set statusline+=%{SyntasticStatuslineFlag()}
 set statusline+=%*
 let g:syntastic_javascript_checkers = ['eslint'] "Use ESLint
+
 let g:syntastic_mode_map = {
       \ 'mode': 'active',
       \ 'active_filetypes': ['javascript','ruby', 'php'],
       \ 'passive_filetypes': ['tex']
       \ }
+
 " Requred: $ gem i rubocop
 let g:syntastic_ruby_checkers = ['rubocop']
+
 " Requred: composer global require "squizlabs/php_codesniffer=*"
 let g:syntastic_php_checkers = ['phpcs']
 let g:syntastic_php_phpcs_args="--standard=psr2"
@@ -235,6 +238,10 @@ set undodir=~/.vim/undo/
 " collect all the backup files to one place
 set backupdir=~/.vim/backup/
 
+" Enable mouse dragging in the tmux
+set mouse=a
+set ttymouse=xterm2
+
 " ******************** Basic settings ********************
 " Use OS clipboard as the register when yank something
 set clipboard+=unnamed
@@ -250,6 +257,7 @@ set fileformats=unix,mac,dos
 
 "appear line numbers
 set number
+set relativenumber
 
 " Tab setting
 set ts=4 sw=4 sts=0
@@ -514,6 +522,13 @@ let g:airline#extensions#tabline#enabled = 1
 
 " width setting
 let g:proj_window_width = 30
+
+" ###################################
+" ########## quickrun.vim ###########
+" ###################################
+let g:quickrun_config={'*': {'split': ''}}
+" Open result window below
+set splitbelow
 
 " #######################################
 " ############ vim-airline ##############
