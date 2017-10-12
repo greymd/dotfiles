@@ -526,9 +526,9 @@ let g:proj_window_width = 30
 " ###################################
 " ########## quickrun.vim ###########
 " ###################################
-let g:quickrun_config={'*': {'split': ''}}
+let g:quickrun_config={'*': {'split': 'vertical'}}
 " Open result window below
-set splitbelow
+set splitright
 
 " #######################################
 " ############ vim-airline ##############
