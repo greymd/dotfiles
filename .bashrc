@@ -954,3 +954,5 @@ train-kanto () {
     awk NF=NF |
     xargs -n 2
 }
+
+ggrks () { echo $@ | tr \  + | awk '{print "http://www.google.co.jp/search?hl=ja&source=hp&q="$0}' | xargs open;};
