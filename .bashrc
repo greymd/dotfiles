@@ -988,3 +988,10 @@ slow-dos () {
 nc-200 () {
   ( echo "HTTP/1.1 200 Ok"; echo; printf "$1" ) | nc -l 8080
 }
+
+hub-clone () {
+  local _user="${1%/*}"
+  local _repo="${1##*/}"
+  local _repo_path="$HOME/reps"
+  git clone "git@github.com:$1.git" "$_repo_path/$_user/$_repo"
+}
