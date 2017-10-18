@@ -21,7 +21,7 @@ if [[ $unamestr == 'Darwin' ]]; then
   alias p='pbcopy'
   alias factor='gfactor'
   alias shuf='gshuf'
-  export ECLIPSE_HOME="/Applications/Eclipse.app/Contents/Eclipse"
+  export ECLIPSE_HOME="$HOME/eclipse"
 
   cdf () {
       target=`osascript -e 'tell application "Finder" to if (count of Finder windows) > 0 then get POSIX path of (target of front Finder window as text)'`
