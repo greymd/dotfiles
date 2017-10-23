@@ -22,7 +22,7 @@ if [[ $unamestr == 'Darwin' ]]; then
   alias factor='gfactor'
   alias shuf='gshuf'
   alias chrome="/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome"
-  export ECLIPSE_HOME="/Applications/Eclipse.app/Contents/Eclipse"
+  export ECLIPSE_HOME="$HOME/eclipse"
 
   cdf () {
       target=`osascript -e 'tell application "Finder" to if (count of Finder windows) > 0 then get POSIX path of (target of front Finder window as text)'`
@@ -988,4 +988,11 @@ slow-dos () {
 
 nc-200 () {
   ( echo "HTTP/1.1 200 Ok"; echo; printf "$1" ) | nc -l 8080
+}
+
+hub-clone () {
+  local _user="${1%/*}"
+  local _repo="${1##*/}"
+  local _repo_path="$HOME/reps"
+  git clone "git@github.com:$1.git" "$_repo_path/$_user/$_repo"
 }
