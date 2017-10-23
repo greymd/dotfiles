@@ -21,6 +21,7 @@ if [[ $unamestr == 'Darwin' ]]; then
   alias p='pbcopy'
   alias factor='gfactor'
   alias shuf='gshuf'
+  alias chrome="/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome"
   export ECLIPSE_HOME="/Applications/Eclipse.app/Contents/Eclipse"
 
   cdf () {
