@@ -22,6 +22,7 @@ if [[ $unamestr == 'Darwin' ]]; then
   alias factor='gfactor'
   alias shuf='gshuf'
   alias chrome="/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome"
+  alias vscode="/Applications/Visual\ Studio\ Code.app/Contents/Resources/app/bin/code"
   export ECLIPSE_HOME="$HOME/eclipse"
 
   cdf () {
