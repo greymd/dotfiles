@@ -995,3 +995,38 @@ hub-clone () {
   local _repo_path="$HOME/reps"
   git clone "git@github.com:$1.git" "$_repo_path/$_user/$_repo"
 }
+
+fnd () {
+  find "$PWD" | grep "${1-}"
+}
+
+mail-sweeper () {
+  local _mail_dir="$HOME/Mails/new"
+  local _filter="$1" ;shift
+  local _opt="${1-}" ;shift
+  local _target_dir="$PWD"
+
+  if [ -z "$_filter" ]; then
+    echo "Error: filter '$_filter' is empty." >&2
+    return 1
+  fi
+
+  if [[ "$_opt"  =~ ^--all$ ]];then
+    getmail -v --all
+  else
+    getmail -v -n
+  fi
+
+  (
+    cd "$_mail_dir"
+    rename "s/\.[^\.]+$/.eml/" *
+    find . -type f \
+      | grep eml \
+      | while read f;
+        do
+          printf "mv '$f' "
+          echo '"'$_mail_dir/$(cat "$f" | nkf -w | perl -nle '/^Subject: \K.*/ and print $&')_$(basename $f)'"'
+        done | tee | sh
+    grep "$_filter" * | awk -F: '{print $1}' | sort | uniq | while read f;do mv "$f" "$_target_dir";done
+  )
+}
