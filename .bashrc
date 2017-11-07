@@ -1032,3 +1032,8 @@ mail-sweeper () {
     grep "$_filter" * | awk -F: '{print $1}' | sort | uniq | while read f;do mv "$f" "$_target_dir";done
   )
 }
+
+btc2jpy () {
+  local _unit=${1:-1}
+  echo "$(curl https://api.bitflyer.jp/v1/getboard -G -d 'product_code=BTC_JPY' 2>/dev/null | jq '.mid_price') * $_unit" | bc -l
+}
