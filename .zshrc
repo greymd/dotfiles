@@ -1,6 +1,10 @@
 # Use .bashrc settings as much as possible
 source $HOME/.bashrc
 
+if [ -s "$HOME/.local.zsh" ]; then
+    source "$HOME/.local.zsh"
+fi
+
 #--------------------
 # Incremental Search
 # (This settings should be earlyer than antigen)
