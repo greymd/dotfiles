@@ -436,7 +436,7 @@ docker-dev () {
   local _opts="-it greymd/dev"
   if [[ "$1" =~ v ]]; then
     # Mount current volume
-    _opts="-v $(pwd):/work ${_opts}"
+    _opts="-v ${PWD}:/work ${_opts}"
   fi
   if [[ "$1" =~ j ]]; then
     # Java mode
@@ -1033,7 +1033,7 @@ mail-sweeper () {
   )
 }
 
-btc2jpy () {
-  local _unit=${1:-1}
-  echo "$(curl https://api.bitflyer.jp/v1/getboard -G -d 'product_code=BTC_JPY' 2>/dev/null | jq '.mid_price') * $_unit" | bc -l
-}
+# btc2jpy () {
+#   local _unit=${1:-1}
+#   echo "$(curl https://api.bitflyer.jp/v1/getboard -G -d 'product_code=BTC_JPY' 2>/dev/null | jq '.mid_price') * $_unit" | bc -l
+# }
