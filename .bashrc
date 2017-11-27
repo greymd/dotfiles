@@ -243,7 +243,7 @@ jex () {
 }
 
 _jshell () {
-  "$HOME/.sdkman/candidates/java/9ea13-zulu/bin/jshell" "$@"
+  "$HOME/.sdkman/candidates/java/9.0.0-zulu/bin//jshell" "$@"
 }
 
 jshell () {
@@ -996,6 +996,7 @@ hub-clone () {
   local _repo="${1##*/}"
   local _repo_path="$HOME/reps"
   git clone "git@github.com:$1.git" "$_repo_path/$_user/$_repo"
+  cd "$_repo_path/$_user/$_repo"
 }
 
 fnd () {
@@ -1036,4 +1037,27 @@ mail-sweeper () {
 btc2jpy () {
   local _unit=${1:-1}
   echo "$(curl https://api.bitflyer.jp/v1/getboard -G -d 'product_code=BTC_JPY' 2>/dev/null | jq '.mid_price') * $_unit" | bc -l
+}
+
+#
+# Input:
+# 2017-11-30 ScheduleA
+# 2017-12-01 ScheduleA
+# 2017-12-04 ScheduleA
+# 2017-12-05 ScheduleA
+# 2017-12-06 ScheduleA
+# 2017-12-07 ScheduleA
+# 2017-12-08 ScheduleB
+# 2017-12-11 ScheduleC
+# 2017-12-12 ScheduleC
+#
+# Output:
+# 2017-11-30 - 12-07 ScheduleA
+# 2017-12-08 ScheduleB
+# 2017-12-11 - 12-12 ScheduleC
+schedule_shrink () {
+  awk '{print $1,$NF}' \
+    | awk '{a[$NF]=a[$NF]" "$1} END{for(k in a){print a[k],k}}' \
+    | sort -k1,1n \
+    | awk 'NF>2{gsub(/^....-/,"",$(NF-1));print $1" - "$(NF-1),$NF} NF==2{print $1,$2}'
 }
