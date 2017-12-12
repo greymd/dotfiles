@@ -889,13 +889,6 @@ pokemons () {
     w3m -dump 'http://wiki.xn--rckteqa2e.com/wiki/%E3%83%9D%E3%82%B1%E3%83%A2%E3%83%B3%E3%81%AE%E5%A4%96%E5%9B%BD%E8%AA%9E%E5%90%8D%E4%B8%80%E8%A6%A7' | sed -n '/001  フシギダネ/,/151 ミュウ/p' | perl -anle '/^\d{3}/ and scalar(@F)==6 and print'
 }
 
-adjust_md_refs () {
-    local _tmp_file="/tmp/$$.adjust_md_refs"
-    cat "$1" | grep -oP '\[\^[^\[]*?\](?!:)' | while read s; do echo "$s" | awk '{print "s/"$1"/[^'$(cat /dev/urandom| LANG=C tr -dc 'A-Za-z0-9' | fold -w 10 | head -n 1)']/g"}' ;done | perl -pe 's/[\[\]]/\\$&/g' | sed -f - "$1" > "$_tmp_file"
-    cat "$_tmp_file" | grep -oP '\[\^[^\[]*?\](?!:)' | awk '{print "s/"$1"/[^"NR"]/g"}' | perl -pe 's/[\[\]]/\\$&/g' | sed -f - "$_tmp_file"
-    rm "$_tmp_file"
-}
-
 # 2 -> 10
 bin2dec() {
     BC_LINE_LENGTH=0 cat | sed 's/^/obase=10;ibase=2;/' | bc | while read i;do echo $i ;done
@@ -1038,6 +1031,25 @@ btc2jpy () {
   local _unit=${1:-1}
   echo "$(curl https://api.bitflyer.jp/v1/getboard -G -d 'product_code=BTC_JPY' 2>/dev/null | jq '.mid_price') * $_unit" | bc -l
 }
+
+aud-jpy () {
+  something-jpy "aud"
+}
+
+eur-jpy () {
+  something-jpy "eur"
+}
+
+usd-jpy () {
+  something-jpy "usd"
+}
+
+something-jpy () {
+  local _cur="$1"
+  curl -H 'User-Agent: Mozilla/5.0' https://jp.investing.com/currencies/${_cur}-jpy 2>/dev/null \
+    | xmllint --format --html --xpath '//*[@id="last_last"]/text()' - 2>/dev/null
+}
+
 #
 # Input:
 # 2017-11-30 ScheduleA
@@ -1060,4 +1072,39 @@ schedule_shrink () {
     | sort -k1,1n \
     | awk 'NF>2{gsub(/^....-/,"",$(NF-1));print $1" - "$(NF-1),$NF} NF==2{print $1,$2}'
 }
+
+
+# -----------------------
+# Markdown Utils
+# -----------------------
+
+md.tbl () {
+  pandoc -f gfm -t gfm
+}
+
+md.tblsum () {
+  local _from="$1" ;shift
+  local _to="$1" ;shift
+  awk '
+  {
+    for (i=from+offset; i<=to+offset; i++){
+      s[i]=s[i]+$i
+    };print
+  }
+  END{
+    printf "%s",OFS"sum"
+    for (i=from+offset; i<=to+offset; i++){
+      printf OFS""s[i]
+    }
+    print OFS
+  }' {FS,OFS,IFS}='|' offset=1 from="${_from}" to="${_to}" | pandoc -f gfm -t gfm
+}
+
+md.adjust_refs () {
+    local _tmp_file="/tmp/$$.adjust_md_refs"
+    cat "$1" | grep -oP '\[\^[^\[]*?\](?!:)' | while read s; do echo "$s" | awk '{print "s/"$1"/[^'$(cat /dev/urandom| LANG=C tr -dc 'A-Za-z0-9' | fold -w 10 | head -n 1)']/g"}' ;done | perl -pe 's/[\[\]]/\\$&/g' | sed -f - "$1" > "$_tmp_file"
+    cat "$_tmp_file" | grep -oP '\[\^[^\[]*?\](?!:)' | awk '{print "s/"$1"/[^"NR"]/g"}' | perl -pe 's/[\[\]]/\\$&/g' | sed -f - "$_tmp_file"
+    rm "$_tmp_file"
+}
+
 
