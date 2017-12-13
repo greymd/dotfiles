@@ -721,7 +721,16 @@ usedportof()
 }
 
 holidays() {
-  curl -Lso- goo.gl/Ynbsm9 | awk 1
+  local _cmd="$1" ;shift
+  case "$_cmd" in
+    until)
+      local _until_date="$1"
+      curl -Lso- goo.gl/Ynbsm9 | awk 1 | awk '/'"$(date +%F)"'/,/'"${_until_date}"'/'
+      ;;
+    *)
+      curl -Lso- goo.gl/Ynbsm9 | awk 1
+      ;;
+  esac
 }
 
 today() {
