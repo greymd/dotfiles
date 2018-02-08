@@ -1041,6 +1041,10 @@ btc2jpy () {
   echo "$(curl https://api.bitflyer.jp/v1/getboard -G -d 'product_code=BTC_JPY' 2>/dev/null | jq '.mid_price') * $_unit" | bc -l
 }
 
+ytn2jpy () {
+  curl -so- 'https://www.coingecko.com/ja/%E7%9B%B8%E5%A0%B4%E3%83%81%E3%83%A3%E3%83%BC%E3%83%88/yenten/jpy' | sed -nr 's|今日のYENTEN の価格は.*<span>([0-9\.]+).?</span>.*$|\1|p'
+}
+
 aud-jpy () {
   something-jpy "aud"
 }
