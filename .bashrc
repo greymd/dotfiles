@@ -1038,23 +1038,37 @@ mail-sweeper () {
 
 btc2jpy () {
   local _unit=${1:-1}
-  echo "$(curl https://api.bitflyer.jp/v1/getboard -G -d 'product_code=BTC_JPY' 2>/dev/null | jq '.mid_price') * $_unit" | bc -l
+  local _rate
+  _rate="$(curl https://api.bitflyer.jp/v1/getboard -G -d 'product_code=BTC_JPY' 2>/dev/null | jq '.mid_price')"
+  echo "$_rate * $_unit" | bc -l
 }
 
 ytn2jpy () {
-  curl -so- 'https://www.coingecko.com/ja/%E7%9B%B8%E5%A0%B4%E3%83%81%E3%83%A3%E3%83%BC%E3%83%88/yenten/jpy' | sed -nr 's|今日のYENTEN の価格は.*<span>([0-9\.]+).?</span>.*$|\1|p'
+  local _unit=${1:-1}
+  local _rate
+  _rate=$(curl -so- 'https://www.coingecko.com/ja/%E7%9B%B8%E5%A0%B4%E3%83%81%E3%83%A3%E3%83%BC%E3%83%88/yenten/jpy' | sed -nr 's|今日のYENTEN の価格は.*<span>([0-9\.]+).?</span>.*$|\1|p')
+  echo "$_rate * $_unit" | bc -l
 }
 
-aud-jpy () {
-  something-jpy "aud"
+aud2jpy () {
+  local _unit=${1:-1}
+  local _rate
+  _rate=$(something-jpy "aud")
+  echo "$_rate * $_unit" | bc -l
 }
 
-eur-jpy () {
-  something-jpy "eur"
+eur2jpy () {
+  local _unit=${1:-1}
+  local _rate
+  _rate=$(something-jpy "eur")
+  echo "$_rate * $_unit" | bc -l
 }
 
-usd-jpy () {
-  something-jpy "usd"
+usd2jpy () {
+  local _unit=${1:-1}
+  local _rate
+  _rate=$(something-jpy "usd")
+  echo "$_rate * $_unit" | bc -l
 }
 
 something-jpy () {
