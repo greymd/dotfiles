@@ -26,6 +26,8 @@ if IsBoW() && os=="linux"
     " This is bash on windows.
     " Share clipboard with windows native env.
     vmap <C-c> :w !win32yank.exe -i<CR><CR>
+elseif os=="linux"
+    set clipboard=unnamedplus
 endif
 
 " ###############################
