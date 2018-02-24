@@ -1,0 +1,22 @@
+#compdef gradle-test
+
+_gradle-test () {
+    local _tests=$(__gradle-test_get_tests)
+    _arguments "*:*:($_tests)"
+}
+
+__gradle-test_get_tests() {
+    find src/test -type f \
+        | grep "Test.java$" \
+        | while read f
+          do
+            cls=$(basename "$f" | sed 's/.java$//')
+            echo "$cls"
+            # If you want to disable method completion, comment out following statement.
+            cat "$f" \
+                | grep -P '^\s*(?:(?:public)|(?:private)|(?:static)|(?:protected)\s+)' \
+                | grep -oP 'test[[:alnum:]]+(?=\s*\()' \
+                | sed "s/^/$cls./"
+          done \
+              | xargs
+}

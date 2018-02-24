@@ -3,6 +3,8 @@
 	email = greengregson@gmail.com
 [alias]
 	gr = log --graph --date=short --decorate=short --pretty=format:'%Cgreen%h %Creset%cd %Cblue%cn %Cred%d %Creset%s'
+[alias]
+	fpr = "!f() { git fetch origin pull/$1/head:pr/$1; }; f"
 [core]
 	excludesfile = ~/.gitignore_global
 	autocrlf = input
@@ -10,3 +12,9 @@
 	editor = vim
 [push]
 	default = matching
+[difftool "sourcetree"]
+	cmd = opendiff \"$LOCAL\" \"$REMOTE\"
+	path = 
+[mergetool "sourcetree"]
+	cmd = /Applications/SourceTree.app/Contents/Resources/opendiff-w.sh \"$LOCAL\" \"$REMOTE\" -ancestor \"$BASE\" -merge \"$MERGED\"
+	trustExitCode = true

@@ -1,6 +1,10 @@
 # Use .bashrc settings as much as possible
 source $HOME/.bashrc
 
+if [ -s "$HOME/.local.zsh" ]; then
+    source "$HOME/.local.zsh"
+fi
+
 #--------------------
 # Incremental Search
 # (This settings should be earlyer than antigen)
@@ -79,8 +83,8 @@ bindkey "^S" history-incremental-search-forward
 bindkey '^R' history-incremental-pattern-search-backward
 bindkey '^S' history-incremental-pattern-search-forward
 
-#C-Uで行頭まで削除
-bindkey "^U" backward-kill-line
+# Ctrl + U has same behavior as bash.
+bindkey '^U' backward-kill-line
 
 # C-^ で一つ上のディレクトリへ
 function cdup() {
@@ -99,8 +103,10 @@ bindkey '^^' cdup
 # Ref: issue https://github.com/zplug/zplug/issues/272
 #--------------------
 source $HOME/reps/zsh-users/antigen/antigen.zsh
-
 antigen use oh-my-zsh
+
+# Use oh-my-zsh plugins
+antigen bundle heroku
 
 antigen bundle "b4b4r07/enhancd"
 antigen bundle "zsh-users/zsh-syntax-highlighting"
@@ -109,6 +115,9 @@ antigen bundle "zsh-users/zsh-completions"
 antigen bundle "greymd/cureutils"
 antigen bundle "greymd/docker-zsh-completion"
 antigen bundle "greymd/tmux-xpanes"
+antigen bundle "greymd/eclim-cli"
+antigen bundle "greymd/confl"
+antigen bundle "nobeans/zsh-sdkman"
 
 antigen apply
 
@@ -425,7 +434,7 @@ elif [[ $unamestr == 'CYGWIN' ]]; then
   # Above prompt is too heavy for cygwin...
   PROMPT='%F{5}%f%{$fg[green]%}%B%~%b%F{5}%f%(!.%F{red}#%f.$)%b '
 elif [[ $unamestr == 'Linux' ]]; then
-  if grep -q Microsoft /proc/version ;then
+  if grep -q Microsoft /proc/version 2> /dev/null ;then
     PROMPT='${new_line}%{$fg[green]%}%B%~%b $(vcs_echo)${new_line}%(!.%F{red}#%f.$)%b '
   else
     # Simple one
@@ -433,9 +442,41 @@ elif [[ $unamestr == 'Linux' ]]; then
   fi
 fi
 
-# export NVM_DIR="$HOME/.nvm"
-# [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-# [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+# From: http://qiita.com/mollifier/items/b72a108daab16a18d34a
+# helper function to autoload
+# Example 1 : zload ~/work/function/_f
+# Example 2 : zload *
+function zload {
+    if [[ "${#}" -le 0 ]]; then
+        echo "Usage: $0 PATH..."
+        echo 'Load specified files as an autoloading function'
+        return 1
+    fi
+
+    local file function_path function_name
+    for file in "$@"; do
+        if [[ -z "$file" ]]; then
+            continue
+        fi
+
+        function_path="${file:h}"
+        function_name="${file:t}"
+
+        if (( $+functions[$function_name] )) ; then
+            # "function_name" is defined
+            unfunction "$function_name"
+        fi
+        FPATH="$function_path" autoload -Uz +X "$function_name"
+
+        if [[ "$function_name" == _* ]]; then
+            # "function_name" is a completion script
+
+            # fpath requires absolute path
+            # convert relative path to absolute path with :a modifier
+            fpath=("${function_path:a}" $fpath) compinit
+        fi
+    done
+}
 
 # if (which zprof > /dev/null) ;then
 #       zprof | less
