@@ -102,7 +102,7 @@ bindkey '^^' cdup
 # (because zplug does not work on docker)
 # Ref: issue https://github.com/zplug/zplug/issues/272
 #--------------------
-source $HOME/reps/zsh-users/antigen/antigen.zsh
+source $HOME/repos/zsh-users/antigen/antigen.zsh
 antigen use oh-my-zsh
 
 # Use oh-my-zsh plugins

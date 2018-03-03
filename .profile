@@ -1,4 +1,4 @@
-export __GRE_REPOSITORY_DIR="$HOME/reps"
+export __GRE_REPOSITORY_DIR="$HOME/repos"
 
 # --------------------
 # Bash completion

@@ -996,7 +996,7 @@ nc-200 () {
 hub-clone () {
   local _user="${1%/*}"
   local _repo="${1##*/}"
-  local _repo_path="$HOME/reps"
+  local _repo_path="$HOME/repos"
   git clone "git@github.com:$1.git" "$_repo_path/$_user/$_repo"
   cd "$_repo_path/$_user/$_repo"
 }
