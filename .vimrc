@@ -198,6 +198,15 @@ call dein#add('greymd/gre-vim-snippets')
 " egison
 call dein#add('greymd/vim-egison-snippets')
 
+" go plugins
+call dein#add('fatih/vim-go')
+let g:go_highlight_functions = 1
+let g:go_highlight_methods = 1
+let g:go_highlight_fields = 1
+let g:go_highlight_types = 1
+let g:go_highlight_operators = 1
+let g:go_highlight_build_constraints = 1
+
 " json
 call dein#add('elzr/vim-json')
 " In json, do not hide quotation (http://yuzuemon.hatenablog.com/entry/2015/01/15/035759)
