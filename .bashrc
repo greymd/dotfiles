@@ -8,6 +8,10 @@ export SAVEHIST=1000000
 # __GRE_REPOSITORY_DIR environment variable is defined on .profile.
 export PS1="\W \$ "
 
+if [ -s "$HOME/.local.bash" ]; then
+    source "$HOME/.local.bash"
+fi
+
 ###################################
 #### Depending on the platform ####
 ###################################
