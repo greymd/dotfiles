@@ -998,10 +998,12 @@ nc-200 () {
 }
 
 hub-clone () {
-  local _user="${1%/*}"
-  local _repo="${1##*/}"
+  local _arg="$(echo "$1" | awk -F/ '{if(/github.com/){gsub(".git","",$NF);print $(NF-1)"/"$NF}else{print}}')"
+  local _user="${_arg%/*}"
+  local _repo="${_arg##*/}"
   local _repo_path="$HOME/repos"
-  git clone "git@github.com:$1.git" "$_repo_path/$_user/$_repo"
+  mkdir -p "$_repo_path/$_user"
+  git clone "git@github.com:$_user/$_repo.git" "$_repo_path/$_user/$_repo"
   cd "$_repo_path/$_user/$_repo"
 }
 
@@ -1138,4 +1140,22 @@ md.adjust_refs () {
     rm "$_tmp_file"
 }
 
+tellme () {
+  local _input="$*"
+  _input=$(printf "${_input}" | urlenc | tr -d \\n)
+  curl -so- "http://api.wolframalpha.com/v2/query?input=${_input}&appid=${WOLFRAM_ID}" \
+    | grep plaintext \
+    | grep -v '</plaintext></plaintext>' \
+    | sed -r 's|</?plaintext>||g'
+}
 
+heybot () {
+  local _input="$*"
+  curl -so- https://api.a3rt.recruit-tech.co.jp/talk/v1/smalltalk \
+    -d "apikey=${TALK_API_KEY}" \
+    -d "query=${_input}" | \
+    jq -r '.results[].reply' | \
+    sed 's/私/ぼく/g' | \
+    sed 's/$/❗/'
+    # jq .
+}
