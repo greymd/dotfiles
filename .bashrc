@@ -125,6 +125,7 @@ alias git-add-modified='git status | grep modified | awk '\''{print "git add "$N
 alias up="cd ..; ls"
 
 alias psum='tr "\n" " " | perl -anle "print eval join \"+\", @F"'
+# alias psum="dc -f- -e'[+z1<r]srz1<rp"
 
 # SSL dump alias
 # usage $ ssl-client url:port
@@ -882,11 +883,11 @@ tensorflow-start () {
   source $HOME/tensorflow/bin/activate
 }
 
-hex2bin () {
+hex2binary () {
     perl -nle 'print pack("H*", $_)'
 }
 
-bin2hex () {
+binary2hex () {
     od -An -tx1 | tr -dc '[:alnum:]'
 }
 
@@ -904,33 +905,39 @@ pokemons () {
 
 # 2 -> 10
 bin2dec() {
-    BC_LINE_LENGTH=0 cat | sed 's/^/obase=10;ibase=2;/' | bc | while read i;do echo $i ;done
+    sed -e 's/^/2i /' -e 's/$/ p/' | dc
+    # BC_LINE_LENGTH=0 cat | sed 's/^/obase=10;ibase=2;/' | bc | while read i;do echo $i ;done
 }
 
 # 2 -> 16
 bin2hex() {
-    cat | sed 's/^/obase=16;ibase=2;/' | bc
+    sed -e 's/^/2i /' -e 's/$/ 16op/' | dc
+    # cat | sed 's/^/obase=16;ibase=2;/' | bc
 }
 
 # 10 -> 2
 dec2bin () {
+    sed -e 's/^/10i /' -e 's/$/ 2op/' | dc
     # cat | sed 's/^/obase=2;ibase=10;/' | bc | while read i;do echo $i ;done
-    BC_LINE_LENGTH=0 cat | sed 's/^/obase=2;ibase=10;/' | bc | while read i;do echo $i ;done
+    # BC_LINE_LENGTH=0 cat | sed 's/^/obase=2;ibase=10;/' | bc | while read i;do echo $i ;done
 }
 
 # 10 -> 16
 dec2hex () {
-    BC_LINE_LENGTH=0 cat | sed 's/^/obase=16;ibase=10;/' | bc | while read i;do echo $i ;done
+    sed -e 's/^/10i /' -e 's/$/ 16op/' | dc
+    # BC_LINE_LENGTH=0 cat | sed 's/^/obase=16;ibase=10;/' | bc | while read i;do echo $i ;done
 }
 
 # 16 -> 2
 hex2bin () {
-    BC_LINE_LENGTH=0 cat | tr '[:lower:]' '[:upper:]' | sed 's/^/obase=2;ibase=16;/' | bc | while read i;do echo $i ;done
+    sed -e 's/^/16i /' -e 's/$/ 2op/' | dc
+    # BC_LINE_LENGTH=0 cat | tr '[:lower:]' '[:upper:]' | sed 's/^/obase=2;ibase=16;/' | bc | while read i;do echo $i ;done
 }
 
 # 16 -> 10
 hex2dec() {
-    BC_LINE_LENGTH=0 cat | tr '[:lower:]' '[:upper:]' | sed 's/^/obase=10;ibase=16;/' | bc | while read i;do echo $i ;done
+    sed -e 's/^/16i /' -e 's/$/ p/' | dc
+    # BC_LINE_LENGTH=0 cat | tr '[:lower:]' '[:upper:]' | sed 's/^/obase=10;ibase=16;/' | bc | while read i;do echo $i ;done
 }
 
 sslcert-gen() {

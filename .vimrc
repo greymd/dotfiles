@@ -75,7 +75,7 @@ call dein#add('tpope/vim-endwise')
 call dein#add('vimtaku/hl_matchit.vim.git')
 call dein#add('deris/vim-shot-f')
 call dein#add('kamichidu/vim-edit-properties')
-call dein#add('kien/ctrlp.vim')
+call dein#add('ctrlpvim/ctrlp.vim')
 call dein#add('powerman/vim-plugin-AnsiEsc')
 call dein#add('bling/vim-airline')
 call dein#add('rking/ag.vim')
@@ -151,6 +151,8 @@ let g:syntastic_mode_map = {
 " Requred: $ gem i rubocop
 let g:syntastic_ruby_checkers = ['rubocop']
 
+" let g:syntastic_go_checkers = ['errcheck', 'go']
+
 " Requred: composer global require "squizlabs/php_codesniffer=*"
 let g:syntastic_php_checkers = ['phpcs']
 let g:syntastic_php_phpcs_args="--standard=psr2"
@@ -185,7 +187,7 @@ call dein#add('aklt/plantuml-syntax')
 call dein#add('neo4j-contrib/cypher-vim-syntax')
 
 " nginx syntax
-call dein#add('evanmiller/nginx-vim-syntax')
+call dein#add('rhowardiv/nginx-vim-syntax')
 
 " e-mail header syntax
 call dein#add('greymd/headers.vim')
@@ -200,12 +202,33 @@ call dein#add('greymd/vim-egison-snippets')
 
 " go plugins
 call dein#add('fatih/vim-go')
+let g:go_highlight_types = 1
+let g:go_highlight_fields = 1
 let g:go_highlight_functions = 1
 let g:go_highlight_methods = 1
-let g:go_highlight_fields = 1
-let g:go_highlight_types = 1
 let g:go_highlight_operators = 1
+let g:go_highlight_extra_types = 1
 let g:go_highlight_build_constraints = 1
+let g:go_textobj_enabled = 1
+let g:go_auto_type_info = 1 " :GoInfo
+let g:go_auto_sameids = 0 " :GoSameIds
+let g:go_list_type = "quickfix"
+let g:go_fmt_command = "goimports"
+let g:syntastic_go_checkers = ['go', 'golint', 'govet', 'errcheck']
+autocmd Filetype go command! -bang A call go#alternate#Switch(<bang>0, 'edit')
+autocmd Filetype go command! -bang AV call go#alternate#Switch(<bang>0, 'vsplit')
+autocmd Filetype go command! -bang AS call go#alternate#Switch(<bang>0, 'split')
+autocmd Filetype go command! -bang AT call go#alternate#Switch(<bang>0, 'tabe')
+autocmd Filetype go command! -bang GD execute ":GoDecls"
+autocmd Filetype go command! -bang GDD execute ":GoDeclsDir"
+" :GoInfo
+" :GoImplements
+" :GoDescribe
+" :GoWhicherrs
+" :GoChannelPeers
+" :GoCallers
+" :GoRename
+call dein#add('AndrewRadev/splitjoin.vim')
 
 " json
 call dein#add('elzr/vim-json')
@@ -408,7 +431,7 @@ endfunction
 " ########## choosewin.vim ###########
 " ####################################
 " '-' で呼び出し
-nmap  -  <Plug>(choosewin)
+nnoremap  -  <Plug>(choosewin)
 
 " Use overlay
 let g:choosewin_overlay_enable = 1
