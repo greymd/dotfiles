@@ -27,6 +27,7 @@ if [[ $unamestr == 'Darwin' ]]; then
   alias shuf='gshuf'
   alias chrome="/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome"
   alias vscode="/Applications/Visual\ Studio\ Code.app/Contents/Resources/app/bin/code"
+  alias vlc="/Applications/VLC.app/Contents/MacOS/VLC"
   export ECLIPSE_HOME="$HOME/eclipse"
 
   cdf () {
@@ -571,30 +572,29 @@ pt-xpanes(){
     | xpanes -e
 }
 
-recgrep2subl()
+rgrep-vis()
 {
-sed -r 's/\[K//g' | sed -nr '
-1{
-h
-s/^\[35m(.+)\[m(\[36m[:-]\[m\[32m[0-9]+\[m\[36m[:-]\[m.*)$/\n\[35m \1 \[m:/
-p
-d
-}
-/^\[36m--\[m$/{
-n
-h
-s/^\[35m(.+)\[m(\[36m[:-]\[m\[32m[0-9]+\[m\[36m[:-]\[m.*)$/\n\[35m \1 \[m:/
-p
-d
-}
-s/^\[35m.+\[m\[36m([:-])\[m\[32m([0-9]+)\[m\[36m([:-])\[m(.*)$/\[36m\1\[m\[33m\2\[m\[36m\3\[m\4/
-p'
+  ESC=$'\x1b'
+  C_START="${ESC}\\[[0-9][0-9]m"
+  C_END="${ESC}\\[m"
+  PURPLE_START="${ESC}\\[35m"
+  CYAN_START="${ESC}\\[36m"
+  YELLOW_START="${ESC}\\[33m"
+  GREP_RESULT="^${C_START}(.+)${C_END}${C_START}([:-])${C_END}${C_START}([0-9]+)${C_END}${C_START}([:-])${C_END}(.*)$"
+  FORMAT_FILE_NAME="${PURPLE_START} \\1 ${C_END}:"
+  FORMAT_MATCH="${CYAN_START}\\2${C_END}${YELLOW_START}\\3${C_END}${CYAN_START}\\4${C_END}\\5"
+  sed -r "s/${ESC}\\[K//g" \
+    | sed -nr "
+      1s/${GREP_RESULT}/${FORMAT_FILE_NAME}/p
+      /^${C_START}--${C_END}$/{n;s/^${GREP_RESULT}/\\n${FORMAT_FILE_NAME}/p}
+      s/${GREP_RESULT}/${FORMAT_MATCH}/p
+  "
 }
 
 rgrep()
 {
   echo "Searching files...\n"
-  time grep -r -inHI -C2 --exclude-dir=".git" --exclude-dir=".svn" --exclude-dir=".hg" --exclude-dir=".bzr" --color=always $@ $(pwd) | recgrep2subl
+  time grep -r -inHI -C2 --exclude-dir=".git" --exclude-dir=".svn" --exclude-dir=".hg" --exclude-dir=".bzr" --color=always "$@" "${PWD}" | rgrep-vis
   echo "\n...finsihed"
 }
 
@@ -1166,3 +1166,7 @@ heybot () {
     sed 's/$/❗/'
     # jq .
 }
+
+# zen_to_i () {
+#   sed -r 's/(万|億|兆)/\0\n/g' | perl -C -Mutf8 -pe '$n="一二三四五六七八九";eval "s/(".join("|", split("", $n)).")/+\$&/g";eval "tr/$n/1-9/";s/(\d)十/$1*10/g;s/(\d)百/$1*100/g;s/(\d)千/$1*1000/g;s/十/10/g;s/百/100/g;s/千/1000/g;' | perl -C -Mutf8 -pe 's/^\+//;s/([\d\*+]+)万/($1)*10000/;s/([\d\*+]+)億/($1)*100000000/g;s/([\d\*+]+)兆/($1)*100000000/;' | gpaste -sd'+' | bc
+# }
