@@ -170,6 +170,7 @@ __add_path "$HOME/.embulk/bin"
 __add_path "$HOME/.cabal/bin"
 __add_path "$HOME/.composer/vendor/bin"
 __add_path "$HOME/.egison/bin"
+__add_path "$HOME/.nodebrew/current/bin"
 __add_path "/usr/games" # For Ubuntu
 __add_path "/usr/local/sbin"
 __add_path "/usr/local/opt/icu4c/bin"
