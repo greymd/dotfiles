@@ -122,7 +122,7 @@ alias rmcc='perl -pe '"'"'s/\e([^\[\]]|\[.*?[a-zA-Z]|\].*?\a)//g'"'"' | col -b'
 alias rmccal='ls *.log | while read f;do cat "$f" | rmcc > /tmp/tmpfile && cat /tmp/tmpfile > "$f" ;done && rm /tmp/tmpfile'
 
 #git add modified files
-alias git-add-modified='git status | grep modified | awk '\''{print "git add "$NF}'\'
+alias git-add-modified='git ls-files -m | sed "s/^/git add /"'
 alias up="cd ..; ls"
 
 alias psum='tr "\n" " " | perl -anle "print eval join \"+\", @F"'
@@ -145,6 +145,8 @@ alias pict-format="column -s$'\t' -t | tee >(sed -n '1,1p') | sed '1,1d' | sort"
 alias h2-cli='java -cp /Applications/h2/bin/h2-1.4.191.jar org.h2.tools.Shell -url jdbc:h2:./data -user sa'
 alias 蒸着="sudo -s"
 alias octave='octave --no-gui'
+
+alias terminal-slack="node ${HOME}/repos/evanyeung/terminal-slack/main.js"
 
 #--------------------
 # Update PATH variable
