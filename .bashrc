@@ -185,7 +185,14 @@ _target_path="$HOME/.go"
 if [ -e "$_target_path" ]; then
   export GOPATH="$_target_path"
   export GOBIN="$_target_path/bin"
-  export PATH=$GOPATH/bin:$PATH
+  export PATH="$GOPATH/bin:$PATH"
+else
+  _target_path="$HOME/go"
+  if [ -e "$_target_path" ]; then
+    export GOPATH="$_target_path"
+    export GOBIN="$_target_path/bin"
+    export PATH="$GOPATH/bin:$PATH"
+  fi
 fi
 
 #--------------------
@@ -1168,6 +1175,14 @@ heybot () {
     sed 's/私/ぼく/g' | \
     sed 's/$/❗/'
     # jq .
+}
+
+ec2-ls () {
+  aws ec2 describe-instances | jq -r '.Reservations[] | .Instances[] | select(.State.Code == 16)  | .PublicDnsName'
+}
+
+ec2-assh () {
+  aws ec2 describe-instances | jq -r '.Reservations[] | .Instances[] | select(.State.Code == 16)  | .PublicDnsName' | xpanes -c 'ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa_ant ec2-user@{}'
 }
 
 # zen_to_i () {
