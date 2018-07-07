@@ -103,6 +103,8 @@ bindkey '^^' cdup
 # Ref: issue https://github.com/zplug/zplug/issues/272
 #--------------------
 source $HOME/repos/zsh-users/antigen/antigen.zsh
+# Edit misc.zsh by following https://stackoverflow.com/questions/25614613/how-to-disable-zsh-substitution-autocomplete-with-url-and-backslashes
+# Or, special characters will be automatically escaped.
 antigen use oh-my-zsh
 
 # Use oh-my-zsh plugins
@@ -114,9 +116,10 @@ antigen bundle "zsh-users/zsh-syntax-highlighting"
 antigen bundle "zsh-users/zsh-completions"
 antigen bundle "greymd/cureutils"
 antigen bundle "greymd/docker-zsh-completion"
-antigen bundle "greymd/tmux-xpanes"
+# antigen bundle "greymd/tmux-xpanes"
 antigen bundle "greymd/eclim-cli"
 antigen bundle "greymd/confl"
+antigen bundle "greymd/awless-zsh-completion"
 antigen bundle "nobeans/zsh-sdkman"
 
 antigen apply

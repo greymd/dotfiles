@@ -13,7 +13,11 @@ if os=="win"
   set langmenu=ja_jp.utf-8
   source $VIMRUNTIME/menu.vim
 endif
-
+if has("unix")
+  if system('uname')=~'Darwin'
+    set shell=/bin/bash
+  endif
+endif
 " Customize GUI window
 " http://vim.wikia.com/wiki/Hide_toolbar_or_menus_to_see_more_text
 set guioptions-=m  "remove menu bar
