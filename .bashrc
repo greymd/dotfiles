@@ -122,7 +122,7 @@ alias rmcc='perl -pe '"'"'s/\e([^\[\]]|\[.*?[a-zA-Z]|\].*?\a)//g'"'"' | col -b'
 alias rmccal='ls *.log | while read f;do cat "$f" | rmcc > /tmp/tmpfile && cat /tmp/tmpfile > "$f" ;done && rm /tmp/tmpfile'
 
 #git add modified files
-alias git-add-modified='git status | grep modified | awk '\''{print "git add "$NF}'\'
+alias git-add-modified='git ls-files -m | sed "s/^/git add /"'
 alias up="cd ..; ls"
 
 alias psum='tr "\n" " " | perl -anle "print eval join \"+\", @F"'
@@ -145,6 +145,8 @@ alias pict-format="column -s$'\t' -t | tee >(sed -n '1,1p') | sed '1,1d' | sort"
 alias h2-cli='java -cp /Applications/h2/bin/h2-1.4.191.jar org.h2.tools.Shell -url jdbc:h2:./data -user sa'
 alias 蒸着="sudo -s"
 alias octave='octave --no-gui'
+
+alias terminal-slack="node ${HOME}/repos/evanyeung/terminal-slack/main.js"
 
 #--------------------
 # Update PATH variable
@@ -170,6 +172,7 @@ __add_path "$HOME/.embulk/bin"
 __add_path "$HOME/.cabal/bin"
 __add_path "$HOME/.composer/vendor/bin"
 __add_path "$HOME/.egison/bin"
+__add_path "$HOME/.nodebrew/current/bin"
 __add_path "/usr/games" # For Ubuntu
 __add_path "/usr/local/sbin"
 __add_path "/usr/local/opt/icu4c/bin"
@@ -182,7 +185,14 @@ _target_path="$HOME/.go"
 if [ -e "$_target_path" ]; then
   export GOPATH="$_target_path"
   export GOBIN="$_target_path/bin"
-  export PATH=$GOPATH/bin:$PATH
+  export PATH="$GOPATH/bin:$PATH"
+else
+  _target_path="$HOME/go"
+  if [ -e "$_target_path" ]; then
+    export GOPATH="$_target_path"
+    export GOBIN="$_target_path/bin"
+    export PATH="$GOPATH/bin:$PATH"
+  fi
 fi
 
 #--------------------
@@ -1170,4 +1180,16 @@ heybot () {
 logawk () {
   # Inspired by https://www.slideshare.net/HirofumiSaito/gnu-awk-gawk-apache
   awk -vFPAT="(\\[[^\\[\\]]+\\])|(\"[^\"]+\")|([^ ]+)" "$@"
+}
+
+ec2-ls () {
+  aws ec2 describe-instances | jq -r '.Reservations[] | .Instances[] | select(.State.Code == 16)  | .PublicDnsName'
+}
+
+ec2-assh () {
+  aws ec2 describe-instances | jq -r '.Reservations[] | .Instances[] | select(.State.Code == 16)  | .PublicDnsName' | xpanes -c 'ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa_ant ec2-user@{}'
+}
+
+zen_to_i () {
+  sed -r 's/(万|億|兆)/\0\n/g' | perl -C -Mutf8 -pe '$n="一二三四五六七八九";eval "s/(".join("|", split("", $n)).")/+\$&/g";eval "tr/$n/1-9/";s/(\d)十/$1*10/g;s/(\d)百/$1*100/g;s/(\d)千/$1*1000/g;s/十/10/g;s/百/100/g;s/千/1000/g;' | perl -C -Mutf8 -pe 's/^\+//;s/([\d\*+]+)万/($1)*10000/;s/([\d\*+]+)億/($1)*100000000/g;s/([\d\*+]+)兆/($1)*100000000/;' | gpaste -sd'+' | bc
 }
