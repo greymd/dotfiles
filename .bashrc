@@ -178,6 +178,8 @@ __add_path "/usr/local/sbin"
 __add_path "/usr/local/opt/icu4c/bin"
 __add_path "/usr/local/opt/icu4c/sbin"
 
+# __add_path "/usr/local/opt/coreutils/libexec/gnubin"
+
 #--------------------
 # Go
 #--------------------
@@ -331,7 +333,12 @@ mvn-springboot() {
 }
 
 pom-jars () {
-    cat pom.xml | perl -anle 'print if /dependencies/../\/dependencies/' | grep -Po '<(groupId|artifactId|version)>\K.*(?=</\1>)' | xargs -n 3 | perl -anpe '$F[0]=~s|\.|/|g; $_="$F[0]/$F[1]/$F[2]/.*\\.jar\$\n"' | grep -Ef - <(find ~/.m2/g_repository)
+    cat pom.xml \
+      | perl -anle 'print if /dependencies/../\/dependencies/' \
+      | grep -Po '<(groupId|artifactId|version)>\K.*(?=</\1>)' \
+      | xargs -n 3 \
+      | perl -anpe '$F[0]=~s|\.|/|g; $_="$F[0]/$F[1]/$F[2]/.*\\.jar\$\n"' \
+      | grep -Ef - <(find ${HOME}/.m2/g_repository)
 }
 
 mvn-exe() {
@@ -1178,13 +1185,41 @@ heybot () {
 }
 
 ec2-ls () {
-  aws ec2 describe-instances | jq -r '.Reservations[] | .Instances[] | select(.State.Code == 16)  | .PublicDnsName'
+  aws ec2 describe-instances --output json | jq -r '.Reservations[] | .Instances[] | select(.State.Code == 16)  | .PublicDnsName'
 }
 
 ec2-assh () {
-  aws ec2 describe-instances | jq -r '.Reservations[] | .Instances[] | select(.State.Code == 16)  | .PublicDnsName' | xpanes -c 'ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa_ant ec2-user@{}'
+  aws ec2 describe-instances --output json | jq -r '.Reservations[] | .Instances[] | select(.State.Code == 16)  | .PublicDnsName' | xpanes -t -c 'ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa_ohio ec2-user@{}'
 }
 
 # zen_to_i () {
 #   sed -r 's/(万|億|兆)/\0\n/g' | perl -C -Mutf8 -pe '$n="一二三四五六七八九";eval "s/(".join("|", split("", $n)).")/+\$&/g";eval "tr/$n/1-9/";s/(\d)十/$1*10/g;s/(\d)百/$1*100/g;s/(\d)千/$1*1000/g;s/十/10/g;s/百/100/g;s/千/1000/g;' | perl -C -Mutf8 -pe 's/^\+//;s/([\d\*+]+)万/($1)*10000/;s/([\d\*+]+)億/($1)*100000000/g;s/([\d\*+]+)兆/($1)*100000000/;' | gpaste -sd'+' | bc
 # }
+
+date_utc2jst () {
+  TZ=Asia/Tokyo  gdate -d "$* UTC" "+%FT%T.000Z"
+}
+
+date_jst2utc () {
+  TZ=UTC  gdate -d "$* JST" "+%FT%T.000Z"
+}
+
+date_ist2jst () {
+  TZ=Europe/Dublin gdate -d "$* JST" "+%FT%T.000Z"
+}
+
+timezones () {
+  _datetime="$*"
+  if [[ -z "${_datetime}" ]]; then
+    _datetime="now"
+  fi
+
+  for TZ in US/Pacific UTC Europe/Dublin Asia/Tokyo
+  do
+    TZ=$TZ gdate -d "${_datetime}" +"%Y/%m/%d %H:%M %Z  %FT%T.000Z" | grep -v GMT | awk '!/UTC/{$NF=""};4'
+  done
+}
+
+somosomo () {
+  grep -P '([\p{Han}\p{Hiragana}]+)\1'
+}
