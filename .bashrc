@@ -1228,8 +1228,8 @@ timezones () {
 
 somosomo () {
   grep -P '([\p{Han}\p{Hiragana}]+)\1'
+}
 
 zen_to_i () {
   sed -r 's/(万|億|兆)/\0\n/g' | perl -C -Mutf8 -pe '$n="一二三四五六七八九";eval "s/(".join("|", split("", $n)).")/+\$&/g";eval "tr/$n/1-9/";s/(\d)十/$1*10/g;s/(\d)百/$1*100/g;s/(\d)千/$1*1000/g;s/十/10/g;s/百/100/g;s/千/1000/g;' | perl -C -Mutf8 -pe 's/^\+//;s/([\d\*+]+)万/($1)*10000/;s/([\d\*+]+)億/($1)*100000000/g;s/([\d\*+]+)兆/($1)*100000000/;' | gpaste -sd'+' | bc
-
 }
