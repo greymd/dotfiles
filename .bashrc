@@ -30,6 +30,11 @@ if [[ $unamestr == 'Darwin' ]]; then
   alias vlc="/Applications/VLC.app/Contents/MacOS/VLC"
   export ECLIPSE_HOME="$HOME/eclipse"
 
+  mplayx () {
+    kill $(pgrep MPlayerX)
+    /Applications/MPlayerX.app/Contents/MacOS/MPlayerX "$PWD/$1"
+  }
+
   cdf () {
       target=`osascript -e 'tell application "Finder" to if (count of Finder windows) > 0 then get POSIX path of (target of front Finder window as text)'`
       if [ "$target" != "" ]
