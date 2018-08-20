@@ -301,14 +301,15 @@ set textwidth=0
 set tw=0
 
 " Use 4 space instead of a tab
-set tabstop=4
+set tabstop=2
 set autoindent
 " set noexpandtab
 set expandtab
-set shiftwidth=4
+set shiftwidth=2
 
 " In case of ruby, use 2 spaces
 autocmd Filetype ruby,sh,html,c setlocal ts=2 sts=2 sw=2
+autocmd Filetype js setlocal ts=2 sts=2 sw=2
 
 " In case of go, use tab
 autocmd Filetype go setlocal noexpandtab
