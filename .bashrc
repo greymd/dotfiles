@@ -757,9 +757,10 @@ usedportof()
 }
 
 holidays() {
-  local _cmd="$1" ;shift
+  local _cmd="${1-}"
   case "$_cmd" in
     until)
+      shift
       local _until_date="$1"
       curl -Lso- goo.gl/Ynbsm9 | awk 1 | awk '/'"$(date +%F)"'/,/'"${_until_date}"'/'
       ;;
@@ -1239,16 +1240,24 @@ date_ist2jst () {
 }
 
 timezones () {
-  _datetime="$*"
-  if [[ -z "${_datetime}" ]]; then
-    _datetime="now"
-  fi
+  local _datetime _gap
+  _datetime="${1:-now}"
+  _gap="${2:-30}"
   # IST(Indian Standard Time) => Irish Standard Time
   _datetime="${_datetime/IST/GMT+1}"
 
   for TZ in US/Pacific UTC Europe/Dublin Asia/Tokyo
   do
-    TZ=$TZ gdate -d "${_datetime}" +"%Y/%m/%d %H:%M %Z  %FT%T.000Z" | grep -v GMT | awk '!/UTC/{$NF=""};4'
+    if [[ "$TZ" != UTC ]];then
+      TZ=$TZ gdate -d "${_datetime}" +"%Y/%m/%d %H:%M %Z"
+    fi
+    if [[ "$TZ" == UTC ]];then
+      local _before _after _now
+      _before=$(TZ=$TZ gdate -d "${_datetime} ${_gap} minutes ago" +"%FT%T.000Z")
+      _after=$(TZ=$TZ gdate -d "${_datetime} ${_gap} minutes" +"%FT%T.000Z")
+      _now=$(TZ=$TZ gdate -d "${_datetime}" +"%Y/%m/%d %H:%M %Z  %FT%T.000Z")
+      echo "${_now} ${_before} ${_after}"
+    fi
   done
 }
 
@@ -1277,6 +1286,11 @@ byte-read () {
     return 1
   fi
   ${_exec} --to=iec
+}
+
+ByteMin2MibSec () {
+  printf "%s" "$1 bytes/min = "
+  printf "%s\\n" "scale=2; $1 / 60 / 1024 / 1024" | tr -d , | bc -l | sed 's:$: MiB/s:'
 }
 
 tmux-title () {
