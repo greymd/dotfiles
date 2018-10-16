@@ -1,0 +1,15 @@
+{
+    "rules": {
+        "no-mix-dearu-desumasu": true,
+        "spellcheck-tech-word": true,
+        "preset-ja-technical-writing": true,
+        "web-plus-db": true,
+        "ja-hiragana-keishikimeishi": true,
+        "ja-hiragana-hojodoushi": true,
+        "no-doubled-joshi": true,
+        "no-double-negative-ja": true,
+        "ja-no-redundant-expression": true,
+        "prefer-tari-tari": true,
+        "no-nfd":true
+    }
+}
