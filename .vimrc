@@ -15,6 +15,17 @@ function! GetRunningOS()
 endfunction
 let os=GetRunningOS()
 
+" Avoid python3 issue: https://github.com/macvim-dev/macvim/issues/562
+" if has('python3')
+"   command! -nargs=1 Py py3 <args>
+"   set pythonthreedll=/usr/local/Frameworks/Python.framework/Versions/3.6/Python
+"   set pythonthreehome=/usr/local/Frameworks/Python.framework/Versions/3.6
+" else
+"   command! -nargs=1 Py py <args>
+"   set pythondll=/usr/local/Frameworks/Python.framework/Versions/2.7/Python
+"   set pythonhome=/usr/local/Frameworks/Python.framework/Versions/2.7
+" endif
+
 function! IsBoW()
   " win32yank.exe is required (https://github.com/equalsraf/win32yank).
   let executeCmd="grep -q Microsoft /proc/version 2> /dev/null && which win32yank.exe &> /dev/null"
@@ -157,6 +168,8 @@ let g:syntastic_ruby_checkers = ['rubocop']
 let g:syntastic_php_checkers = ['phpcs']
 let g:syntastic_php_phpcs_args="--standard=psr2"
 
+call dein#add('keith/swift.vim')
+let g:syntastic_swift_checkers = ['swiftpm', 'swiftlint']
 " Earthquake detection
 " call dein#add('haya14busa/eew.vim')
 

@@ -5,6 +5,7 @@ if [ -s "$HOME/.local.zsh" ]; then
     source "$HOME/.local.zsh"
 fi
 
+
 #--------------------
 # Incremental Search
 # (This settings should be earlyer than antigen)
@@ -353,7 +354,6 @@ setopt COMPLETE_IN_WORD
 setopt NO_TIFY
 #改行が存在しない標準出力がある場合、自動的に特殊文字で改行する。
 setopt prompt_cr prompt_sp
-
 
 ##################################
 ###### Git related Settings ######
