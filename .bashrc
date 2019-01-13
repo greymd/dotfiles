@@ -267,7 +267,7 @@ jex () {
 }
 
 _jshell () {
-  "$HOME/.sdkman/candidates/java/9.0.0-zulu/bin//jshell" "$@"
+  "$HOME/.sdkman/candidates/java/9.0.0-zulu/bin/jshell" "$@"
 }
 
 jshell () {
