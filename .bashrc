@@ -4,6 +4,7 @@ SKEL_PROJECT_DIR="$HOME/.zsh/project-skel/"
 export HISTSIZE=1000000
 export HISTFILESIZE=1000000
 export SAVEHIST=1000000
+export TMUX_XPANES_PANE_BORDER_FORMAT="#[bg=green,fg=black] #T#{?pane_pipe,[Log],} #[default]"
 
 # __GRE_REPOSITORY_DIR environment variable is defined on .profile.
 export PS1="\W \$ "
@@ -460,18 +461,24 @@ docker-ex () {
 }
 
 docker-dev () {
-  local _cmd='tmux -2'
+  local _cmd='/bin/zsh -c "tmux -2"'
   local _opts="-it greymd/dev"
+  if [[ "$1" =~ b ]]; then
+    ## bash mode
+    _cmd='/bin/bash'
+  fi
   if [[ "$1" =~ v ]]; then
+    ## mounting volume
     # Mount current volume
     _opts="-v ${PWD}:/work ${_opts}"
   fi
   if [[ "$1" =~ j ]]; then
     # Java mode
     # _cmd='nohup Xvfb :1 -screen 0 1024x768x24 &> /dev/null & /home/docker/eclipse/eclimd -b &> /dev/null && tmux -2'
-    _cmd='nohup Xvfb :1 -screen 0 1024x768x24 &> /dev/null & tmux -2'
+    _cmd='/bin/zsh -c "nohup Xvfb :1 -screen 0 1024x768x24 &> /dev/null & tmux -2"'
   fi
   if [[ "$1" =~ m ]]; then
+    # import maven
     # Import Maven settings
     _opts="-v $HOME/.m2:/home/docker/.m2 ${_opts}"
   fi
@@ -479,8 +486,10 @@ docker-dev () {
     # Import SSH settings
     _opts="-v $HOME/.ssh:/home/docker/.ssh ${_opts}"
   fi
-  echo "command: docker run $_opts /bin/zsh -c \"$_cmd\""
-  docker run $_opts /bin/zsh -c "$_cmd"
+  ## Allow to use strace
+  _opts="--security-opt seccomp:unconfined ${_opts}"
+  echo "command: docker run $_opts $_cmd"
+  eval "docker run $_opts $_cmd"
 }
 
 docker-ubuntu () {
@@ -748,9 +757,10 @@ usedportof()
 }
 
 holidays() {
-  local _cmd="$1" ;shift
+  local _cmd="${1-}"
   case "$_cmd" in
     until)
+      shift
       local _until_date="$1"
       curl -Lso- goo.gl/Ynbsm9 | awk 1 | awk '/'"$(date +%F)"'/,/'"${_until_date}"'/'
       ;;
@@ -1194,14 +1204,24 @@ logawk () {
   awk -vFPAT="(\\[[^\\[\\]]+\\])|(\"[^\"]+\")|([^ ]+)" "$@"
 }
 
+__aws_ssh_key () {
+  local _region="${1:-us-east-2}"
+  echo "us-east-1 $HOME/.ssh/id_rsa_ant
+  us-east-2 $HOME/.ssh/id_rsa_ohio
+  ap-northeast-1 $HOME/.ssh/id_rsa_tokyo" | awk "/$_region/{print \$2}"
+}
+
 ec2-ls () {
-  aws ec2 describe-instances --output json | jq -r '.Reservations[] | .Instances[] | select(.State.Code == 16)  | .PublicDnsName'
+  local _region="${1:-us-east-2}"
+  aws ec2 describe-instances --region "$_region" --output json | jq -r '.Reservations[] | .Instances[] | select(.State.Code == 16)  | .PublicDnsName'
 }
 
 ec2-assh () {
-  aws ec2 describe-instances --output json | jq -r '.Reservations[] | .Instances[] | select(.State.Code == 16)  | .PublicDnsName' | xpanes -t -c 'ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa_ohio ec2-user@{}'
+  local _region="${1:-us-east-2}"
+  local _key=
+  _key=$(__aws_ssh_key "$_region")
+  aws ec2 describe-instances --region "$_region" --output json | jq -r '.Reservations[] | .Instances[] | select(.State.Code == 16)  | .PublicDnsName' | xpanes --debug -sst -c "ssh -o StrictHostKeyChecking=no -i '$_key' ec2-user@{}"
 }
-
 
 # zen_to_i () {
 #   sed -r 's/(万|億|兆)/\0\n/g' | perl -C -Mutf8 -pe '$n="一二三四五六七八九";eval "s/(".join("|", split("", $n)).")/+\$&/g";eval "tr/$n/1-9/";s/(\d)十/$1*10/g;s/(\d)百/$1*100/g;s/(\d)千/$1*1000/g;s/十/10/g;s/百/100/g;s/千/1000/g;' | perl -C -Mutf8 -pe 's/^\+//;s/([\d\*+]+)万/($1)*10000/;s/([\d\*+]+)億/($1)*100000000/g;s/([\d\*+]+)兆/($1)*100000000/;' | gpaste -sd'+' | bc
@@ -1220,14 +1240,24 @@ date_ist2jst () {
 }
 
 timezones () {
-  _datetime="$*"
-  if [[ -z "${_datetime}" ]]; then
-    _datetime="now"
-  fi
+  local _datetime _gap
+  _datetime="${1:-now}"
+  _gap="${2:-30}"
+  # IST(Indian Standard Time) => Irish Standard Time
+  _datetime="${_datetime/IST/GMT+1}"
 
   for TZ in US/Pacific UTC Europe/Dublin Asia/Tokyo
   do
-    TZ=$TZ gdate -d "${_datetime}" +"%Y/%m/%d %H:%M %Z  %FT%T.000Z" | grep -v GMT | awk '!/UTC/{$NF=""};4'
+    if [[ "$TZ" != UTC ]];then
+      TZ=$TZ gdate -d "${_datetime}" +"%Y/%m/%d %H:%M %Z"
+    fi
+    if [[ "$TZ" == UTC ]];then
+      local _before _after _now
+      _before=$(TZ=$TZ gdate -d "${_datetime} ${_gap} minutes ago" +"%FT%T.000Z")
+      _after=$(TZ=$TZ gdate -d "${_datetime} ${_gap} minutes" +"%FT%T.000Z")
+      _now=$(TZ=$TZ gdate -d "${_datetime}" +"%Y/%m/%d %H:%M %Z  %FT%T.000Z")
+      echo "${_now} ${_before} ${_after}"
+    fi
   done
 }
 
@@ -1237,4 +1267,32 @@ somosomo () {
 
 zen_to_i () {
   sed -r 's/(万|億|兆)/\0\n/g' | perl -C -Mutf8 -pe '$n="一二三四五六七八九";eval "s/(".join("|", split("", $n)).")/+\$&/g";eval "tr/$n/1-9/";s/(\d)十/$1*10/g;s/(\d)百/$1*100/g;s/(\d)千/$1*1000/g;s/十/10/g;s/百/100/g;s/千/1000/g;' | perl -C -Mutf8 -pe 's/^\+//;s/([\d\*+]+)万/($1)*10000/;s/([\d\*+]+)億/($1)*100000000/g;s/([\d\*+]+)兆/($1)*100000000/;' | gpaste -sd'+' | bc
+}
+
+possible_exec () {
+  for _cmd in "$@"; do
+    if type "$_cmd" &> /dev/null ;then
+      echo "$_cmd"
+      return 0
+    fi
+  done
+  return 1
+}
+
+byte-read () {
+  local _exec
+  if ! _exec="$(possible_exec numfmt gnumfmt)"; then
+    echo "numfmt command is not found" >&2
+    return 1
+  fi
+  ${_exec} --to=iec
+}
+
+ByteMin2MibSec () {
+  printf "%s" "$1 bytes/min = "
+  printf "%s\\n" "scale=2; $1 / 60 / 1024 / 1024" | tr -d , | bc -l | sed 's:$: MiB/s:'
+}
+
+tmux-title () {
+    printf "\\033]2;%s\\033\\\\" "$1"
 }
