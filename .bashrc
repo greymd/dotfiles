@@ -664,7 +664,7 @@ sed-conv () {
 }
 
 urlenc() {
-  od -An -tx1 | awk 'NF{OFS="%";$1=$1;print "%"$0}' | tr '[:lower:]' '[:upper:]'
+  od -An -v -tx1 | awk 'NF{OFS="%";$1=$1;print "%"$0}' | tr '[:lower:]' '[:upper:]'
 }
 
 # Numeric character refernce to string
