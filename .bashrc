@@ -269,7 +269,7 @@ jex () {
 }
 
 _jshell () {
-  "$HOME/.sdkman/candidates/java/9.0.0-zulu/bin//jshell" "$@"
+  "$HOME/.sdkman/candidates/java/9.0.0-zulu/bin/jshell" "$@"
 }
 
 jshell () {
@@ -675,7 +675,7 @@ sed-conv () {
 }
 
 urlenc() {
-  od -An -tx1 | awk 'NF{OFS="%";$1=$1;print "%"$0}' | tr '[:lower:]' '[:upper:]'
+  od -An -v -tx1 | awk 'NF{OFS="%";$1=$1;print "%"$0}' | tr '[:lower:]' '[:upper:]'
 }
 
 # Numeric character refernce to string
