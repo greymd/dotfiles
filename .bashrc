@@ -173,6 +173,7 @@ fi
 # Import various commands
 #--------------------
 __add_path "$HOME/bin"
+__add_path "$HOME/tmux/bin"
 __add_path "$HOME/.config/tmuxvm/bin" # Activate tmuxvm
 __add_path "$HOME/.embulk/bin"
 __add_path "$HOME/.cabal/bin"
@@ -183,6 +184,7 @@ __add_path "/usr/games" # For Ubuntu
 __add_path "/usr/local/sbin"
 __add_path "/usr/local/opt/icu4c/bin"
 __add_path "/usr/local/opt/icu4c/sbin"
+__add_path "$HOME/.cargo/bin"
 
 # __add_path "/usr/local/opt/coreutils/libexec/gnubin"
 
