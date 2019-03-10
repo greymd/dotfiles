@@ -592,6 +592,12 @@ pt-gvim(){
   ptt "$@" | gvim -c '%!nkf' -c ':AnsiEsc' -c ':w `=tempname()`' -
 }
 
+# _xpns_opt1='INDEX=`tmux display -pt "${TMUX_PANE}" "#{pane_index}"`'
+# _xpns_opt2="tmux list-panes -F '#{pane_width} #{pane_height} #{pane_id}' | awk '{s=\$1*\$2;if(max_s<s){max_s=s;id=\$3}}END{print id}' | xargs tmux select-pane -t"
+# _xpns_opt3="set {}"
+# alias xpanes='xpanes -s -B "${_xpns_opt1}" -B "${_xpns_opt2}" -B "${_xpns_opt3}"'
+# alias xpanes='xpanes -s -B "set {}"'
+
 # Open multiple files with vim from pt result.
 pt-xpanes(){
   type xpanes &> /dev/null
@@ -1298,3 +1304,8 @@ ByteMin2MibSec () {
 tmux-title () {
     printf "\\033]2;%s\\033\\\\" "$1"
 }
+
+ssm () {
+  aws ssm start-session --target "$1"
+}
+export TMUX_XPANES_SMSG=""

@@ -1,0 +1,6 @@
+#compdef aws
+_aws () {
+  local e
+  e=$(which aws_zsh_completer.sh)
+  if [[ -f $e ]]; then source $e; fi
+}

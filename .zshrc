@@ -224,6 +224,9 @@ WORDCHARS="$WORDCHARS|:"
 # bindkey -M menuselect 'j' vi-down-line-or-history
 # bindkey -M menuselect 'k' vi-up-line-or-history
 # bindkey -M menuselect 'l' vi-forward-char
+#
+#Apply zsh completion to alias
+setopt NO_COMPLETE_ALIASES
 
 #タブキーの連打で自動的にメニュー補完
 setopt AUTO_MENU
@@ -262,8 +265,8 @@ setopt ALWAYS_LAST_PROMPT
 setopt CDABLE_VARS
 #クォートされていない変数拡張が行われたあとで、フィールド分割
 setopt SH_WORD_SPLIT
-#定義された全ての変数は自動的にexportする
-setopt ALL_EXPORT
+#定義された全ての変数は自動的にexportする!! Copy & Paste 時に Segmentationfault を起こすので無効化
+# setopt ALL_EXPORT
 #ディレクトリ名を補完すると、末尾がスラッシュになる。
 setopt AUTO_PARAM_SLASH
 #普通のcdでもスタックに入れる
