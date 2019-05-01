@@ -122,6 +122,7 @@ alias ..5="cd ../../../../.."
 alias g='git'
 alias gr='grep'
 alias gm='git commit -m '
+alias gpom='git push origin master'
 
 #remove control character
 alias rmcc='perl -pe '"'"'s/\e([^\[\]]|\[.*?[a-zA-Z]|\].*?\a)//g'"'"' | col -b'
@@ -154,6 +155,8 @@ alias octave='octave --no-gui'
 
 alias terminal-slack="node ${HOME}/repos/evanyeung/terminal-slack/main.js"
 
+alias ginza='python3 -m spacy.lang.ja_ginza.cli'
+
 #--------------------
 # Update PATH variable
 #--------------------
@@ -173,6 +176,7 @@ fi
 # Import various commands
 #--------------------
 __add_path "$HOME/bin"
+__add_path "$HOME/tmux/bin"
 __add_path "$HOME/.config/tmuxvm/bin" # Activate tmuxvm
 __add_path "$HOME/.embulk/bin"
 __add_path "$HOME/.cabal/bin"
@@ -183,6 +187,8 @@ __add_path "/usr/games" # For Ubuntu
 __add_path "/usr/local/sbin"
 __add_path "/usr/local/opt/icu4c/bin"
 __add_path "/usr/local/opt/icu4c/sbin"
+__add_path "$HOME/.cargo/bin"
+__add_path "/usr/local/texlive/2018/bin/x86_64-darwin" # For Darwin TeX
 
 # __add_path "/usr/local/opt/coreutils/libexec/gnubin"
 
@@ -589,6 +595,12 @@ pt-vim(){
 pt-gvim(){
   ptt "$@" | gvim -c '%!nkf' -c ':AnsiEsc' -c ':w `=tempname()`' -
 }
+
+# _xpns_opt1='INDEX=`tmux display -pt "${TMUX_PANE}" "#{pane_index}"`'
+# _xpns_opt2="tmux list-panes -F '#{pane_width} #{pane_height} #{pane_id}' | awk '{s=\$1*\$2;if(max_s<s){max_s=s;id=\$3}}END{print id}' | xargs tmux select-pane -t"
+# _xpns_opt3="set {}"
+# alias xpanes='xpanes -s -B "${_xpns_opt1}" -B "${_xpns_opt2}" -B "${_xpns_opt3}"'
+# alias xpanes='xpanes -s -B "set {}"'
 
 # Open multiple files with vim from pt result.
 pt-xpanes(){
@@ -1296,3 +1308,26 @@ ByteMin2MibSec () {
 tmux-title () {
     printf "\\033]2;%s\\033\\\\" "$1"
 }
+
+ssm () {
+  aws ssm start-session --target "$1"
+}
+
+shellgeibot () {
+  docker run -m 10M -v "$PWD/images":/images -it greymd/shellgeibot bash -c "$1"
+}
+
+nandoku () {
+  sed  -e 's/0/$?/g' \
+       -e 's/1/$_/g' \
+       -e 's/2/$[-~$_]/g' \
+       -e 's/3/$[-~-~$_]/g' \
+       -e 's/4/$[-~-~-~$_]/g' \
+       -e 's/5/$[-~-~-~-~$_]/g' \
+       -e 's/6/$[-~-~-~-~-~$_]/g' \
+       -e 's/7/$[$_$?--~-~$_]/g' \
+       -e 's/8/$[$_$?--~$_]/g' \
+       -e 's/9/$[$_$?-$_]/g'
+}
+
+export TMUX_XPANES_SMSG=""

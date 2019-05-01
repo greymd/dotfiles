@@ -213,6 +213,10 @@ call dein#add('greymd/gre-vim-snippets')
 " egison
 call dein#add('greymd/vim-egison-snippets')
 
+" json-scheme
+call dein#add('Quramy/vison')
+autocmd FileType json setlocal completeopt+=menu,preview
+
 " go plugins
 call dein#add('fatih/vim-go')
 let g:go_highlight_types = 1
@@ -360,6 +364,7 @@ let mapleader = "\<Space>"
 
 " Original Macro
 noremap <leader>[ i[<ESC>ea]<ESC>
+noremap <leader>` i`<ESC>ea`<ESC>
 noremap <leader>( i(<ESC>ea)<ESC>
 noremap <leader>" i"<ESC>ea"<ESC>
 noremap <leader>' i'<ESC>ea'<ESC>
