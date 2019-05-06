@@ -97,6 +97,8 @@ function cdup() {
 zle -N cdup
 bindkey '^^' cdup
 
+# Use emacs key bindings
+bindkey -e
 
 #--------------------
 # antigen
@@ -106,7 +108,9 @@ bindkey '^^' cdup
 source $HOME/repos/zsh-users/antigen/antigen.zsh
 # Edit misc.zsh by following https://stackoverflow.com/questions/25614613/how-to-disable-zsh-substitution-autocomplete-with-url-and-backslashes
 # Or, special characters will be automatically escaped.
-antigen use oh-my-zsh
+# Disable oh-my-zsh to set ls's alias as expected
+
+# antigen use oh-my-zsh
 
 # Use oh-my-zsh plugins
 antigen bundle heroku

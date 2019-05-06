@@ -20,7 +20,7 @@ unamestr=$(uname | grep -oiE '(Darwin|CYGWIN|Linux)')
 
 if [[ $unamestr == 'Darwin' ]]; then
   VIMPATH="/Applications/MacVim.app/Contents/MacOS"
-  alias ls='ls -G' #BSD version ls
+  alias ls='/bin/ls -G' #BSD version ls
   alias updatedb='sudo /usr/libexec/locate.updatedb'
   alias egison-euler="egison -l $__GRE_REPOSITORY_DIR/project-euler/lib/math/project-euler.egi -l $__GRE_REPOSITORY_DIR/prime-numbers/lib/math/prime-numbers.egi"
   alias p='pbcopy'
@@ -189,25 +189,30 @@ __add_path "/usr/local/opt/icu4c/bin"
 __add_path "/usr/local/opt/icu4c/sbin"
 __add_path "$HOME/.cargo/bin"
 __add_path "/usr/local/texlive/2018/bin/x86_64-darwin" # For Darwin TeX
+__add_path "/usr/local/opt/coreutils/libexec/gnubin" # For coreutils on macOS
+__add_path "/usr/local/opt/grep/libexec/gnubin"
+__add_path "/usr/local/opt/gnu-sed/libexec/gnubin"
+__add_path "$HOME/go/bin"
+__add_path "$HOME/.go/bin"
 
 # __add_path "/usr/local/opt/coreutils/libexec/gnubin"
 
 #--------------------
 # Go
 #--------------------
-_target_path="$HOME/.go"
-if [ -e "$_target_path" ]; then
-  export GOPATH="$_target_path"
-  export GOBIN="$_target_path/bin"
-  export PATH="$GOPATH/bin:$PATH"
-else
-  _target_path="$HOME/go"
-  if [ -e "$_target_path" ]; then
-    export GOPATH="$_target_path"
-    export GOBIN="$_target_path/bin"
-    export PATH="$GOPATH/bin:$PATH"
-  fi
-fi
+# _target_path="$HOME/.go"
+# if [ -e "$_target_path" ]; then
+#   export GOPATH="$_target_path"
+#   export GOBIN="$_target_path/bin"
+#   export PATH="$GOPATH/bin:$PATH"
+# else
+#   _target_path="$HOME/go"
+#   if [ -e "$_target_path" ]; then
+#     export GOPATH="$_target_path"
+#     export GOBIN="$_target_path/bin"
+#     export PATH="$GOPATH/bin:$PATH"
+#   fi
+# fi
 
 #--------------------
 # Python
