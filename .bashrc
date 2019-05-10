@@ -144,18 +144,18 @@ alias ssld-key='openssl rsa -text -noout -in'
 alias ssld-csr='openssl req -text -noout -in'
 # usage $ ssl-cacert-dump filename
 alias ssld-cacert='keytool -v -list -storepass changeit -keystore'
-alias fuck='eval $(thefuck $(fc -ln -1 | tail -n 1)); fc -R'
 # alias pt='pt -i'
+alias terminal-slack="node ${HOME}/repos/evanyeung/terminal-slack/main.js"
 
 # Ref: http://qiita.com/greymd/items/ad18aa44d4159067a627
 alias pict-format="column -s$'\t' -t | tee >(sed -n '1,1p') | sed '1,1d' | sort"
 alias h2-cli='java -cp /Applications/h2/bin/h2-1.4.191.jar org.h2.tools.Shell -url jdbc:h2:./data -user sa'
+
+alias fuck='eval $(thefuck $(fc -ln -1 | tail -n 1)); fc -R'
 alias 蒸着="sudo -s"
 alias octave='octave --no-gui'
-
-alias terminal-slack="node ${HOME}/repos/evanyeung/terminal-slack/main.js"
-
 alias ginza='python3 -m spacy.lang.ja_ginza.cli'
+alias katakoto='mecab -Owakati | mecab -Oyomi'
 
 #--------------------
 # Update PATH variable
