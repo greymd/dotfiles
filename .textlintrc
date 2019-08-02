@@ -6,7 +6,7 @@
         "max-comma": true,
         "max-ten": true,
         "max-kanji-continuous-len": true,
-        "web-plus-db": true,
+        "web-plus-db": false,
         "preset-jtf-style": false,
         "no-double-negative-ja": true,
         "no-dropping-the-ra": true,

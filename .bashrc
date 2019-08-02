@@ -200,19 +200,7 @@ __add_path "$HOME/.go/bin"
 #--------------------
 # Go
 #--------------------
-# _target_path="$HOME/.go"
-# if [ -e "$_target_path" ]; then
-#   export GOPATH="$_target_path"
-#   export GOBIN="$_target_path/bin"
-#   export PATH="$GOPATH/bin:$PATH"
-# else
-#   _target_path="$HOME/go"
-#   if [ -e "$_target_path" ]; then
-#     export GOPATH="$_target_path"
-#     export GOBIN="$_target_path/bin"
-#     export PATH="$GOPATH/bin:$PATH"
-#   fi
-# fi
+export GO111MODULE=on
 
 #--------------------
 # Python
@@ -327,7 +315,7 @@ sdk () {
 mvn-instant() {
   local _name=${1:-$(faker-cli --hacker noun | tr -d '[ "]')}
   local _artifactId=$(echo $_name | sed 's/^./\U&/')
-  yes $'\n' | gmvn archetype:generate -DgroupId=com.$_name -DartifactId=$_artifactId
+  yes $'\n' | mvn archetype:generate -DgroupId=com.$_name -DartifactId=$_artifactId
     cd $_artifactId
   # mkdir -p $_artifactId/src/resources
   # touch $_artifactId/src/resources/application.properties
@@ -706,7 +694,7 @@ str2ncrhex () {
 
 # String to Unicode Escapse Sequence
 str2ues () {
-  nkf -w16B0 | od -tx1 -An | tr -dc '[:alnum:]' | fold -w 4 | sed 's/^/\\u/g' | tr -d '\n' | awk 1
+  nkf -w16B0 | od -v -tx1 -An | tr -dc '[:alnum:]' | fold -w 4 | sed 's/^/\\u/g' | tr -d '\n' | awk 1
   # nkf -w16B0
 }
 
@@ -714,7 +702,8 @@ str2ues () {
 # printf "%s" '\u3046\u3093\u3053\u000a' | ues2str
 # But just echo command supports UES. It might not be the necessary feature.
 ues2str () {
-  sed -r "s/\\\\u(....)/\&#x\1;/g" | ncrhex2str
+  # sed -r "s/\\\\u(....)/\&#x\1;/g" | ncrhex2str
+  sed -E 's/\\u(....)/\1/g'| xxd -r -p | iconv -f UTF-16BE -t UTF-8
 }
 
 # Ref: http://qiita.com/ryo0301/items/7c7b3571d71b934af3f8
@@ -1063,6 +1052,12 @@ hub-clone () {
   cd "$_repo_path/$_user/$_repo"
 }
 
+hub-get () {
+  local _gopath="$(go env GOPATH)"
+  GO111MODULE=off go get -u "github.com/$1"
+  cd "$_gopath/src/github.com/$1"
+}
+
 fnd () {
   find "$PWD" | grep "${1-}"
 }
@@ -1319,7 +1314,20 @@ ssm () {
 }
 
 shellgeibot () {
-  docker run -m 10M -v "$PWD/images":/images -it greymd/shellgeibot bash -c "$1"
+  local _name
+  local _exefile="$1"
+  _name="$(</dev/urandom tr -dc 'a-zA-Z0-9' | fold -w 16 | head -n 1)"
+  cp "$_exefile" "/tmp/$_name"
+  docker run --rm \
+    --net=none \
+    -m 10M \
+    --oom-kill-disable \
+    --pids-limit 1024 \
+    --cap-add sys_ptrace \
+    --name "$_name" \
+    -v "/tmp/$_name:/$_name" -v "$PWD/images":/images theoldmoon0602/shellgeibot \
+    bash -c "chmod +x /$_name && sync && ./$_name; echo \$? | head -c 100K"
+  rm -f "/tmp/$_name"
 }
 
 nandoku () {
@@ -1333,6 +1341,19 @@ nandoku () {
        -e 's/7/$[$_$?--~-~$_]/g' \
        -e 's/8/$[$_$?--~$_]/g' \
        -e 's/9/$[$_$?-$_]/g'
+}
+
+kingunko() {
+  unko.tower -s 💩 4 | sed -e'3s/💩/👁/'{2,3} -e'4s/💩/👃/4' -e'5s/💩/👄/5' -e's/人/👑/'
+}
+
+propgrep () {
+  local _ues=$(printf '%s' "$1" | nkf -w16B0 | od -v -tx1 -An | tr -dc '[:alnum:]' | fold -w 4 | sed 's/^/\\\\u/g' | tr -d '\n')
+  grep -r -e "$1" -e "$_ues"
+}
+
+bssh () {
+  ssh -t "$@" 'bash --rcfile <( echo '$(cat ~/.bashrc | base64 | tr -d '\n' )' | base64 --decode)'
 }
 
 export TMUX_XPANES_SMSG=""
