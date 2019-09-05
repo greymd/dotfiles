@@ -123,11 +123,11 @@ antigen bundle "greymd/cureutils"
 antigen bundle "greymd/docker-zsh-completion"
 antigen bundle "nnao45/zsh-kubectl-completion"
 antigen bundle "greymd/tmux-xpanes"
-antigen bundle "greymd/eclim-cli"
-antigen bundle "greymd/confl"
+# antigen bundle "greymd/eclim-cli"
+# antigen bundle "greymd/confl"
 antigen bundle "greymd/awless-zsh-completion"
 antigen bundle "nobeans/zsh-sdkman"
-
+antigen bundle "unkontributors/super_unko"
 antigen apply
 
 # ----------------------------------------------
