@@ -72,6 +72,9 @@ HISTTIMEFORMAT="[%Y/%M/%D %H:%M:%S] "
 # Key bindings
 # (This settings should be earlyer than antigen)
 #--------------------
+## Use emacs key bindings
+bindkey -e
+
 #入力途中の履歴補完
 bindkey "^P" history-beginning-search-backward-end
 bindkey "^N" history-beginning-search-forward-end
@@ -85,7 +88,7 @@ bindkey '^R' history-incremental-pattern-search-backward
 bindkey '^S' history-incremental-pattern-search-forward
 
 # Ctrl + U has same behavior as bash.
-bindkey '^U' backward-kill-line
+bindkey \^U backward-kill-line
 
 # C-^ で一つ上のディレクトリへ
 function cdup() {
@@ -97,7 +100,6 @@ function cdup() {
 zle -N cdup
 bindkey '^^' cdup
 
-
 #--------------------
 # antigen
 # (because zplug does not work on docker)
@@ -106,7 +108,9 @@ bindkey '^^' cdup
 source $HOME/repos/zsh-users/antigen/antigen.zsh
 # Edit misc.zsh by following https://stackoverflow.com/questions/25614613/how-to-disable-zsh-substitution-autocomplete-with-url-and-backslashes
 # Or, special characters will be automatically escaped.
-antigen use oh-my-zsh
+# Disable oh-my-zsh to set ls's alias as expected
+
+# antigen use oh-my-zsh
 
 # Use oh-my-zsh plugins
 antigen bundle heroku
@@ -117,12 +121,13 @@ antigen bundle "zsh-users/zsh-syntax-highlighting"
 antigen bundle "zsh-users/zsh-completions"
 antigen bundle "greymd/cureutils"
 antigen bundle "greymd/docker-zsh-completion"
+antigen bundle "nnao45/zsh-kubectl-completion"
 antigen bundle "greymd/tmux-xpanes"
-antigen bundle "greymd/eclim-cli"
-antigen bundle "greymd/confl"
+# antigen bundle "greymd/eclim-cli"
+# antigen bundle "greymd/confl"
 antigen bundle "greymd/awless-zsh-completion"
 antigen bundle "nobeans/zsh-sdkman"
-
+antigen bundle "unkontributors/super_unko"
 antigen apply
 
 # ----------------------------------------------

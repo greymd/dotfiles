@@ -20,12 +20,13 @@ unamestr=$(uname | grep -oiE '(Darwin|CYGWIN|Linux)')
 
 if [[ $unamestr == 'Darwin' ]]; then
   VIMPATH="/Applications/MacVim.app/Contents/MacOS"
-  alias ls='ls -G' #BSD version ls
+  alias ls='/bin/ls -G' #BSD version ls
   alias updatedb='sudo /usr/libexec/locate.updatedb'
   alias egison-euler="egison -l $__GRE_REPOSITORY_DIR/project-euler/lib/math/project-euler.egi -l $__GRE_REPOSITORY_DIR/prime-numbers/lib/math/prime-numbers.egi"
   alias p='pbcopy'
   alias factor='gfactor'
   alias shuf='gshuf'
+  alias gparallel='/usr/local/opt/parallel/bin/parallel'
   alias chrome="/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome"
   alias vscode="/Applications/Visual\ Studio\ Code.app/Contents/Resources/app/bin/code"
   alias vlc="/Applications/VLC.app/Contents/MacOS/VLC"
@@ -144,18 +145,20 @@ alias ssld-key='openssl rsa -text -noout -in'
 alias ssld-csr='openssl req -text -noout -in'
 # usage $ ssl-cacert-dump filename
 alias ssld-cacert='keytool -v -list -storepass changeit -keystore'
-alias fuck='eval $(thefuck $(fc -ln -1 | tail -n 1)); fc -R'
 # alias pt='pt -i'
+alias terminal-slack="node ${HOME}/repos/evanyeung/terminal-slack/main.js"
 
 # Ref: http://qiita.com/greymd/items/ad18aa44d4159067a627
 alias pict-format="column -s$'\t' -t | tee >(sed -n '1,1p') | sed '1,1d' | sort"
 alias h2-cli='java -cp /Applications/h2/bin/h2-1.4.191.jar org.h2.tools.Shell -url jdbc:h2:./data -user sa'
+
+alias fuck='eval $(thefuck $(fc -ln -1 | tail -n 1)); fc -R'
 alias 蒸着="sudo -s"
 alias octave='octave --no-gui'
-
-alias terminal-slack="node ${HOME}/repos/evanyeung/terminal-slack/main.js"
-
 alias ginza='python3 -m spacy.lang.ja_ginza.cli'
+alias katakoto='mecab -Owakati | mecab -Oyomi'
+
+alias satysfi='docker run --rm -v $PWD:/satysfi amutake/satysfi:latest satysfi'
 
 #--------------------
 # Update PATH variable
@@ -182,32 +185,27 @@ __add_path "$HOME/.embulk/bin"
 __add_path "$HOME/.cabal/bin"
 __add_path "$HOME/.composer/vendor/bin"
 __add_path "$HOME/.egison/bin"
-__add_path "$HOME/.nodebrew/current/bin"
+# __add_path "$HOME/.nodebrew/current/bin"
+__add_path "$HOME/.nodenv/shims"
 __add_path "/usr/games" # For Ubuntu
 __add_path "/usr/local/sbin"
 __add_path "/usr/local/opt/icu4c/bin"
 __add_path "/usr/local/opt/icu4c/sbin"
 __add_path "$HOME/.cargo/bin"
 __add_path "/usr/local/texlive/2018/bin/x86_64-darwin" # For Darwin TeX
+__add_path "/usr/local/opt/coreutils/libexec/gnubin" # For coreutils on macOS
+__add_path "/usr/local/opt/grep/libexec/gnubin"
+__add_path "/usr/local/opt/gnu-sed/libexec/gnubin"
+__add_path "$HOME/go/bin"
+__add_path "$HOME/.go/bin"
+__add_path "/Applications/calibre.app/Contents/MacOS"
 
 # __add_path "/usr/local/opt/coreutils/libexec/gnubin"
 
 #--------------------
 # Go
 #--------------------
-_target_path="$HOME/.go"
-if [ -e "$_target_path" ]; then
-  export GOPATH="$_target_path"
-  export GOBIN="$_target_path/bin"
-  export PATH="$GOPATH/bin:$PATH"
-else
-  _target_path="$HOME/go"
-  if [ -e "$_target_path" ]; then
-    export GOPATH="$_target_path"
-    export GOBIN="$_target_path/bin"
-    export PATH="$GOPATH/bin:$PATH"
-  fi
-fi
+export GO111MODULE=on
 
 #--------------------
 # Python
@@ -254,6 +252,9 @@ nvm() {
     export NVM_DIR="$HOME/.nvm"
     [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm
     [ -s "$NVM_DIR/bash_completion" ] && [ -n "$BASH_VERSION" ] && . "$NVM_DIR/bash_completion"
+    ## For brew
+    [ -s "/usr/local/opt/nvm/nvm.sh" ] && . "/usr/local/opt/nvm/nvm.sh"  # This loads nvm
+    [ -s "/usr/local/opt/nvm/etc/bash_completion.d/nvm" ] && . "/usr/local/opt/nvm/etc/bash_completion.d/nvm"  # This loads nvm bash_completion
     nvm "$@"
 }
 
@@ -273,7 +274,7 @@ jex () {
 }
 
 _jshell () {
-  "$HOME/.sdkman/candidates/java/11.0.1-open/bin/jshell" "$@"
+  "$HOME/.sdkman/candidates/java/current/bin/jshell" "$@"
 }
 
 jshell () {
@@ -322,7 +323,7 @@ sdk () {
 mvn-instant() {
   local _name=${1:-$(faker-cli --hacker noun | tr -d '[ "]')}
   local _artifactId=$(echo $_name | sed 's/^./\U&/')
-  yes $'\n' | gmvn archetype:generate -DgroupId=com.$_name -DartifactId=$_artifactId
+  yes $'\n' | mvn archetype:generate -DgroupId=com.$_name -DartifactId=$_artifactId
     cd $_artifactId
   # mkdir -p $_artifactId/src/resources
   # touch $_artifactId/src/resources/application.properties
@@ -701,7 +702,7 @@ str2ncrhex () {
 
 # String to Unicode Escapse Sequence
 str2ues () {
-  nkf -w16B0 | od -tx1 -An | tr -dc '[:alnum:]' | fold -w 4 | sed 's/^/\\u/g' | tr -d '\n' | awk 1
+  nkf -w16B0 | od -v -tx1 -An | tr -dc '[:alnum:]' | fold -w 4 | sed 's/^/\\u/g' | tr -d '\n' | awk 1
   # nkf -w16B0
 }
 
@@ -709,7 +710,8 @@ str2ues () {
 # printf "%s" '\u3046\u3093\u3053\u000a' | ues2str
 # But just echo command supports UES. It might not be the necessary feature.
 ues2str () {
-  sed -r "s/\\\\u(....)/\&#x\1;/g" | ncrhex2str
+  # sed -r "s/\\\\u(....)/\&#x\1;/g" | ncrhex2str
+  sed -E 's/\\u(....)/\1/g'| xxd -r -p | iconv -f UTF-16BE -t UTF-8
 }
 
 # Ref: http://qiita.com/ryo0301/items/7c7b3571d71b934af3f8
@@ -1058,6 +1060,12 @@ hub-clone () {
   cd "$_repo_path/$_user/$_repo"
 }
 
+hub-get () {
+  local _gopath="$(go env GOPATH)"
+  GO111MODULE=off go get -u "github.com/$1"
+  cd "$_gopath/src/github.com/$1"
+}
+
 fnd () {
   find "$PWD" | grep "${1-}"
 }
@@ -1314,7 +1322,20 @@ ssm () {
 }
 
 shellgeibot () {
-  docker run -m 10M -v "$PWD/images":/images -it greymd/shellgeibot bash -c "$1"
+  local _name
+  local _exefile="$1"
+  _name="$(</dev/urandom tr -dc 'a-zA-Z0-9' | fold -w 16 | head -n 1)"
+  cp "$_exefile" "/tmp/$_name"
+  docker run --rm \
+    --net=none \
+    -m 10M \
+    --oom-kill-disable \
+    --pids-limit 1024 \
+    --cap-add sys_ptrace \
+    --name "$_name" \
+    -v "/tmp/$_name:/$_name" -v "$PWD/images":/images theoldmoon0602/shellgeibot \
+    bash -c "chmod +x /$_name && sync && ./$_name; echo \$? | head -c 100K"
+  rm -f "/tmp/$_name"
 }
 
 nandoku () {
@@ -1330,4 +1351,34 @@ nandoku () {
        -e 's/9/$[$_$?-$_]/g'
 }
 
+kingunko() {
+  unko.tower -s 💩 4 | sed -e'3s/💩/👁/'{2,3} -e'4s/💩/👃/4' -e'5s/💩/👄/5' -e's/人/👑/'
+}
+
+propgrep () {
+  local _ues=$(printf '%s' "$1" | nkf -w16B0 | od -v -tx1 -An | tr -dc '[:alnum:]' | fold -w 4 | sed 's/^/\\\\u/g' | tr -d '\n')
+  grep -r -e "$1" -e "$_ues"
+}
+
+bssh () {
+  ssh -t "$@" 'bash --rcfile <( echo '$(cat ~/.bashrc | base64 | tr -d '\n' )' | base64 --decode)'
+}
+
+# kubectl () {
+#   source "/usr/local/opt/kube-ps1/share/kube-ps1.sh"
+#   export PS1='$(kube_ps1)'$PS1
+#   kubectl ${1+"$@"}
+# }
+
+## convert ogg file to mp3 keeping metadata
+ogg2mp3 () {
+  ffmpeg -vn -n -i "$1" -c:a libmp3lame -q:a 1 -ar 44100 -map_metadata 0:s:0 -id3v2_version 3 "$2"
+}
+
+corona () {
+  curl -so- https://corona-stats.online/${1-}
+}
+
 export TMUX_XPANES_SMSG=""
+export GO111MODULE=auto
+eval "$(nodenv init -)"
