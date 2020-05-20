@@ -229,6 +229,8 @@ let g:go_highlight_build_constraints = 1
 let g:go_textobj_enabled = 1
 let g:go_auto_type_info = 1 " :GoInfo
 let g:go_auto_sameids = 0 " :GoSameIds
+let g:go_def_mode='gopls'
+let g:go_info_mode='gopls'
 let g:go_list_type = "quickfix"
 let g:go_fmt_command = "goimports"
 let g:syntastic_go_checkers = ['go', 'golint', 'govet', 'errcheck']
@@ -246,12 +248,17 @@ autocmd Filetype go command! -bang GDD execute ":GoDeclsDir"
 " :GoChannelPeers
 " :GoCallers
 " :GoRename
+:setl omnifunc=go#complete#Complete
 call dein#add('AndrewRadev/splitjoin.vim')
 
 " json
 call dein#add('elzr/vim-json')
 " In json, do not hide quotation (http://yuzuemon.hatenablog.com/entry/2015/01/15/035759)
 let g:vim_json_syntax_conceal = 0
+
+" LaTeX
+" In LaTeX, do not hide characters
+let g:tex_conceal = ""
 
 " For Java IDE
 " Ref: http://www.lucianofiandesio.com/vim-configuration-for-happy-java-coding
@@ -270,6 +277,12 @@ call dein#add('qpkorr/vim-bufkill')
 
 " Sushibar
 " call dein#add('pocke/sushibar.vim')
+
+" Rust
+call dein#add('rust-lang/rust.vim')
+call dein#add('rhysd/rust-doc.vim')
+
+
 
 call dein#end()
 

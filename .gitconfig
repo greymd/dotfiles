@@ -6,7 +6,7 @@
 [alias]
 	fpr = "!f() { git fetch origin pull/$1/head:pr/$1; }; f"
 [core]
-	excludesfile = ~/.gitignore_global
+	excludesfile = /Users/yasyam/.gitignore_global
 	autocrlf = input
 	safecrlf = false
 	editor = vim

@@ -72,6 +72,9 @@ HISTTIMEFORMAT="[%Y/%M/%D %H:%M:%S] "
 # Key bindings
 # (This settings should be earlyer than antigen)
 #--------------------
+## Use emacs key bindings
+bindkey -e
+
 #入力途中の履歴補完
 bindkey "^P" history-beginning-search-backward-end
 bindkey "^N" history-beginning-search-forward-end
@@ -85,7 +88,7 @@ bindkey '^R' history-incremental-pattern-search-backward
 bindkey '^S' history-incremental-pattern-search-forward
 
 # Ctrl + U has same behavior as bash.
-bindkey '^U' backward-kill-line
+bindkey \^U backward-kill-line
 
 # C-^ で一つ上のディレクトリへ
 function cdup() {
@@ -96,9 +99,6 @@ function cdup() {
 
 zle -N cdup
 bindkey '^^' cdup
-
-# Use emacs key bindings
-bindkey -e
 
 #--------------------
 # antigen

@@ -26,6 +26,7 @@ if [[ $unamestr == 'Darwin' ]]; then
   alias p='pbcopy'
   alias factor='gfactor'
   alias shuf='gshuf'
+  alias gparallel='/usr/local/opt/parallel/bin/parallel'
   alias chrome="/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome"
   alias vscode="/Applications/Visual\ Studio\ Code.app/Contents/Resources/app/bin/code"
   alias vlc="/Applications/VLC.app/Contents/MacOS/VLC"
@@ -157,6 +158,8 @@ alias octave='octave --no-gui'
 alias ginza='python3 -m spacy.lang.ja_ginza.cli'
 alias katakoto='mecab -Owakati | mecab -Oyomi'
 
+alias satysfi='docker run --rm -v $PWD:/satysfi amutake/satysfi:latest satysfi'
+
 #--------------------
 # Update PATH variable
 #--------------------
@@ -182,7 +185,8 @@ __add_path "$HOME/.embulk/bin"
 __add_path "$HOME/.cabal/bin"
 __add_path "$HOME/.composer/vendor/bin"
 __add_path "$HOME/.egison/bin"
-__add_path "$HOME/.nodebrew/current/bin"
+# __add_path "$HOME/.nodebrew/current/bin"
+__add_path "$HOME/.nodenv/shims"
 __add_path "/usr/games" # For Ubuntu
 __add_path "/usr/local/sbin"
 __add_path "/usr/local/opt/icu4c/bin"
@@ -194,6 +198,7 @@ __add_path "/usr/local/opt/grep/libexec/gnubin"
 __add_path "/usr/local/opt/gnu-sed/libexec/gnubin"
 __add_path "$HOME/go/bin"
 __add_path "$HOME/.go/bin"
+__add_path "/Applications/calibre.app/Contents/MacOS"
 
 # __add_path "/usr/local/opt/coreutils/libexec/gnubin"
 
@@ -247,6 +252,9 @@ nvm() {
     export NVM_DIR="$HOME/.nvm"
     [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm
     [ -s "$NVM_DIR/bash_completion" ] && [ -n "$BASH_VERSION" ] && . "$NVM_DIR/bash_completion"
+    ## For brew
+    [ -s "/usr/local/opt/nvm/nvm.sh" ] && . "/usr/local/opt/nvm/nvm.sh"  # This loads nvm
+    [ -s "/usr/local/opt/nvm/etc/bash_completion.d/nvm" ] && . "/usr/local/opt/nvm/etc/bash_completion.d/nvm"  # This loads nvm bash_completion
     nvm "$@"
 }
 
@@ -266,7 +274,7 @@ jex () {
 }
 
 _jshell () {
-  "$HOME/.sdkman/candidates/java/9.0.0-zulu/bin/jshell" "$@"
+  "$HOME/.sdkman/candidates/java/current/bin/jshell" "$@"
 }
 
 jshell () {
@@ -1356,4 +1364,21 @@ bssh () {
   ssh -t "$@" 'bash --rcfile <( echo '$(cat ~/.bashrc | base64 | tr -d '\n' )' | base64 --decode)'
 }
 
+# kubectl () {
+#   source "/usr/local/opt/kube-ps1/share/kube-ps1.sh"
+#   export PS1='$(kube_ps1)'$PS1
+#   kubectl ${1+"$@"}
+# }
+
+## convert ogg file to mp3 keeping metadata
+ogg2mp3 () {
+  ffmpeg -vn -n -i "$1" -c:a libmp3lame -q:a 1 -ar 44100 -map_metadata 0:s:0 -id3v2_version 3 "$2"
+}
+
+corona () {
+  curl -so- https://corona-stats.online/${1-}
+}
+
 export TMUX_XPANES_SMSG=""
+export GO111MODULE=auto
+eval "$(nodenv init -)"
