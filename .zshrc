@@ -472,7 +472,7 @@ elif [[ $unamestr == 'Linux' ]]; then
     PROMPT='${new_line}%{$fg[green]%}%B%~%b $(vcs_echo)${new_line}%(!.%F{red}#%f.$)%b '
   else
     # Simple one
-    PROMPT='${new_line}%F{${_UNIQ_FGCOLOR}}%B%~%b $(vcs_echo)${new_line}%{${reset_color}%}%(!.%F{red}#%f.$)%b '
+    PROMPT='${new_line}%F{${_UNIQ_FGCOLOR}}%B%~%b%f $(vcs_echo)${new_line}%(!.%F{red}#%f.$)%b '
   fi
 fi
 
