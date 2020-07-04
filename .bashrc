@@ -1383,4 +1383,4 @@ corona () {
 
 export TMUX_XPANES_SMSG=""
 export GO111MODULE=auto
-eval "$(nodenv init -)"
+# eval "$(nodenv init -)"

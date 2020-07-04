@@ -8,3 +8,4 @@ if [ -f "${__GRE_REPOSITORY_DIR}/scop/bash-completion/bash_completion" ] && [ -n
 fi
 
 export PATH="$HOME/.cargo/bin:$PATH"
+export PS1="\W \$ "

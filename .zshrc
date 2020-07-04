@@ -429,6 +429,29 @@ function vcs_echo {
 # Zsh Appearance
 #--------------------
 
+function adjustcolor() {
+  local _bgval_dec="$1"
+  # 0-255 => 0-215
+  _bgval_dec_clipped=$(( 215 * _bgval_dec / 255 ))
+  # 0-215 => 16-231
+  _bgval_dec=$(( _bgval_dec_clipped + 16))
+  if (( ( _bgval_dec_clipped / 18 ) % 2 == 0 )) ;then
+    _bgval_dec=$((_bgval_dec + 18))
+  fi
+  printf '%d\n' "$_bgval_dec"
+}
+
+function getfgcolor () {
+  local _bgval_dec
+  local _bgval_hex
+  local _host=${HOST:-"$(hostname)"}
+  _bgval_hex=$(printf "%s\\n" "$_host" | sha1sum | cut -c1-2)
+  _bgval_dec=$(adjustcolor "$((16#$_bgval_hex))")
+  printf "%s" "$_bgval_dec"
+}
+
+_UNIQ_FGCOLOR=$(getfgcolor)
+
 # Prompot appearance
 new_line='
 '
@@ -449,7 +472,7 @@ elif [[ $unamestr == 'Linux' ]]; then
     PROMPT='${new_line}%{$fg[green]%}%B%~%b $(vcs_echo)${new_line}%(!.%F{red}#%f.$)%b '
   else
     # Simple one
-    PROMPT='${new_line}%{$fg[green]%}%B%~%b $(vcs_echo)${new_line}%(!.%F{red}#%f.$)%b '
+    PROMPT='${new_line}%F{${_UNIQ_FGCOLOR}}%B%~%b%f $(vcs_echo)${new_line}%(!.%F{red}#%f.$)%b '
   fi
 fi
 
