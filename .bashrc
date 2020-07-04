@@ -30,6 +30,7 @@ if [[ $unamestr == 'Darwin' ]]; then
   alias chrome="/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome"
   alias vscode="/Applications/Visual\ Studio\ Code.app/Contents/Resources/app/bin/code"
   alias vlc="/Applications/VLC.app/Contents/MacOS/VLC"
+  alias ldd="otool -L"
   export ECLIPSE_HOME="$HOME/eclipse"
 
   mplayx () {
@@ -199,6 +200,7 @@ __add_path "/usr/local/opt/gnu-sed/libexec/gnubin"
 __add_path "$HOME/go/bin"
 __add_path "$HOME/.go/bin"
 __add_path "/Applications/calibre.app/Contents/MacOS"
+__add_path "/usr/local/opt/qt/bin"
 
 # __add_path "/usr/local/opt/coreutils/libexec/gnubin"
 

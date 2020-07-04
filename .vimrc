@@ -101,9 +101,10 @@ call dein#add('terryma/vim-multiple-cursors')
 
 " For CSV file
 call dein#add('chrisbra/csv.vim')
+
 " http://qiita.com/rbtnn/items/3830c1ca7d65725046ed
-call dein#add('rbtnn/rabbit-ui.vim')
-call dein#add('rbtnn/rabbit-ui-collection.vim')
+" call dein#add('rbtnn/rabbit-ui.vim')
+" call dein#add('rbtnn/rabbit-ui-collection.vim')
 
 if os=="win" || os=="linux"
   call dein#add('drmikehenry/vim-fontsize')
@@ -279,10 +280,17 @@ call dein#add('qpkorr/vim-bufkill')
 " call dein#add('pocke/sushibar.vim')
 
 " Rust
-call dein#add('rust-lang/rust.vim')
+" call dein#add('rust-lang/rust.vim')
 call dein#add('rhysd/rust-doc.vim')
 
+call dein#add('autozimu/LanguageClient-neovim', {
+    \ 'rev': 'next',
+    \ 'build': 'bash install.sh',
+    \ })
 
+let g:LanguageClient_serverCommands = {
+\ 'rust': ['rust-analyzer'],
+\ }
 
 call dein#end()
 
