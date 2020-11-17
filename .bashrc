@@ -604,6 +604,8 @@ pt-gvim(){
 # _xpns_opt3="set {}"
 # alias xpanes='xpanes -s -B "${_xpns_opt1}" -B "${_xpns_opt2}" -B "${_xpns_opt3}"'
 # alias xpanes='xpanes -s -B "set {}"'
+# _cmd='stty `tmux display-message -p "rows #{pane_height} cols #{pane_width}"`'
+# alias xpanes="xpanes -B '${_cmd}'"
 
 # Open multiple files with vim from pt result.
 pt-xpanes(){
