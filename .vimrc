@@ -299,6 +299,7 @@ autocmd FileType rust nnoremap <silent> <leader>R :call LanguageClient_textDocum
 autocmd FileType rust nnoremap <silent> <leader>F :call LanguageClient_textDocument_formatting()<CR>
 autocmd FileType rust nnoremap <silent> <leader>S :call LanguageClient_textDocument_documentSymbol()<CR>
 autocmd FileType rust nnoremap <silent> <leader>C :call LanguageClient_textDocument_codeAction()<CR>
+" Rust: C-x + o is completion
 
 call dein#end()
 
@@ -400,6 +401,11 @@ noremap <leader>" i"<ESC>ea"<ESC>
 noremap <leader>' i'<ESC>ea'<ESC>
 noremap <leader>o :Unite outline -start-insert<cr>
 noremap <leader>y :Oscyank<cr>
+
+" TeX
+autocmd FileType tex noremap <leader>i veyea\index{<ESC>pa}<ESC>
+autocmd FileType tex noremap <leader>v i\verb\|<ESC>ea\|<ESC>
+autocmd FileType tex noremap <leader>t i\textbf{<ESC>ea}<ESC>
 
 " #######################################
 " ################ eclim ################
@@ -810,4 +816,5 @@ if os=="win"
   set shellcmdflag=--login\ -c
   set shellxquote=\"
 endif
+
 

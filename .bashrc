@@ -32,6 +32,7 @@ if [[ $unamestr == 'Darwin' ]]; then
   alias vlc="/Applications/VLC.app/Contents/MacOS/VLC"
   alias ldd="otool -L"
   export ECLIPSE_HOME="$HOME/eclipse"
+  export PATH="/usr/local/opt/zip/bin:$PATH"
 
   mplayx () {
     kill $(pgrep MPlayerX)
@@ -125,6 +126,7 @@ alias g='git'
 alias gr='grep'
 alias gm='git commit -m '
 alias gpom='git push origin master'
+# alias xpanes='xpanes -B "stty \`tmux display-message -p \"rows #{pane_height} cols #{pane_width}\"\`"'
 
 #remove control character
 alias rmcc='perl -pe '"'"'s/\e([^\[\]]|\[.*?[a-zA-Z]|\].*?\a)//g'"'"' | col -b'
@@ -201,7 +203,9 @@ __add_path "$HOME/go/bin"
 __add_path "$HOME/.go/bin"
 __add_path "/Applications/calibre.app/Contents/MacOS"
 __add_path "/usr/local/opt/qt/bin"
-
+__add_path "/opt/local/bin"
+__add_path "/opt/local/sbin"
+# __add_path "$HOME/Library/Python/2.7/bin"
 # __add_path "/usr/local/opt/coreutils/libexec/gnubin"
 
 #--------------------

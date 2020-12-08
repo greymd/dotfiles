@@ -9,3 +9,4 @@ fi
 
 export PATH="$HOME/.cargo/bin:$PATH"
 export PS1="\W \$ "
+export PATH="/opt/local/bin:/opt/local/sbin:$PATH"
