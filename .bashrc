@@ -1374,6 +1374,10 @@ bssh () {
   ssh -t "$@" 'bash --rcfile <( echo '$(cat ~/.bashrc | base64 | tr -d '\n' )' | base64 --decode)'
 }
 
+euclid () {
+  awk '{x=$1;y=$2;r=x%y;while(r!=0){x=y;y=r;r=x%y}; print y}'
+}
+
 # kubectl () {
 #   source "/usr/local/opt/kube-ps1/share/kube-ps1.sh"
 #   export PS1='$(kube_ps1)'$PS1
