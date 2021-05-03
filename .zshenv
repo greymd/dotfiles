@@ -7,3 +7,4 @@ fi
 
 autoload -U compdef
 source "$HOME/.profile"
+source "$HOME/.cargo/env"
