@@ -1375,7 +1375,7 @@ bssh () {
 }
 
 euclid () {
-  awk '{x=$1;y=$2;r=x%y;while(r!=0){x=y;y=r;r=x%y}; print y}'
+  awk '{m=$1;n=$2;while (n = m % (m = n));print m}'
 }
 
 # kubectl () {
