@@ -5,6 +5,7 @@ export HISTSIZE=1000000
 export HISTFILESIZE=1000000
 export SAVEHIST=1000000
 export TMUX_XPANES_PANE_BORDER_FORMAT="#[bg=green,fg=black] #T#{?pane_pipe,[Log],} #[default]"
+export EDITOR=vim
 
 # __GRE_REPOSITORY_DIR environment variable is defined on .profile.
 export PS1="\W \$ "
@@ -190,6 +191,7 @@ __add_path "$HOME/.composer/vendor/bin"
 __add_path "$HOME/.egison/bin"
 # __add_path "$HOME/.nodebrew/current/bin"
 __add_path "$HOME/.nodenv/shims"
+__add_path "$HOME/.glue/bin"
 __add_path "/usr/games" # For Ubuntu
 __add_path "/usr/local/sbin"
 __add_path "/usr/local/opt/icu4c/bin"
@@ -1372,6 +1374,10 @@ bssh () {
   ssh -t "$@" 'bash --rcfile <( echo '$(cat ~/.bashrc | base64 | tr -d '\n' )' | base64 --decode)'
 }
 
+euclid () {
+  awk '{m=$1;n=$2;while (n = m % (m = n));print m}'
+}
+
 # kubectl () {
 #   source "/usr/local/opt/kube-ps1/share/kube-ps1.sh"
 #   export PS1='$(kube_ps1)'$PS1
@@ -1390,3 +1396,6 @@ corona () {
 export TMUX_XPANES_SMSG=""
 export GO111MODULE=auto
 # eval "$(nodenv init -)"
+
+makerepo () { mkdir "$1" && cd "$1" && echo "# $1" > README.md && git init && git add README.md && git commit -m 'Initial commit'; }
+source "$HOME/.cargo/env"
