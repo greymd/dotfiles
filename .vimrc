@@ -104,7 +104,7 @@ call dein#add('alpicola/vim-egison')
 call dein#add('CORDEA/vim-glue')
 call dein#add('bronson/vim-trailing-whitespace')
 call dein#add('greymd/oscyank.vim')
-
+call dein#add('posva/vim-vue')
 
 " MultiCursors
 call dein#add('terryma/vim-multiple-cursors')
