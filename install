@@ -1,0 +1,42 @@
+#!/bin/bash
+set -ux
+
+check_depends() {
+  for cmd in "$@"; do
+    if ! type "${cmd}" > /dev/null 2>&1; then
+      echo "'${cmd}' does not exist." >&2
+      exit 1
+    fi
+  done
+}
+
+main() {
+  check_depends zsh vim git curl
+
+  ## Dotfiles
+  mkdir -p "$HOME"/repos/greymd && \
+    git clone https://github.com/greymd/dotfiles.git "$HOME"/repos/greymd/dotfiles && \
+    cd "$HOME"/repos/greymd/dotfiles && \
+    ls -a | grep '^\.'  | grep -vFw '.' | grep -v '^\.git$' | sed 's|^|rm -f $HOME/|' | sh && \
+    ls -a | grep '^\.' | grep -v '^\.git$' | grep -vwF '.' | sed 's/^.*/echo ln -s $(pwd)\/& $HOME\/&/' | sh | sh
+
+    mkdir -p "$HOME"/repos/zsh-users/antigen && \
+      git clone https://github.com/zsh-users/antigen.git "$HOME"/repos/zsh-users/antigen
+
+  ## Zsh
+  zsh --rcs "$HOME"/.zshrc -c 'antigen-update'
+
+  ## Vim
+  mkdir -p "$HOME"/.cache/dein && \
+    curl -L https://raw.githubusercontent.com/Shougo/dein.vim/master/bin/installer.sh > "$HOME"/installer.sh && \
+    sh "$HOME"/installer.sh "$HOME"/.cache/dein && \
+    rm "$HOME"/installer.sh
+    # Install dein plugins
+    yes | vim -c ":silent call dein#install() | :q"
+    # Create vimproc_linux64.so for vimproc
+    cd "$HOME"/.cache/dein/repos/github.com/Shougo/vimproc.vim && make
+    # Install Go dependencies
+    vim -c ":GoInstallBinaries" -c ":q!"
+}
+
+main ${1+"$@"}
