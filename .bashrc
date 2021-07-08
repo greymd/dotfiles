@@ -1431,4 +1431,4 @@ export GO111MODULE=auto
 # eval "$(nodenv init -)"
 
 makerepo () { mkdir "$1" && cd "$1" && echo "# $1" > README.md && git init && git add README.md && git commit -m 'Initial commit'; }
-source "$HOME/.cargo/env"
+# source "$HOME/.cargo/env"

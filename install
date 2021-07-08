@@ -1,5 +1,5 @@
 #!/bin/bash
-set -ux
+set -u
 
 check_depends() {
   for cmd in "$@"; do
@@ -11,7 +11,8 @@ check_depends() {
 }
 
 main() {
-  check_depends zsh vim git curl
+  check_depends zsh vim git curl make gcc
+  ## make and gcc are required to build vimproc
 
   ## Dotfiles
   mkdir -p "$HOME"/repos/greymd && \
