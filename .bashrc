@@ -33,6 +33,7 @@ if [[ $unamestr == 'Darwin' ]]; then
   alias ldd="otool -L"
   export ECLIPSE_HOME="$HOME/eclipse"
   export PATH="/usr/local/opt/zip/bin:$PATH"
+  export PATH="$HOME/Library/Python/3.9/bin:$PATH"
 
   mplayx () {
     kill $(pgrep MPlayerX)
@@ -189,7 +190,10 @@ __add_path "$HOME/.cabal/bin"
 __add_path "$HOME/.composer/vendor/bin"
 __add_path "$HOME/.egison/bin"
 # __add_path "$HOME/.nodebrew/current/bin"
-__add_path "$HOME/.nodenv/shims"
+if [[ -e "$HOME/.nodenv/version" ]]; then
+  __add_path "$HOME/.nodenv/shims"
+  __add_path "$HOME/.nodenv/versions/$(<"$HOME/.nodenv/version")/bin"
+fi
 __add_path "/usr/games" # For Ubuntu
 __add_path "/usr/local/sbin"
 __add_path "/usr/local/opt/icu4c/bin"
@@ -205,8 +209,10 @@ __add_path "/Applications/calibre.app/Contents/MacOS"
 __add_path "/usr/local/opt/qt/bin"
 __add_path "/opt/local/bin"
 __add_path "/opt/local/sbin"
+export PATH="$HOME/bin/texinfo/bin/bin:$PATH"
 # __add_path "$HOME/Library/Python/2.7/bin"
 # __add_path "/usr/local/opt/coreutils/libexec/gnubin"
+__add_path "$HOME/google-cloud-sdk/bin"
 
 #--------------------
 # Go
@@ -694,7 +700,11 @@ sed-conv () {
 }
 
 urlenc() {
-  od -An -v -tx1 | awk 'NF{OFS="%";$1=$1;print "%"$0}' | tr '[:lower:]' '[:upper:]'
+  od -An -v -tx1 | awk 'NF{OFS="%";$1=$1;printf("%s","%"$0)}' | tr '[:lower:]' '[:upper:]'
+}
+
+urldec() {
+  tr -d '\n' | sed 's/%/\\\\x/g' | xargs -I@ bash -c "printf \"%s\" $'@'"
 }
 
 # Numeric character refernce to string
@@ -1385,6 +1395,27 @@ ogg2mp3 () {
 
 corona () {
   curl -so- https://corona-stats.online/${1-}
+}
+
+wav2mp3 () {
+  local _file="${1}"
+  ffmpeg -i "${_file}" -vn -ar 44100 -ac 2 -b:a 192k "${_file/.???}.mp3"
+}
+
+ssh-ssm () {
+  ssh -o ProxyCommand="sh -c \"aws ssm start-session  --region eu-west-1 --target %h --document-name AWS-StartSSHSession --parameters 'portNumber=%p'\"" "$@"
+}
+
+sshrc () {
+  ssh -t 'bash --rcfile <( printf "%s" '$(cat $HOME/.bashrc |base64)'|base64 -d)' "$@"
+}
+
+diffsec () {
+  local _start="$1"
+  shift
+  local _end="$1"
+  read -r _small _big < <(printf '%s\n%s\n' "$(date -d "$_end" +%s)" "$(date -d "$_start" +%s)" | sort -n | xargs)
+  printf '%s\n' "$_big - $_small" | bc -l
 }
 
 export TMUX_XPANES_SMSG=""
