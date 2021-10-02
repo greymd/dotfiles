@@ -165,6 +165,22 @@ alias katakoto='mecab -Owakati | mecab -Oyomi'
 
 alias satysfi='docker run --rm -v $PWD:/satysfi amutake/satysfi:latest satysfi'
 
+transpose() {
+  awk '{for(i=1;i<=NF;i++)a[i][NR]=$i}END{for(i in a)for(j in a[i])printf"%s"(j==NR?"\n":FS),a[i][j]}'
+}
+
+rev_field() {
+  awk '{for(i=NF;i>=1;i--){printf("%s"(i==1?"\n":FS), $i)}}'
+}
+
+rot90() {
+  transpose | rev_field
+}
+
+k () {
+  kubectl "$@" --all-namespaces
+}
+
 #--------------------
 # Update PATH variable
 #--------------------
@@ -191,6 +207,7 @@ __add_path "$HOME/.cabal/bin"
 __add_path "$HOME/.composer/vendor/bin"
 __add_path "$HOME/.egison/bin"
 # __add_path "$HOME/.nodebrew/current/bin"
+__add_path "$HOME/.local/bin"
 if [[ -e "$HOME/.nodenv/version" ]]; then
   __add_path "$HOME/.nodenv/shims"
   __add_path "$HOME/.nodenv/versions/$(<"$HOME/.nodenv/version")/bin"
