@@ -86,7 +86,7 @@ if [[ $unamestr == 'Darwin' ]]; then
   }
 
   unix2time () {
-    gdate -d "@$1" +%Y-%m-%d_%H:%M:%S
+    TZ=UTC gdate -d "@$1" +"%FT%TZ"
   }
 
   time2unix () {
@@ -1335,6 +1335,11 @@ ByteMin2MibSec () {
   printf "%s\\n" "scale=2; $1 / 60 / 1024 / 1024" | tr -d , | bc -l | sed 's:$: MiB/s:'
 }
 
+Byte5Min2MibSec () {
+  printf "%s" "$1 bytes/5min = "
+  printf "%s\\n" "scale=2; $1 / 300 / 1024 / 1024" | tr -d , | bc -l | sed 's:$: MiB/s:'
+}
+
 tmux-title () {
     printf "\\033]2;%s\\033\\\\" "$1"
 }
@@ -1432,3 +1437,11 @@ export GO111MODULE=auto
 
 makerepo () { mkdir "$1" && cd "$1" && echo "# $1" > README.md && git init && git add README.md && git commit -m 'Initial commit'; }
 # source "$HOME/.cargo/env"
+
+calc () {
+  printf '%s\n' "$*" | bc -l
+}
+
+permutation () {
+  python3 -c 'import sys,itertools; a=itertools.permutations([x.strip() for x in sys.stdin]);[print(" ".join(x)) for x in a]'
+}
