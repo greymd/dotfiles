@@ -292,13 +292,12 @@ call dein#add('qpkorr/vim-bufkill')
 " Rust
 " call dein#add('rust-lang/rust.vim')
 " call dein#add('rhysd/rust-doc.vim')
-
-autocmd FileType rust nnoremap <silent> gh :call LanguageClient_textDocument_hover()<CR>
-autocmd FileType rust nnoremap <silent> gd :call LanguageClient_textDocument_definition()<CR>
-autocmd FileType rust nnoremap <silent> <leader>R :call LanguageClient_textDocument_rename()<CR>
-autocmd FileType rust nnoremap <silent> <leader>F :call LanguageClient_textDocument_formatting()<CR>
-autocmd FileType rust nnoremap <silent> <leader>S :call LanguageClient_textDocument_documentSymbol()<CR>
-autocmd FileType rust nnoremap <silent> <leader>C :call LanguageClient_textDocument_codeAction()<CR>
+" autocmd FileType rust nnoremap <silent> gh :call LanguageClient_textDocument_hover()<CR>
+" autocmd FileType rust nnoremap <silent> gd :call LanguageClient_textDocument_definition()<CR>
+" autocmd FileType rust nnoremap <silent> <leader>R :call LanguageClient_textDocument_rename()<CR>
+" autocmd FileType rust nnoremap <silent> <leader>F :call LanguageClient_textDocument_formatting()<CR>
+" autocmd FileType rust nnoremap <silent> <leader>S :call LanguageClient_textDocument_documentSymbol()<CR>
+" autocmd FileType rust nnoremap <silent> <leader>C :call LanguageClient_textDocument_codeAction()<CR>
 " Rust: C-x + o is completion
 
 call dein#end()
