@@ -14,11 +14,9 @@ noremap <leader>( i(<ESC>ea)<ESC>
 noremap <leader>" i"<ESC>ea"<ESC>
 noremap <leader>' i'<ESC>ea'<ESC>
 
-let g:deoplete#enable_at_startup = 1
 colorscheme molokai
 set number
 set relativenumber
-let g:coc_global_extensions = ['coc-rust-analyzer', 'coc-snippets']
 set updatetime=300
 set shortmess+=c
 set signcolumn=yes
@@ -36,6 +34,9 @@ endfunction
 let g:coc_snippet_next = '<tab>'
 
 " === coc.nvim ===
+let g:coc_global_extensions = [ 'coc-rust-analyzer', 'coc-snippets', 'coc-diagnostic' ]
+" :CocConfig to run shellcheck
+
 " From: https://github.com/neoclide/coc.nvim
 " Use `[g` and `]g` to navigate diagnostics
 " Use `:CocDiagnostics` to get all diagnostics of current buffer in location list.
@@ -70,3 +71,6 @@ nmap <leader>a  <Plug>(coc-codeaction-selected)
 nmap <leader>ac  <Plug>(coc-codeaction)
 " Apply AutoFix to problem on the current line.
 nmap <leader>qf  <Plug>(coc-fix-current)
+
+" Add `:Format` command to format current buffer.
+command! -nargs=0 Format :call CocAction('format')
