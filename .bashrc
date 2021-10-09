@@ -166,15 +166,18 @@ alias katakoto='mecab -Owakati | mecab -Oyomi'
 alias satysfi='docker run --rm -v $PWD:/satysfi amutake/satysfi:latest satysfi'
 
 transpose() {
-  awk '{for(i=1;i<=NF;i++)a[i][NR]=$i}END{for(i in a)for(j in a[i])printf"%s"(j==NR?"\n":FS),a[i][j]}'
+  local _ifs="${1:-$IFS}"
+  awk '{for(i=1;i<=NF;i++)a[i][NR]=$i}END{for(i in a)for(j in a[i])printf"%s"(j==NR?"\n":FS),a[i][j]}' FS="$_ifs"
 }
 
 rev_field() {
-  awk '{for(i=NF;i>=1;i--){printf("%s"(i==1?"\n":FS), $i)}}'
+  local _ifs="${1:-$IFS}"
+  awk '{for(i=NF;i>=1;i--){printf("%s"(i==1?"\n":FS), $i)}}' FS="$_ifs"
 }
 
 rot90() {
-  transpose | rev_field
+  local _ifs="${1:-$IFS}"
+  transpose "$_ifs" | rev_field "$_ifs"
 }
 
 k () {

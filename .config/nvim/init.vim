@@ -3,7 +3,7 @@ call plug#begin('~/.vim/plugged')
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'vim-airline/vim-airline'
 Plug 'tomasr/molokai'
-Plug 'jiangmiao/auto-pairs'
+" Plug 'jiangmiao/auto-pairs'
 Plug 'terryma/vim-multiple-cursors'
 call plug#end()
 " === Pulugins END ===
