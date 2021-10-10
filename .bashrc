@@ -164,6 +164,7 @@ alias ginza='python3 -m spacy.lang.ja_ginza.cli'
 alias katakoto='mecab -Owakati | mecab -Oyomi'
 
 alias satysfi='docker run --rm -v $PWD:/satysfi amutake/satysfi:latest satysfi'
+alias vim='nvim'
 
 transpose() {
   local _ifs="${1:-$IFS}"
