@@ -11,6 +11,21 @@
 			"args":["-i","2","-ci","-sr","-kp"],
 			"sourceName": "shfmt"
 		}
+	},
+	"languageserver": {
+		"golang": {
+			"command": "gopls",
+			"rootPatterns": ["go.mod", ".vim/", ".git/", ".hg/"],
+			"filetypes": ["go"],
+			"initializationOptions": {
+				"usePlaceholders": true
+			}
+		},
+		"bash": {
+			"command": "bash-language-server",
+			"args": ["start"],
+			"filetypes": ["sh"],
+			"ignoreRootPaths":["~"]
+		}
 	}
 }
-
