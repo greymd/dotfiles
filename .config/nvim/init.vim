@@ -3,10 +3,24 @@ call plug#begin('~/.vim/plugged')
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'vim-airline/vim-airline'
 Plug 'tomasr/molokai'
-" Plug 'jiangmiao/auto-pairs'
 Plug 'terryma/vim-multiple-cursors'
 call plug#end()
 " === Pulugins END ===
+"
+" === Check OS ===
+function! GetRunningOS()
+  if has("win32")
+    return "win"
+  endif
+  if has("unix")
+    if system('uname')=~'Darwin'
+      return "mac"
+    else
+      return "linux"
+    endif
+  endif
+endfunction
+let os=GetRunningOS()
 
 " === Common Configures START ===
 let mapleader = "\<Space>"
@@ -81,3 +95,8 @@ nmap <leader>ac  <Plug>(coc-codeaction)
 nmap <leader>qf  <Plug>(coc-fix-current)
 " Add `:Format` command to format current buffer.
 command! -nargs=0 Format :call CocAction('format')
+
+if os=="mac"
+  " Workaround for opening browser since g:netrw_http_cmd does not work (see https://github.com/vim/vim/issues/4738 ) 
+  noremap <silent> gx :execute 'silent! !open -a Google\ Chrome ' . shellescape(expand('<cWORD>'), 1)<cr>
+endif
