@@ -4,6 +4,7 @@ Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'vim-airline/vim-airline'
 Plug 'tomasr/molokai'
 Plug 'terryma/vim-multiple-cursors'
+Plug 'lambdalisue/pastefix.vim' " Workaround of bug of clipboard
 call plug#end()
 " === Pulugins END ===
 "
@@ -30,6 +31,7 @@ noremap <leader>( i(<ESC>ea)<ESC>
 noremap <leader>" i"<ESC>ea"<ESC>
 noremap <leader>' i'<ESC>ea'<ESC>
 
+set clipboard=unnamedplus
 colorscheme molokai
 set number
 set relativenumber
@@ -38,7 +40,6 @@ set shortmess+=c
 set signcolumn=yes
 
 " Use OS clipboard as the register when yank something
-set clipboard+=unnamed
 " Set default file encoding utf-8
 set encoding=utf-8
 " Set proper encoding by tring multiple encoding continuously
