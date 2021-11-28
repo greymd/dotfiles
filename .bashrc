@@ -1466,3 +1466,32 @@ calc () {
 permutation () {
   python3 -c 'import sys,itertools; a=itertools.permutations([x.strip() for x in sys.stdin]);[print(" ".join(x)) for x in a]'
 }
+
+oj-cl () {
+  grep -Ev '^\s*//' | grep -v 'eprint'
+}
+
+oj-rs () {
+  oj t -c 'cargo run'
+}
+
+oj-sh () {
+  oj t -c 'bash a.sh'
+}
+
+oj-new () {
+  cargo init
+  echo 'proconio = "0.4.1"' >> ./Cargo.toml
+  sed -i 1i'use proconio::input;' ./src/main.rs
+}
+
+comb-num () {
+  local left="$1"
+  shift
+  local right="$1"
+  echo "($(seq "$left" | tac | head -n "$right" | paste -sd '*'))/($(seq "$right" | paste -sd '*'))" | bc -l
+}
+
+gcd () {
+  echo | awk '{while(n = m % (m = n)); print m}' m="$1" n="$2"
+}
