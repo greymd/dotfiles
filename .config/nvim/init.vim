@@ -46,6 +46,8 @@ set encoding=utf-8
 set fileencodings=utf-8,iso-2022-jp,euc-jp,sjis
 " Newline type
 set fileformats=unix,mac,dos
+" Enable mouse
+set mouse=a
 " === Common Configures END ===
 
 " === coc-snippets ====
@@ -95,6 +97,8 @@ nmap <leader>a  <Plug>(coc-codeaction-selected)
 nmap <leader>ac  <Plug>(coc-codeaction)
 " Apply AutoFix to problem on the current line.
 nmap <leader>qf  <Plug>(coc-fix-current)
+" Symbol renaming.
+nmap <leader>rn <Plug>(coc-rename)
 
 " Add `:Format` command to format current buffer.
 command! -nargs=0 Format :call CocAction('format')
