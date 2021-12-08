@@ -105,8 +105,8 @@ command! -nargs=0 Format :call CocAction('format')
 
 if os=="mac"
   " Workaround for opening browser since g:netrw_http_cmd does not work (see https://github.com/vim/vim/issues/4738 ) 
-  " noremap <silent> gx :execute 'silent! !open -a Google\ Chrome ' . shellescape(expand('<cWORD>'), 1)<cr>
-  noremap <silent> gx :execute 'silent! !open -a Firefox ' . shellescape(expand('<cWORD>'), 1)<cr>
+  noremap <silent> gx :execute 'silent! !open -a Google\ Chrome ' . shellescape(expand('<cWORD>'), 1)<cr>
+  " noremap <silent> gx :execute 'silent! !open -a Firefox ' . shellescape(expand('<cWORD>'), 1)<cr>
 endif
 
 " === Go Settings ===
