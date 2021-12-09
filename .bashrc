@@ -1479,6 +1479,10 @@ oj-sh () {
   oj t -c 'bash a.sh'
 }
 
+oj-py () {
+  oj t -c 'python3 a.py'
+}
+
 oj-new () {
   cargo init
   echo 'proconio = "0.4.1"' >> ./Cargo.toml
