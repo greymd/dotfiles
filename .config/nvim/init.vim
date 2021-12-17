@@ -40,6 +40,15 @@ set updatetime=300
 set shortmess+=c
 set signcolumn=yes
 
+" Spaces & Tabs {{{
+set tabstop=2
+set softtabstop=2
+set shiftwidth=2
+set expandtab
+set autoindent
+set copyindent
+" }}} Spaces & Tabs
+
 " Use OS clipboard as the register when yank something
 " Set default file encoding utf-8
 set encoding=utf-8
