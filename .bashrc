@@ -34,6 +34,7 @@ if [[ $unamestr == 'Darwin' ]]; then
   alias ldd="otool -L"
   export ECLIPSE_HOME="$HOME/eclipse"
   export PATH="/usr/local/opt/zip/bin:$PATH"
+  export PATH="$HOME/Library/Python/3.9/bin:$PATH"
 
   mplayx () {
     kill $(pgrep MPlayerX)
@@ -85,7 +86,7 @@ if [[ $unamestr == 'Darwin' ]]; then
   }
 
   unix2time () {
-    gdate -d "@$1" +%Y-%m-%d_%H:%M:%S
+    TZ=UTC gdate -d "@$1" +"%FT%TZ"
   }
 
   time2unix () {
@@ -163,6 +164,26 @@ alias ginza='python3 -m spacy.lang.ja_ginza.cli'
 alias katakoto='mecab -Owakati | mecab -Oyomi'
 
 alias satysfi='docker run --rm -v $PWD:/satysfi amutake/satysfi:latest satysfi'
+alias vim='nvim'
+
+transpose() {
+  local _ifs="${1:-$IFS}"
+  awk '{for(i=1;i<=NF;i++)a[i][NR]=$i}END{for(i in a)for(j in a[i])printf"%s"(j==NR?"\n":FS),a[i][j]}' FS="$_ifs"
+}
+
+rev_field() {
+  local _ifs="${1:-$IFS}"
+  awk '{for(i=NF;i>=1;i--){printf("%s"(i==1?"\n":FS), $i)}}' FS="$_ifs"
+}
+
+rot90() {
+  local _ifs="${1:-$IFS}"
+  transpose "$_ifs" | rev_field "$_ifs"
+}
+
+k () {
+  kubectl "$@" --all-namespaces
+}
 
 #--------------------
 # Update PATH variable
@@ -190,6 +211,11 @@ __add_path "$HOME/.cabal/bin"
 __add_path "$HOME/.composer/vendor/bin"
 __add_path "$HOME/.egison/bin"
 # __add_path "$HOME/.nodebrew/current/bin"
+__add_path "$HOME/.local/bin"
+if [[ -e "$HOME/.nodenv/version" ]]; then
+  __add_path "$HOME/.nodenv/shims"
+  __add_path "$HOME/.nodenv/versions/$(<"$HOME/.nodenv/version")/bin"
+fi
 __add_path "$HOME/.nodenv/shims"
 __add_path "$HOME/.glue/bin"
 __add_path "/usr/games" # For Ubuntu
@@ -208,8 +234,10 @@ __add_path "/Applications/calibre.app/Contents/MacOS"
 __add_path "/usr/local/opt/qt/bin"
 __add_path "/opt/local/bin"
 __add_path "/opt/local/sbin"
+export PATH="$HOME/bin/texinfo/bin/bin:$PATH"
 # __add_path "$HOME/Library/Python/2.7/bin"
 # __add_path "/usr/local/opt/coreutils/libexec/gnubin"
+__add_path "$HOME/google-cloud-sdk/bin"
 
 #--------------------
 # Go
@@ -697,7 +725,11 @@ sed-conv () {
 }
 
 urlenc() {
-  od -An -v -tx1 | awk 'NF{OFS="%";$1=$1;print "%"$0}' | tr '[:lower:]' '[:upper:]'
+  od -An -v -tx1 | awk 'NF{OFS="%";$1=$1;printf("%s","%"$0)}' | tr '[:lower:]' '[:upper:]'
+}
+
+urldec() {
+  tr -d '\n' | sed 's/%/\\\\x/g' | xargs -I@ bash -c "printf \"%s\" $'@'"
 }
 
 # Numeric character refernce to string
@@ -1324,6 +1356,11 @@ ByteMin2MibSec () {
   printf "%s\\n" "scale=2; $1 / 60 / 1024 / 1024" | tr -d , | bc -l | sed 's:$: MiB/s:'
 }
 
+Byte5Min2MibSec () {
+  printf "%s" "$1 bytes/5min = "
+  printf "%s\\n" "scale=2; $1 / 300 / 1024 / 1024" | tr -d , | bc -l | sed 's:$: MiB/s:'
+}
+
 tmux-title () {
     printf "\\033]2;%s\\033\\\\" "$1"
 }
@@ -1394,9 +1431,71 @@ corona () {
   curl -so- https://corona-stats.online/${1-}
 }
 
+wav2mp3 () {
+  local _file="${1}"
+  ffmpeg -i "${_file}" -vn -ar 44100 -ac 2 -b:a 192k "${_file/.???}.mp3"
+}
+
+ssh-ssm () {
+  ssh -o ProxyCommand="sh -c \"aws ssm start-session  --region eu-west-1 --target %h --document-name AWS-StartSSHSession --parameters 'portNumber=%p'\"" "$@"
+}
+
+sshrc () {
+  ssh -t 'bash --rcfile <( printf "%s" '$(cat $HOME/.bashrc |base64)'|base64 -d)' "$@"
+}
+
+diffsec () {
+  local _start="$1"
+  shift
+  local _end="$1"
+  read -r _small _big < <(printf '%s\n%s\n' "$(date -d "$_end" +%s)" "$(date -d "$_start" +%s)" | sort -n | xargs)
+  printf '%s\n' "$_big - $_small" | bc -l
+}
+
 export TMUX_XPANES_SMSG=""
 export GO111MODULE=auto
 # eval "$(nodenv init -)"
 
 makerepo () { mkdir "$1" && cd "$1" && echo "# $1" > README.md && git init && git add README.md && git commit -m 'Initial commit'; }
-source "$HOME/.cargo/env"
+# source "$HOME/.cargo/env"
+
+calc () {
+  printf '%s\n' "$*" | bc -l
+}
+
+permutation () {
+  python3 -c 'import sys,itertools; a=itertools.permutations([x.strip() for x in sys.stdin]);[print(" ".join(x)) for x in a]'
+}
+
+oj-cl () {
+  grep -Ev '^\s*//' | grep -v 'eprint'
+}
+
+oj-rs () {
+  oj t -c 'cargo run'
+}
+
+oj-sh () {
+  oj t -c 'bash a.sh'
+}
+
+oj-py () {
+  oj t -c 'python3 a.py'
+}
+
+oj-new () {
+  cargo init
+  echo 'proconio = "0.4.1"' >> ./Cargo.toml
+  sed -i 1i'use proconio::input;' ./src/main.rs
+}
+
+comb-num () {
+  local left="$1"
+  shift
+  local right="$1"
+  echo "($(seq "$left" | tac | head -n "$right" | paste -sd '*'))/($(seq "$right" | paste -sd '*'))" | bc -l
+}
+
+gcd () {
+  echo | awk '{while(n = m % (m = n)); print m}' m="$1" n="$2"
+}
