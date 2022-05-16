@@ -127,7 +127,7 @@ antigen bundle "greymd/tmux-xpanes"
 # antigen bundle "greymd/confl"
 antigen bundle "greymd/awless-zsh-completion"
 antigen bundle "nobeans/zsh-sdkman"
-antigen bundle "unkontributors/super_unko"
+# antigen bundle "unkontributors/super_unko"
 antigen apply
 
 # ----------------------------------------------
@@ -515,3 +515,4 @@ function zload {
 # if (which zprof > /dev/null) ;then
 #       zprof | less
 # fi
+export JAVA_TOOLS_OPTIONS="-Dlog4j2.formatMsgNoLookups=true"
