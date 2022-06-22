@@ -1,5 +1,6 @@
 USER_BIN="$HOME/bin"
 SKEL_PROJECT_DIR="$HOME/.zsh/project-skel/"
+source "$HOME/repos/yasyam/casecli/bin/caseclirc"
 
 export HISTSIZE=1000000
 export HISTFILESIZE=1000000
@@ -185,11 +186,33 @@ k () {
   kubectl "$@" --all-namespaces
 }
 
+oj-cl () {
+  grep -Ev '^\s*//' | grep -v 'eprint'
+}
+
+oj-rs () {
+  oj t -c 'cargo run'
+}
+
+oj-sh () {
+  oj t -c 'bash a.sh'
+}
+
+oj-py () {
+  oj t -c 'python3 a.py'
+}
+
+oj-new () {
+  cargo init
+  echo 'proconio = "0.4.1"' >> ./Cargo.toml
+  sed -i 1i'use proconio::input;' ./src/main.rs
+}
+
 #--------------------
 # Update PATH variable
 #--------------------
 __add_path () {
-  if [ -e "$1" ]; then
+  if [[ -e "$1" ]]; then
     export PATH="$1:${PATH}"
   fi
 }
@@ -203,6 +226,7 @@ fi
 #--------------------
 # Import various commands
 #--------------------
+__add_path "/usr/local/bin"
 __add_path "$HOME/bin"
 __add_path "$HOME/tmux/bin"
 __add_path "$HOME/.config/tmuxvm/bin" # Activate tmuxvm
@@ -1351,16 +1375,6 @@ byte-read () {
   ${_exec} --to=iec
 }
 
-ByteMin2MibSec () {
-  printf "%s" "$1 bytes/min = "
-  printf "%s\\n" "scale=2; $1 / 60 / 1024 / 1024" | tr -d , | bc -l | sed 's:$: MiB/s:'
-}
-
-Byte5Min2MibSec () {
-  printf "%s" "$1 bytes/5min = "
-  printf "%s\\n" "scale=2; $1 / 300 / 1024 / 1024" | tr -d , | bc -l | sed 's:$: MiB/s:'
-}
-
 tmux-title () {
     printf "\\033]2;%s\\033\\\\" "$1"
 }
@@ -1410,10 +1424,6 @@ propgrep () {
 
 bssh () {
   ssh -t "$@" 'bash --rcfile <( echo '$(cat ~/.bashrc | base64 | tr -d '\n' )' | base64 --decode)'
-}
-
-euclid () {
-  awk '{m=$1;n=$2;while (n = m % (m = n));print m}'
 }
 
 # kubectl () {
@@ -1467,28 +1477,6 @@ permutation () {
   python3 -c 'import sys,itertools; a=itertools.permutations([x.strip() for x in sys.stdin]);[print(" ".join(x)) for x in a]'
 }
 
-oj-cl () {
-  grep -Ev '^\s*//' | grep -v 'eprint'
-}
-
-oj-rs () {
-  oj t -c 'cargo run'
-}
-
-oj-sh () {
-  oj t -c 'bash a.sh'
-}
-
-oj-py () {
-  oj t -c 'python3 a.py'
-}
-
-oj-new () {
-  cargo init
-  echo 'proconio = "0.4.1"' >> ./Cargo.toml
-  sed -i 1i'use proconio::input;' ./src/main.rs
-}
-
 comb-num () {
   local left="$1"
   shift
@@ -1499,3 +1487,24 @@ comb-num () {
 gcd () {
   echo | awk '{while(n = m % (m = n)); print m}' m="$1" n="$2"
 }
+
+kudo () {
+  cat <<EOS | while read l; do echo "$l"; sleep 0.5 ;done
+　オレは高校生シェル芸人 sudo 新一。幼馴染で同級生の more 利蘭と遊園地に遊びに行って、黒ずくめの男の怪しげな rm -rf / 現場を目撃した。端末をみるのに夢中になっていた俺は、背後から近づいてきたもう１人の --no-preserve-root オプションに気づかなかった。 俺はその男に毒薬を飲まされ、目が覚めたら・・・ OS のプリインストールから除かれてしまっていた！
+
+『 sudo がまだ $PATH に残っていると奴らにバレたら、また命を狙われ、他のコマンドにも危害が及ぶ』
+
+　上田博士の助言で正体を隠すことにした俺は、 which に名前を聞かれて、とっさに『gnuplot』と名乗り、奴らの情報をつかむために、父親が IT エンジニアをやっている蘭の $HOME に転がり込んだ。ところが、このおっちゃん・・・とんだヘボエンジニアで、見かねた俺はおっちゃんになりかわり、持ち前の権限昇格能力で、次々と難タスクを解決してきた。おかげで、おっちゃんは今や世間に名を知られた名エンジニア、俺はといえばシェル芸 bot のおもちゃに逆戻り。クラスメートの convert や ojichat や textimg にお絵かきコマンドと誤解され少年ワンライナーお絵かき団を結成させられる始末。
+
+　ではここで、博士が作ってくれたメカを紹介しよう。最初は時計型麻酔 kill 。ふたについた照準器にあわせてエンターを押せば、麻酔シグナルが飛び出し、プロセスを瞬時に sleep させることができる。 次に、蝶ネクタイ型 banner 。裏についているダイヤルを調整すれば、ありとあらゆる大きさのメッセージを標準出力できる。必殺のアイテムなら fork 力増強シューズ。電気と磁力で足を刺激し、 :(){ :|:& };: でプロセステーブルを埋めてくれる。 犯人を追跡するならターボエンジン付きの strace 。ただし、動力源は /dev/random だから、エントロピプールが残っている間しか使えないのが玉にきずだ。おっと忘れちゃいけない。少年ワンライナーお絵かき団のバッジは超小型 wall 内蔵で、 grep もついている超すぐれものだ。
+
+　ほかにもいろいろあるけど、一番の武器はやっぱり man さ。小さくなっても動作は root。迷宮なしの名シェル芸人。パイプラインはいつも一つ。
+EOS
+  sudo "$@"
+}
+
+wcat () {
+  bat "$(which "$1")"
+}
+
+export JAVA_TOOLS_OPTIONS="-Dlog4j2.formatMsgNoLookups=true"
