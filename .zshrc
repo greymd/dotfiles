@@ -461,7 +461,7 @@ if [[ $unamestr == 'Darwin' ]]; then
   # Shows emoji "END" at the end of the result.
   END_MARK=$'\xf0\x9f\x94\x9a'
   export PROMPT_EOL_MARK="%K{3}$END_MARK %K%{$reset_color%}"
-  PROMPT='${new_line}%{$fg[green]%}%B%~%b $(vcs_echo)${new_line}%(!.%F{red}#%f.$)%b '
+  PROMPT='${new_line}%{$fg[green]%}%B%~%b $(vcs_echo)${new_line}%(!.%F{red}#%f.$)%b %{$reset_color%}'
   # RPROMPT="git:"
 elif [[ $unamestr == 'CYGWIN' ]]; then
   # Simple one

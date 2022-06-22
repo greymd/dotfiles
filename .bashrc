@@ -36,6 +36,7 @@ if [[ $unamestr == 'Darwin' ]]; then
   export ECLIPSE_HOME="$HOME/eclipse"
   export PATH="/usr/local/opt/zip/bin:$PATH"
   export PATH="$HOME/Library/Python/3.9/bin:$PATH"
+  export PATH="/opt/homebrew/bin:$PATH"
 
   mplayx () {
     kill $(pgrep MPlayerX)
@@ -856,7 +857,7 @@ today() {
 }
 
 melos () {
-  curl -so- 'http://www.aozora.gr.jp/cards/000035/files/1567_14913.html' | xmllint --html --xpath '/html/body/div[3]' - 2>/dev/null | nkf -w -Lu | sed -r 's/<[^>]*>//g;s/（.*）//g;s/( 「|」|　)//g' | awk NF
+  curl -Lso- 'http://www.aozora.gr.jp/cards/000035/files/1567_14913.html' | xmllint --html --xpath '/html/body/div[3]' - 2>/dev/null | nkf -w -Lu | sed -r 's/<[^>]*>//g;s/（.*）//g;s/( 「|」|　)//g' | awk NF
 }
 
 nanbu-sen () {
