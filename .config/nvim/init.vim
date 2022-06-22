@@ -6,6 +6,7 @@ Plug 'tomasr/molokai'
 Plug 'terryma/vim-multiple-cursors'
 Plug 'lambdalisue/pastefix.vim' " Workaround of bug of clipboard
 Plug 'Shougo/defx.nvim', { 'do': ':UpdateRemotePlugins' }
+Plug 'github/copilot.vim'
 call plug#end()
 " === Pulugins END ===
 "
