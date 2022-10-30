@@ -140,17 +140,17 @@ main() {
   }
   for f in .??*
   do
-      [[ "$f" == ".DS_Store" ]] && continue
-      [[ "$f" == ".git" ]] && continue
-      ln -snf "$DOT_DIR"/"$f" "$HOME"/"$f"
-      msg_info "Create symlink to $f"
+    [[ "$f" == ".DS_Store" ]] && continue
+    [[ "$f" == ".git" ]] && continue
+    ln -snf "$DOT_DIR"/"$f" "$HOME"/"$f"
+    msg_info "Create symlink to $f"
   done
 
   if [[ ! -d "$BIN_DIR" ]]; then
-      msg_info "Creating $BIN_DIR"
-      mkdir -p "$BIN_DIR"
+    msg_info "Creating $BIN_DIR"
+    mkdir -p "$BIN_DIR"
   else
-      msg_info "$BIN_DIR is already exists"
+    msg_info "$BIN_DIR is already exists"
   fi
 
   DOT_DIR="$DOT_DIR/installer/$(uname)"
