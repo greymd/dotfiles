@@ -8,6 +8,9 @@ if has "teip"; then
   msg_info "xpanes already installed"
   exit 0
 fi
+
+install_package rsync
+
 # download the latest version of teip
 download_file "https://github.com/greymd/teip/releases/download/v2.0.0/teip-2.0.0.x86_64-unknown-linux-musl.tar.gz" "teip-2.0.0.x86_64-unknown-linux-musl.tar.gz"
 tar -xvf teip-2.0.0.x86_64-unknown-linux-musl.tar.gz

@@ -15,6 +15,6 @@ fi
 plugdir="$HOME/.local/share/nvim/site/autoload/"
 if [[ ! -d "$plugdir" ]] || [[ ! -e "$plugdir/plug.vim" ]] ; then
   mkdir -p "$plugdir"
-  download_file "https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim" "$plugdir/plug.vim" 
-  nvim -c ':PlugInstall | :q | :q'
+  download_file "https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim" "$plugdir/plug.vim"
+  "$BIN_DIR"/nvim -c ':PlugInstall | :q | :q'
 fi

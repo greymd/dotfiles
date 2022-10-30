@@ -5,6 +5,8 @@
 # bash -c "$(curl -fsSL https://raw.githubusercontent.com/greymd/dotfiles/master/install.sh)"
 # ```
 # inspired by https://github.com/kisqragi/dotfiles/blob/master/install.sh
+# bash -c "$(curl -fsSL https://raw.githubusercontent.com/greymd/dotfiles/07fb28498b5ad7420c6390cdda4e300ca026a266/install.sh)"
+
 
 set -u
 shopt -s globstar
@@ -111,7 +113,7 @@ main() {
   local tmpdir="/tmp"
   if has "mktemp"; then
     tmpdir="$(mktemp -d)"
-    trap 'rm -rf "$tmpdir"' EXIT
+    trap 'rm -rf $tmpdir' EXIT
   fi
   cd "$tmpdir" || {
     msg_fail "Failed to change directory to $tmpdir"
