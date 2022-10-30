@@ -35,20 +35,6 @@ msg_warn () {
   printf "\r\033[2K\033[0;32m[ \033[0;33m%s\033[0;32m ]\033[0;36m %s\033[0m\n" "WARN" "$1" >&2
 }
 
-# install package per platform (rpm-base or apt-base)
-install_package() {
-    local package="$1"
-    if [ -x "$(command -v apt)" ]; then
-        sudo apt install -y "$package"
-    elif [ -x "$(command -v yum)" ]; then
-        sudo yum install -y "$package"
-    else
-        msg_fail "Unsupported platform"
-        return 1
-    fi
-    return 0
-}
-
 # access URL and download file by curl or wget
 download_file() {
     local url="$1"
@@ -125,8 +111,8 @@ main() {
   local tmpdir="/tmp"
   if has "mktemp"; then
     tmpdir="$(mktemp -d)"
+    trap 'rm -rf "$tmpdir"' EXIT
   fi
-  trap 'rm -rf $tmpdir' EXIT
   cd "$tmpdir" || {
     msg_fail "Failed to change directory to $tmpdir"
     return 1
