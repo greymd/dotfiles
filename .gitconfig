@@ -1,10 +1,8 @@
 [user]
 	name = Yasuhiro Yamada
-  # email = yamada@gr3.ie
-	email = yasyam@amazon.com
+  email = yamada@gr3.ie
 [alias]
 	gr = log --graph --date=short --decorate=short --pretty=format:'%Cgreen%h %Creset%cd %Cblue%cn %Cred%d %Creset%s'
-[alias]
 	fpr = "!f() { git fetch origin pull/$1/head:pr/$1; }; f"
 [core]
 	excludesfile = /Users/yasyam/.gitignore_global
@@ -20,3 +18,10 @@
 [mergetool "sourcetree"]
 	cmd = /Applications/Sourcetree.app/Contents/Resources/opendiff-w.sh \"$LOCAL\" \"$REMOTE\" -ancestor \"$BASE\" -merge \"$MERGED\"
 	trustExitCode = true
+[safe]
+	directory = /home/ubuntu/repos/PolaClub/kumasanbot-go
+[filter "lfs"]
+	required = true
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process

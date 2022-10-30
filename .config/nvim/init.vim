@@ -1,5 +1,6 @@
 " === Pulugins START ===
 call plug#begin('~/.vim/plugged')
+Plug 'ntpeters/vim-better-whitespace'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'vim-airline/vim-airline'
 Plug 'tomasr/molokai'
@@ -49,6 +50,11 @@ set expandtab
 set autoindent
 set copyindent
 " }}} Spaces & Tabs
+
+" set indent and tabstop to 4 in C
+autocmd FileType c setlocal tabstop=4 shiftwidth=4 softtabstop=4 expandtab
+" set indent and tabstop to 4 in Java
+autocmd FileType java setlocal tabstop=4 shiftwidth=4 softtabstop=4 expandtab
 
 " Use OS clipboard as the register when yank something
 " Set default file encoding utf-8
@@ -213,3 +219,14 @@ call defx#custom#option('_', {
       \ 'toggle': 1,
       \ 'resume': 1,
       \ })
+
+" Copilot v:false = disable, v:true = enable
+let g:copilot_filetypes = {
+      \ '*': v:false,  
+      \ 'sh': v:true,  
+      \ 'c' : v:true,  
+      \ 'java' : v:true,  
+      \ 'rs' : v:true,  
+      \ 'py' : v:true,  
+      \ 'go' : v:true,  
+      \ }

@@ -515,4 +515,3 @@ function zload {
 # if (which zprof > /dev/null) ;then
 #       zprof | less
 # fi
-export JAVA_TOOLS_OPTIONS="-Dlog4j2.formatMsgNoLookups=true"
