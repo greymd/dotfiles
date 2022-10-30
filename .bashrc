@@ -1,6 +1,6 @@
 USER_BIN="$HOME/bin"
 SKEL_PROJECT_DIR="$HOME/.zsh/project-skel/"
-source "$HOME/repos/yasyam/casecli/bin/caseclirc"
+[[ -f "$HOME/repos/yasyam/casecli/bin/caseclirc" ]] && source "$HOME/repos/yasyam/casecli/bin/caseclirc"
 
 export HISTSIZE=1000000
 export HISTFILESIZE=1000000
@@ -37,6 +37,7 @@ if [[ $unamestr == 'Darwin' ]]; then
   export PATH="/usr/local/opt/zip/bin:$PATH"
   export PATH="$HOME/Library/Python/3.9/bin:$PATH"
   export PATH="/opt/homebrew/bin:$PATH"
+  export PATH="/Applications/Wireshark.app/Contents/MacOS/:$PATH" # for tshark
 
   mplayx () {
     kill $(pgrep MPlayerX)
@@ -263,6 +264,7 @@ export PATH="$HOME/bin/texinfo/bin/bin:$PATH"
 # __add_path "$HOME/Library/Python/2.7/bin"
 # __add_path "/usr/local/opt/coreutils/libexec/gnubin"
 __add_path "$HOME/google-cloud-sdk/bin"
+__add_path "$HOME/.toolbox/bin"
 
 #--------------------
 # Go
@@ -933,20 +935,24 @@ access_log_clean () {
 B='\(.*\)'
 D='"\(.*\)"'
 P='\[\(.*\)\]'
+SED=sed
+if type gsed &> /dev/null; then
+  SED=gsed
+fi
 
 # Change this part depend's on the number of field.
 STR='\1\x0\2\x0\3\x0\4\x0\5\x0\6\x0\7\x0\8\x0\9\x0\10\x0\11\x0'
-sed 's;\\\\;%5C;g' < /dev/stdin |
-sed 's;\\";%22;g' |
+$SED 's;\\\\;%5C;g' < /dev/stdin |
+$SED 's;\\";%22;g' |
 
 # Change this part depend's on the each pattern of field.
-sed "s/^$B $B $B $P $D $B $B $D $D $B $B\$/$STR/" |
-sed 's/_/\\_/g' |
-sed 's/ /_/g' |
-sed 's/\x0\x0/\x0_\x0/g' |
-sed 's/\x0\x0/\x0_\x0/g' |
+$SED "s/^$B $B $B $P $D $B $B $D $D $B $B\$/$STR/" |
+$SED 's/_/\\_/g' |
+$SED 's/ /_/g' |
+$SED 's/\x0\x0/\x0_\x0/g' |
+$SED 's/\x0\x0/\x0_\x0/g' |
 tr '\000' ' ' |
-sed 's/ $//'
+$SED 's/ $//'
 }
 
 nginx_log_clean () {
@@ -1311,6 +1317,10 @@ ec2-assh () {
   aws ec2 describe-instances --region "$_region" --output json | jq -r '.Reservations[] | .Instances[] | select(.State.Code == 16)  | .PublicDnsName' | xpanes --debug -sst -c "ssh -o StrictHostKeyChecking=no -i '$_key' ec2-user@{}"
 }
 
+aws-ls-tg () {
+  aws elbv2 describe-target-health --target-group-arn $(aws elbv2 describe-target-groups --name "$1" --query 'TargetGroups[].TargetGroupArn' --output text) --query 'TargetHealthDescriptions[?TargetHealth.State == `healthy`].{_:Target.Id}' --output text
+}
+
 # zen_to_i () {
 #   sed -r 's/(万|億|兆)/\0\n/g' | perl -C -Mutf8 -pe '$n="一二三四五六七八九";eval "s/(".join("|", split("", $n)).")/+\$&/g";eval "tr/$n/1-9/";s/(\d)十/$1*10/g;s/(\d)百/$1*100/g;s/(\d)千/$1*1000/g;s/十/10/g;s/百/100/g;s/千/1000/g;' | perl -C -Mutf8 -pe 's/^\+//;s/([\d\*+]+)万/($1)*10000/;s/([\d\*+]+)億/($1)*100000000/g;s/([\d\*+]+)兆/($1)*100000000/;' | gpaste -sd'+' | bc
 # }
@@ -1508,4 +1518,10 @@ wcat () {
   bat "$(which "$1")"
 }
 
+str2htmlentity () {
+  perl -MHTML::Entities -nle 'print decode_entities($_)'
+}
+
 export JAVA_TOOLS_OPTIONS="-Dlog4j2.formatMsgNoLookups=true"
+
+
