@@ -121,6 +121,17 @@ main() {
     return 0
   fi
 
+  msg_info "Create temporary directory"
+  local tmpdir="/tmp"
+  if has "mktemp"; then
+    tmpdir="$(mktemp -d)"
+  fi
+  trap 'rm -rf $tmpdir' EXIT
+  cd "$tmpdir" || {
+    msg_fail "Failed to change directory to $tmpdir"
+    return 1
+  }
+
   msg_info "Start installing dotfiles..."
   if [[ ! -d "${DOT_DIR}" ]]; then
     download_github_repo "greymd/dotfiles" "${DOT_DIR}"
@@ -131,6 +142,9 @@ main() {
     if [[ "${answer}" != "y" ]]; then
       msg_info "Skip installing dotfiles"
       exit 0
+    else
+      msg_info "Reinstall dotfiles"
+      download_github_repo "greymd/dotfiles" "${DOT_DIR}"
     fi
   fi
 
