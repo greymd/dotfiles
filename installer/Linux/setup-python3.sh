@@ -5,7 +5,7 @@ install_build_environment
 
 # Install openssl
 {
-  download_file "https://www.openssl.org/source/openssl-1.1.1g.tar.gz"
+  download_file "https://www.openssl.org/source/openssl-1.1.1g.tar.gz" "openssl-1.1.1g.tar.gz"
   tar -xzf openssl-1.1.1g.tar.gz
   cd "openssl-1.1.1g" || {
     msg_fail "Failed to cd into openssl-1.1.1g"
