@@ -12,6 +12,8 @@ else
     msg_info "nvim is already installed"
 fi
 
+install_package "git" # required for vim-plug
+
 plugdir="$HOME/.local/share/nvim/site/autoload/"
 if [[ ! -d "$plugdir" ]] || [[ ! -e "$plugdir/plug.vim" ]] ; then
   mkdir -p "$plugdir"
