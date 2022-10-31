@@ -90,7 +90,7 @@ download_github_repo () {
             github_archive_url="https://github.com/$user_slash_repo/archive/${github_tag}.tar.gz"
             download_file "$github_archive_url" "${github_tag}.tar.gz"
             if [[ -f "${github_tag}.tar.gz" ]]; then
-                tar xzf "${github_tag}.tar.gz" || {
+                tar xf "${github_tag}.tar.gz" || {
                   # failed to extract tar.gz
                   rm -f "${github_tag}.tar.gz"
                   continue
