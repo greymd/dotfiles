@@ -171,6 +171,7 @@ main() {
   do
     app_name="${f#setup-}"
     app_name="${app_name%.sh}"
+    requires=()
     # get required app_name
     # if the file contains "require:" line, get the app_name
     if grep -q "^# *require:" "$f"; then
