@@ -13,6 +13,8 @@ else
 fi
 
 install_package "git" # required for vim-plug
+install_package "python3" # required for coc (:pyc)
+pip3 install -U neovim
 
 plugdir="$HOME/.local/share/nvim/site/autoload/"
 if [[ ! -d "$plugdir" ]] || [[ ! -e "$plugdir/plug.vim" ]] ; then
