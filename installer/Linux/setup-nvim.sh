@@ -10,7 +10,7 @@ else
 fi
 
 install_package "git" # required for vim-plug
-install_package "python3" # required for coc (:pyc)
+install_package "python3" "python3-pip" # required for coc (:pyc)
 pip3 install -U neovim
 
 plugdir="$HOME/.local/share/nvim/site/autoload/"

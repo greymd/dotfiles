@@ -104,8 +104,8 @@ download_github_repo () {
 }
 
 main() {
-  # if this function is called from the file starts with "_setup.sh", skip
-  if [[ "$0" =~ ^_setup.sh ]]; then
+  # if this function is called from the file contains "_setup.sh", skip
+  if [[ "$0" =~ _setup.sh ]]; then
     return 0
   fi
 
