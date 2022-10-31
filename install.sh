@@ -203,11 +203,11 @@ main() {
         all_install=1
       fi
     fi
-    msg_info "Job: $f"
+    msg_info "Job: $app_name"
     if bash -ue _setup.sh "$app_name"; then
-      msg_info "Job: $f: OK"
+      msg_info "Job: $app_name: OK"
     else
-      msg_warn "Job: $f: Failed"
+      msg_warn "Job: $app_name: Failed"
     fi
   done
   msg_info "Finish installing softwares, enjoy."
