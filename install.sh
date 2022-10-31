@@ -5,8 +5,6 @@
 # bash -c "$(curl -fsSL https://raw.githubusercontent.com/greymd/dotfiles/master/install.sh)"
 # ```
 # inspired by https://github.com/kisqragi/dotfiles/blob/master/install.sh
-# bash -c "$(curl -fsSL https://raw.githubusercontent.com/greymd/dotfiles/07fb28498b5ad7420c6390cdda4e300ca026a266/install.sh)"
-
 
 set -u
 shopt -s globstar
@@ -163,10 +161,9 @@ main() {
 
   msg_info "Start installing softwares..."
   local all_install=0
-
   # solve dependency of each installer
-  apps=() # app depends on other apps
-  app_required=()
+  local apps=() # app depends on other apps
+  local app_required=()
   for f in setup-*.sh;
   do
     app_name="${f#setup-}"
@@ -174,8 +171,7 @@ main() {
     # get required app_name
     # if the file contains "require:" line, get the app_name
     if grep -q "^# *require:" "$f"; then
-      mapfile -t requires <<<"$(grep -m 1 "^# *require:" "$f" | sed -e "s/^# *require: *//" | tr -s ' ' | tr ' ' '\n' | awk NF)"
-      for rapp in "${requires[@]}"; do
+      for rapp in $(grep -m 1 "^# *require:" "$f" | sed -e "s/^# *require: *//" | tr -s ' ' | tr ' ' '\n' | awk NF); do
         app_required=("${app_required[@]}" "$app_name $rapp")
       done
     else

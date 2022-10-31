@@ -11,8 +11,7 @@ do
   # get required app_name
   # if the file contains "require:" line, get the app_name
   if grep -q "^# *require:" "$f"; then
-    mapfile -t requires <<<"$(grep -m 1 "^# *require:" "$f" | sed -e "s/^# *require: *//" | tr -s ' ' | tr ' ' '\n' | awk NF)"
-    for rapp in "${requires[@]}"; do
+    for rapp in $(grep -m 1 "^# *require:" "$f" | sed -e "s/^# *require: *//" | tr -s ' ' | tr ' ' '\n' | awk NF); do
       app_required=("${app_required[@]}" "$app_name $rapp")
     done
   else
