@@ -11,16 +11,14 @@ do
   # get required app_name
   # if the file contains "require:" line, get the app_name
   if grep -q "^# *require:" "$f"; then
-    read -r -a requires <<<"$(grep -m 1 "^# *require:" "$f" | sed -e "s/^# *require: *//" | tr -s ' ' | tr ' ' '\n' | awk NF)"
+    mapfile -t requires <<<"$(grep -m 1 "^# *require:" "$f" | sed -e "s/^# *require: *//" | tr -s ' ' | tr ' ' '\n' | awk NF)"
     for rapp in "${requires[@]}"; do
       app_required=("${app_required[@]}" "$app_name $rapp")
     done
   else
-    requires=()
     app_required=("${app_required[@]}" "$app_name __none__")
   fi
 done
-
 # print app_required as new line separated file
 while read -r line; do
   if [[ "$line" != "__none__" ]]; then
@@ -28,9 +26,4 @@ while read -r line; do
   fi
 done < <(for l in "${app_required[@]}";do echo "$l";done | tsort)
 
-# join iapps and dapps removing duplicates and keep the order
-for app_name in "${apps[@]}"
-do
-  echo "Installing $app_name"
-  # echo ./setup-$app_name.sh
-done
+for l in "${apps[@]}";do echo "$l";done

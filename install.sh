@@ -171,16 +171,14 @@ main() {
   do
     app_name="${f#setup-}"
     app_name="${app_name%.sh}"
-    requires=()
     # get required app_name
     # if the file contains "require:" line, get the app_name
     if grep -q "^# *require:" "$f"; then
-      read -r -a requires <<<"$(grep -m 1 "^# *require:" "$f" | sed -e "s/^# *require: *//" | tr -s ' ' | tr ' ' '\n' | awk NF)"
+      mapfile -t requires <<<"$(grep -m 1 "^# *require:" "$f" | sed -e "s/^# *require: *//" | tr -s ' ' | tr ' ' '\n' | awk NF)"
       for rapp in "${requires[@]}"; do
         app_required=("${app_required[@]}" "$app_name $rapp")
       done
     else
-      requires=()
       app_required=("${app_required[@]}" "$app_name __none__")
     fi
   done
