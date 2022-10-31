@@ -17,12 +17,12 @@ install_package() {
   return 0
 }
 
-# install packages necessary for build enviornmnent
+# install packages necessary for build enviornmnent (zlib is required for building python3)
 install_build_environment() {
   if [ -x "$(command -v apt)" ]; then
-    install_package build-essential
+    install_package build-essential zlib1g-dev
   elif [ -x "$(command -v yum)" ]; then
-    install_package gcc gcc-c++ make
+    install_package gcc gcc-c++ make zlib-devel
   else
     msg_fail "Unsupported platform"
     return 1
@@ -31,15 +31,15 @@ install_build_environment() {
 }
 
 # create a temporary directory
-tmpdir="/tmp"
+setup_tmpdir="/tmp"
 if has "mktemp"; then
-  tmpdir="$(mktemp -d)"
+  setup_tmpdir="$(mktemp -d)"
   # remove the temporary directory when the script exits
-  trap 'rm -rf -- "${tmpdir}"' EXIT
+  trap 'rm -rf -- "${setup_tmpdir}"' EXIT
 fi
 software="$1"
 {
-  cd "$tmpdir" || {
+  cd "$setup_tmpdir" || {
     msg_warn "$software: Failed to change directory"
     exit 1
   }

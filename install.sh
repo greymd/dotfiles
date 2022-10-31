@@ -110,10 +110,10 @@ main() {
   fi
 
   msg_info "Create temporary directory"
-  local tmpdir="/tmp"
+  tmpdir="/tmp"
   if has "mktemp"; then
     tmpdir="$(mktemp -d)"
-    trap 'rm -rf $tmpdir' EXIT
+    trap 'rm -rf "$tmpdir"' EXIT
   fi
   cd "$tmpdir" || {
     msg_fail "Failed to change directory to $tmpdir"
