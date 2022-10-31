@@ -1,4 +1,5 @@
 #!/bin/bash
+# require: git
 if ! has "zsh"; then
   if ! install_package "zsh"; then
       msg_fail "Failed to install zsh"

@@ -1,11 +1,12 @@
 #!/bin/bash
+# require: rsync
 # if the architecture is not x86_64, then exit
 if [[ "$(uname -i)" != "x86_64" ]]; then
-    msg_info "This script is only for x86_64 architecture"
+    msg_info "teip is only for x86_64 architecture"
     exit 0
 fi
 if has "teip"; then
-  msg_info "xpanes already installed"
+  msg_info "teip already installed"
   exit 0
 fi
 

@@ -1,4 +1,7 @@
 #!/bin/bash
+# require: python3 rsync git
+#  - git required for vim-plug
+#  - python3 python3-pip are required for coc (:pyc)
 if ! has nvim; then
     msg_info "nvim not found, installing"
     download_file "https://github.com/neovim/neovim/releases/download/v0.6.1/nvim-linux64.tar.gz" "nvim-linux64.tar.gz"
@@ -9,8 +12,6 @@ else
     msg_info "nvim is already installed"
 fi
 
-install_package "git" # required for vim-plug
-install_package "python3" "python3-pip" # required for coc (:pyc)
 pip3 install -U neovim
 
 plugdir="$HOME/.local/share/nvim/site/autoload/"
