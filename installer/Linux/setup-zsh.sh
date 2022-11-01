@@ -1,5 +1,6 @@
 #!/bin/bash
 # require: git
+# to use antigen, git is mandatory
 if ! has "zsh"; then
   if ! install_package "zsh"; then
       msg_fail "Failed to install zsh"
@@ -11,7 +12,6 @@ fi
 
 if [[ ! -d "$REPO_DIR"/zsh-users/antigen ]]; then
   msg_info "Cloning antigen"
-  install_package "git" # to use antigen, git is mandatory
   download_github_repo "zsh-users/antigen"
 else
   msg_info "Antigen already cloned"

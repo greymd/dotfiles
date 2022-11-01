@@ -1,10 +1,6 @@
 #!/bin/bash
 # require: node
-
-_node_version="$HOME/.nvm/alias/default"
-if [ -s "$_node_version" ];then
-  "$HOME/.nvm/versions/node/$(cat "$_node_version")/bin"/npm i -g bash-language-server
-fi
+npm_global_install bash-language-server
 
 if [[ "$(uname -i)" != "x86_64" ]]; then
     msg_info "shellcheck is only for x86_64 architecture"

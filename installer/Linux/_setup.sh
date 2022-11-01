@@ -17,6 +17,15 @@ install_package() {
   return 0
 }
 
+npm_global_install () {
+  _node_version="$HOME/.nvm/alias/default"
+  if [ -s "$_node_version" ];then
+    local node_bindir=
+    node_bindir="$HOME/.nvm/versions/node/$(cat "$_node_version")/bin"
+    "$node_bindir"/node "$node_bindir"/npm install -g "$@"
+  fi
+}
+
 # install packages necessary for build enviornmnent (zlib is required for building python3)
 install_build_environment() {
   if [ -x "$(command -v apt)" ]; then
