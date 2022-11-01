@@ -6,5 +6,3 @@ download_github_repo "nvm-sh/nvm" "$HOME/.nvm" || {
   exit 1
 }
 bash -c 'source $HOME/.nvm/nvm.sh && nvm install v14.18.0'
-
-"$BIN_DIR"/npm i -g bash-language-server
