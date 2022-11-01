@@ -160,7 +160,6 @@ main() {
   }
 
   msg_info "Start installing softwares..."
-  local all_install=0
   # solve dependency of each installer
   local apps=() # app depends on other apps
   local req_apps=()
@@ -185,7 +184,7 @@ main() {
     fi
   done < <(for l in "${req_apps[@]}";do echo "$l";done | tsort)
 
-
+  local all_install=0
   for app_name in "${apps[@]}"
   do
     if [[ "$all_install" -eq 0 ]]; then
