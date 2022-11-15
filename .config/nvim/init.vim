@@ -49,12 +49,12 @@ set shiftwidth=2
 set expandtab
 set autoindent
 set copyindent
-" }}} Spaces & Tabs
 
 " set indent and tabstop to 4 in C
 autocmd FileType c setlocal tabstop=4 shiftwidth=4 softtabstop=4 expandtab
 " set indent and tabstop to 4 in Java
 autocmd FileType java setlocal tabstop=4 shiftwidth=4 softtabstop=4 expandtab
+" }}} Spaces & Tabs
 
 " Use OS clipboard as the register when yank something
 " Set default file encoding utf-8
@@ -222,11 +222,13 @@ call defx#custom#option('_', {
 
 " Copilot v:false = disable, v:true = enable
 let g:copilot_filetypes = {
-      \ '*': v:false,  
-      \ 'sh': v:true,  
-      \ 'c' : v:true,  
-      \ 'java' : v:true,  
-      \ 'rs' : v:true,  
-      \ 'py' : v:true,  
-      \ 'go' : v:true,  
+      \ '*': v:true,
+      \ 'sh': v:true,
+      \ 'c' : v:true,
+      \ 'java' : v:true,
+      \ 'rs' : v:true,
+      \ 'py' : v:true,
+      \ 'go' : v:true,
+      \ 'cpp' : v:true,
+      \ 'js' : v:true,
       \ }
