@@ -105,6 +105,7 @@ elif [[ $unamestr == 'CYGWIN' ]]; then
 elif [[ $unamestr == 'Linux' ]]; then
   alias ls='ls --color=auto' #GNU version ls
   export ECLIPSE_HOME="$HOME/eclipse"
+  export PATH="/home/linuxbrew/.linuxbrew/bin:$PATH"
 fi
 
 #--------------------
@@ -1523,5 +1524,3 @@ str2htmlentity () {
 }
 
 export JAVA_TOOLS_OPTIONS="-Dlog4j2.formatMsgNoLookups=true"
-
-
