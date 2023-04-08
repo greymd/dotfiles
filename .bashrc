@@ -6,7 +6,7 @@ export HISTSIZE=1000000
 export HISTFILESIZE=1000000
 export SAVEHIST=1000000
 export TMUX_XPANES_PANE_BORDER_FORMAT="#[bg=green,fg=black] #T#{?pane_pipe,[Log],} #[default]"
-export EDITOR=vim
+export EDITOR=nvim
 
 # __GRE_REPOSITORY_DIR environment variable is defined on .profile.
 export PS1="\W \$ "
@@ -106,15 +106,6 @@ elif [[ $unamestr == 'Linux' ]]; then
   alias ls='ls --color=auto' #GNU version ls
   export ECLIPSE_HOME="$HOME/eclipse"
   export PATH="/home/linuxbrew/.linuxbrew/bin:$PATH"
-fi
-
-#--------------------
-# Editor
-#--------------------
-# Set default editor as vim not vi. This is used to edit commit message of git.
-export EDITOR=vi
-if (type vim &> /dev/null) ;then
-  export EDITOR=vim
 fi
 
 #--------------------
