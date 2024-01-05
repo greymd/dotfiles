@@ -4,3 +4,4 @@ _cout-login
 .vim/workbench.xmi
 .vim/plugged/
 .vim/view/
+.config/coc/
