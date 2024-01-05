@@ -222,7 +222,7 @@ call defx#custom#option('_', {
 
 " Copilot v:false = disable, v:true = enable
 let g:copilot_filetypes = {
-      \ '*': v:false,
+      \ '*': v:true,
       \ 'sh': v:true,
       \ 'c' : v:true,
       \ 'java' : v:true,

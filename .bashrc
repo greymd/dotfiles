@@ -177,7 +177,7 @@ rot90() {
 }
 
 k () {
-  kubectl "$@" --all-namespaces
+  kubectl "$@"
 }
 
 oj-cl () {
