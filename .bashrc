@@ -38,6 +38,12 @@ if [[ $unamestr == 'Darwin' ]]; then
   export PATH="$HOME/Library/Python/3.9/bin:$PATH"
   export PATH="/opt/homebrew/bin:$PATH"
   export PATH="/Applications/Wireshark.app/Contents/MacOS/:$PATH" # for tshark
+  export PATH="/Applications/Xcode.app/Contents/Developer/usr/bin:$PATH"
+
+  # Use brew in multi-user system
+  unalias brew 2>/dev/null
+  brewser=$(stat -f "%Su" $(which brew))
+  alias brew='sudo -Hu '$brewser' brew'
 
   mplayx () {
     kill $(pgrep MPlayerX)
