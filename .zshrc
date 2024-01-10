@@ -5,7 +5,6 @@ if [ -s "$HOME/.local.zsh" ]; then
     source "$HOME/.local.zsh"
 fi
 
-
 #--------------------
 # Incremental Search
 # (This settings should be earlyer than antigen)
@@ -110,10 +109,13 @@ source $HOME/repos/zsh-users/antigen/antigen.zsh
 # Or, special characters will be automatically escaped.
 # Disable oh-my-zsh to set ls's alias as expected
 
-# antigen use oh-my-zsh
+# Disable auto escapting
+# https://stackoverflow.com/questions/25614613/how-to-disable-zsh-substitution-autocomplete-with-url-and-backslashes
+DISABLE_MAGIC_FUNCTIONS=true
+antigen use oh-my-zsh
 
 # Use oh-my-zsh plugins
-antigen bundle heroku
+# antigen bundle heroku
 
 antigen bundle "b4b4r07/enhancd"
 antigen bundle "zsh-users/zsh-syntax-highlighting"
@@ -121,12 +123,11 @@ antigen bundle "zsh-users/zsh-syntax-highlighting"
 antigen bundle "zsh-users/zsh-completions"
 antigen bundle "greymd/cureutils"
 antigen bundle "greymd/docker-zsh-completion"
-antigen bundle "nnao45/zsh-kubectl-completion"
 antigen bundle "greymd/tmux-xpanes"
 # antigen bundle "greymd/eclim-cli"
 # antigen bundle "greymd/confl"
-antigen bundle "greymd/awless-zsh-completion"
-antigen bundle "nobeans/zsh-sdkman"
+# antigen bundle "greymd/awless-zsh-completion"
+# antigen bundle "nobeans/zsh-sdkman"
 # antigen bundle "unkontributors/super_unko"
 antigen apply
 
@@ -195,8 +196,10 @@ antigen apply
 autoload -U promptinit colors && colors
 
 ## Skip following procedures because compinit is already loaded by antigen
-# autoload -U compinit
-# compinit
+autoload -U compinit
+compinit
+
+source "$HOME"/repos/b4b4r07/enhancd/init.sh
 
 zstyle ':completion::complete:*' use-cache true
 zstyle ':completion:*:default' menu select=1
@@ -445,13 +448,7 @@ function getfgcolor () {
   local _bgval_dec
   local _bgval_hex
   local _host=${HOST:-"$(hostname)"}
-  local _hash_exec
-  if type sha1sum &> /dev/null; then
-    _hash_exec=sha1sum
-  elif type shasum &> /dev/null; then
-    _hash_exec=shasum
-  fi
-  _bgval_hex=$(printf "%s\\n" "$_host" | eval "$_hash_exec" | cut -c1-2)
+  _bgval_hex=$(printf "%s\\n" "$_host" | sha1sum | cut -c1-2)
   _bgval_dec=$(adjustcolor "$((16#$_bgval_hex))")
   printf "%s" "$_bgval_dec"
 }
@@ -518,6 +515,7 @@ function zload {
     done
 }
 
+[[ $commands[kubectl] ]] && source <(kubectl completion zsh)
 # if (which zprof > /dev/null) ;then
 #       zprof | less
 # fi
