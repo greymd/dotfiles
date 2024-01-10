@@ -99,37 +99,6 @@ function cdup() {
 zle -N cdup
 bindkey '^^' cdup
 
-#--------------------
-# antigen
-# (because zplug does not work on docker)
-# Ref: issue https://github.com/zplug/zplug/issues/272
-#--------------------
-source $HOME/repos/zsh-users/antigen/antigen.zsh
-# Edit misc.zsh by following https://stackoverflow.com/questions/25614613/how-to-disable-zsh-substitution-autocomplete-with-url-and-backslashes
-# Or, special characters will be automatically escaped.
-# Disable oh-my-zsh to set ls's alias as expected
-
-# Disable auto escapting
-# https://stackoverflow.com/questions/25614613/how-to-disable-zsh-substitution-autocomplete-with-url-and-backslashes
-DISABLE_MAGIC_FUNCTIONS=true
-antigen use oh-my-zsh
-
-# Use oh-my-zsh plugins
-# antigen bundle heroku
-
-antigen bundle "zsh-users/zsh-syntax-highlighting"
-# antigen bundle "zsh-users/zsh-autosuggestions"
-antigen bundle "zsh-users/zsh-completions"
-antigen bundle "greymd/cureutils"
-antigen bundle "greymd/docker-zsh-completion"
-antigen bundle "greymd/tmux-xpanes"
-# antigen bundle "greymd/eclim-cli"
-# antigen bundle "greymd/confl"
-# antigen bundle "greymd/awless-zsh-completion"
-# antigen bundle "nobeans/zsh-sdkman"
-# antigen bundle "unkontributors/super_unko"
-antigen apply
-
 # ----------------------------------------------
 # Configurations: zsh-users/zsh-autosuggestions
 # From: https://github.com/zsh-users/zsh-autosuggestions/blob/master/src/config.zsh
@@ -191,14 +160,9 @@ antigen apply
 #--------------------
 # Completion
 #--------------------
-# Enable completion feature
+# 補完機能を有効にする
 autoload -U promptinit colors && colors
-
-## Skip following procedures because compinit is already loaded by antigen
-autoload -U compinit
-compinit
-
-source "$HOME"/repos/b4b4r07/enhancd/init.sh
+autoload -Uz compinit && compinit
 
 zstyle ':completion::complete:*' use-cache true
 zstyle ':completion:*:default' menu select=1
@@ -521,6 +485,51 @@ function zload {
 }
 
 [[ $commands[kubectl] ]] && source <(kubectl completion zsh)
+
+# プラグインを読み込む
+# antigen などのプラグインマネージャは勝手にいろんな設定を盛り込んでくるので使わない
+__hub-clone () {
+  local _arg="$(echo "$1" | awk -F/ '{if(/github.com/){gsub(".git","",$NF);print $(NF-1)"/"$NF}else{print}}')"
+  local _user="${_arg%/*}"
+  local _repo="${_arg##*/}"
+  local _repo_path="$HOME/repos"
+  mkdir -p "$_repo_path/$_user"
+  git clone "git@github.com:$_user/$_repo.git" "$_repo_path/$_user/$_repo"
+  cd "$_repo_path/$_user/$_repo"
+}
+
+repositories=(
+  "b4b4r07/enhancd"
+  "zsh-users/zsh-syntax-highlighting"
+  "zsh-users/zsh-completions"
+  "greymd/cureutils"
+  "greymd/docker-zsh-completion"
+  "greymd/tmux-xpanes"
+  "greymd/awless-zsh-completion"
+  "greymd/zsh-sdkman"
+  # "unkontributors/super_unko"
+)
+
+fpath_before="$fpath"
+for entry in "${repositories[@]}"; do
+  _user="${entry%/*}"
+  _repo="${entry##*/}"
+  _plugin_file="$HOME/repos/${_user}/${_repo}/${_repo}.plugin.zsh"
+  # ファイルがない場合、リポジトリをクローンする
+  if ! [[ -f "$_plugin_file" ]]; then
+    __hub-clone "$entry"
+  fi
+  # プラグインファイルがあれば読み込む
+  if [[ -f "$_plugin_file" ]]; then
+    source "$_plugin_file"
+  fi
+done
+fpath_after="$fpath"
+if [[ $fpath_before != $fpath_after ]] ;then
+  # 補完が更新されたはずなので更新する
+  compinit
+fi
+
 # if (which zprof > /dev/null) ;then
 #       zprof | less
 # fi
