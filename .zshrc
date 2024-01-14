@@ -495,7 +495,6 @@ __hub-clone () {
   local _repo_path="$HOME/repos"
   mkdir -p "$_repo_path/$_user"
   git clone "git@github.com:$_user/$_repo.git" "$_repo_path/$_user/$_repo"
-  cd "$_repo_path/$_user/$_repo"
 }
 
 repositories=(
