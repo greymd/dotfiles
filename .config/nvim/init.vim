@@ -33,6 +33,8 @@ noremap <leader>` i`<ESC>ea`<ESC>
 noremap <leader>( i(<ESC>ea)<ESC>
 noremap <leader>" i"<ESC>ea"<ESC>
 noremap <leader>' i'<ESC>ea'<ESC>
+" ma で a にマーク設定、'a で戻る
+noremap <leader>W mav?■<cr>j0y'a:noh<cr>
 
 set clipboard=unnamedplus
 colorscheme molokai
