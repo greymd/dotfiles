@@ -263,6 +263,9 @@ export PATH="$HOME/bin/texinfo/bin/bin:$PATH"
 # __add_path "/usr/local/opt/coreutils/libexec/gnubin"
 __add_path "$HOME/google-cloud-sdk/bin"
 __add_path "$HOME/.toolbox/bin"
+## Flutter
+__add_path "$HOME/development/flutter/bin"
+__add_path "$HOME/.pub-cache/bin"
 
 #--------------------
 # Go
@@ -754,7 +757,8 @@ urlenc() {
 }
 
 urldec() {
-  tr -d '\n' | sed 's/%/\\\\x/g' | xargs -I@ bash -c "printf \"%s\" $'@'"
+  # tr -d '\n' | sed 's/%/\\\\x/g' | xargs -I@ bash -c "printf \"%s\" $'@'"
+  python -c "import sys; from urllib.parse import unquote; print(unquote(sys.stdin.read()));"
 }
 
 # Numeric character refernce to string
