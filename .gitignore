@@ -6,3 +6,4 @@ _cout-login
 .vim/view/
 .config/coc/
 .config/github-copilot/versions.json
+.config/github-copilot
