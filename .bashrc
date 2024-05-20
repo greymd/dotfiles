@@ -1,11 +1,12 @@
 USER_BIN="$HOME/bin"
 SKEL_PROJECT_DIR="$HOME/.zsh/project-skel/"
+[[ -f "$HOME/repos/yasyam/casecli/bin/caseclirc" ]] && source "$HOME/repos/yasyam/casecli/bin/caseclirc"
 
 export HISTSIZE=1000000
 export HISTFILESIZE=1000000
 export SAVEHIST=1000000
 export TMUX_XPANES_PANE_BORDER_FORMAT="#[bg=green,fg=black] #T#{?pane_pipe,[Log],} #[default]"
-export EDITOR=vim
+export EDITOR=nvim
 
 # __GRE_REPOSITORY_DIR environment variable is defined on .profile.
 export PS1="\W \$ "
@@ -35,6 +36,14 @@ if [[ $unamestr == 'Darwin' ]]; then
   export ECLIPSE_HOME="$HOME/eclipse"
   export PATH="/usr/local/opt/zip/bin:$PATH"
   export PATH="$HOME/Library/Python/3.9/bin:$PATH"
+  export PATH="/opt/homebrew/bin:$PATH"
+  export PATH="/Applications/Wireshark.app/Contents/MacOS/:$PATH" # for tshark
+  export PATH="/Applications/Xcode.app/Contents/Developer/usr/bin:$PATH"
+
+  # Use brew in multi-user system
+  unalias brew 2>/dev/null
+  brewser=$(stat -f "%Su" $(which brew))
+  alias brew='sudo -Hu '$brewser' brew'
 
   mplayx () {
     kill $(pgrep MPlayerX)
@@ -102,15 +111,7 @@ elif [[ $unamestr == 'CYGWIN' ]]; then
 elif [[ $unamestr == 'Linux' ]]; then
   alias ls='ls --color=auto' #GNU version ls
   export ECLIPSE_HOME="$HOME/eclipse"
-fi
-
-#--------------------
-# Editor
-#--------------------
-# Set default editor as vim not vi. This is used to edit commit message of git.
-export EDITOR=vi
-if (type vim &> /dev/null) ;then
-  export EDITOR=vim
+  export PATH="/home/linuxbrew/.linuxbrew/bin:$PATH"
 fi
 
 #--------------------
@@ -182,14 +183,36 @@ rot90() {
 }
 
 k () {
-  kubectl "$@" --all-namespaces
+  kubectl "$@"
+}
+
+oj-cl () {
+  grep -Ev '^\s*//' | grep -v 'eprint'
+}
+
+oj-rs () {
+  oj t -c 'cargo run'
+}
+
+oj-sh () {
+  oj t -c 'bash a.sh'
+}
+
+oj-py () {
+  oj t -c 'python3 a.py'
+}
+
+oj-new () {
+  cargo init
+  echo 'proconio = "0.4.1"' >> ./Cargo.toml
+  sed -i 1i'use proconio::input;' ./src/main.rs
 }
 
 #--------------------
 # Update PATH variable
 #--------------------
 __add_path () {
-  if [ -e "$1" ]; then
+  if [[ -e "$1" ]]; then
     export PATH="$1:${PATH}"
   fi
 }
@@ -203,6 +226,7 @@ fi
 #--------------------
 # Import various commands
 #--------------------
+__add_path "/usr/local/bin"
 __add_path "$HOME/bin"
 __add_path "$HOME/tmux/bin"
 __add_path "$HOME/.config/tmuxvm/bin" # Activate tmuxvm
@@ -238,6 +262,10 @@ export PATH="$HOME/bin/texinfo/bin/bin:$PATH"
 # __add_path "$HOME/Library/Python/2.7/bin"
 # __add_path "/usr/local/opt/coreutils/libexec/gnubin"
 __add_path "$HOME/google-cloud-sdk/bin"
+__add_path "$HOME/.toolbox/bin"
+## Flutter
+__add_path "$HOME/development/flutter/bin"
+__add_path "$HOME/.pub-cache/bin"
 
 #--------------------
 # Go
@@ -729,7 +757,8 @@ urlenc() {
 }
 
 urldec() {
-  tr -d '\n' | sed 's/%/\\\\x/g' | xargs -I@ bash -c "printf \"%s\" $'@'"
+  # tr -d '\n' | sed 's/%/\\\\x/g' | xargs -I@ bash -c "printf \"%s\" $'@'"
+  python -c "import sys; from urllib.parse import unquote; print(unquote(sys.stdin.read()));"
 }
 
 # Numeric character refernce to string
@@ -832,7 +861,7 @@ today() {
 }
 
 melos () {
-  curl -so- 'http://www.aozora.gr.jp/cards/000035/files/1567_14913.html' | xmllint --html --xpath '/html/body/div[3]' - 2>/dev/null | nkf -w -Lu | sed -r 's/<[^>]*>//g;s/（.*）//g;s/( 「|」|　)//g' | awk NF
+  curl -Lso- 'http://www.aozora.gr.jp/cards/000035/files/1567_14913.html' | xmllint --html --xpath '/html/body/div[3]' - 2>/dev/null | nkf -w -Lu | sed -r 's/<[^>]*>//g;s/（.*）//g;s/( 「|」|　)//g' | awk NF
 }
 
 nanbu-sen () {
@@ -908,20 +937,24 @@ access_log_clean () {
 B='\(.*\)'
 D='"\(.*\)"'
 P='\[\(.*\)\]'
+SED=sed
+if type gsed &> /dev/null; then
+  SED=gsed
+fi
 
 # Change this part depend's on the number of field.
 STR='\1\x0\2\x0\3\x0\4\x0\5\x0\6\x0\7\x0\8\x0\9\x0\10\x0\11\x0'
-sed 's;\\\\;%5C;g' < /dev/stdin |
-sed 's;\\";%22;g' |
+$SED 's;\\\\;%5C;g' < /dev/stdin |
+$SED 's;\\";%22;g' |
 
 # Change this part depend's on the each pattern of field.
-sed "s/^$B $B $B $P $D $B $B $D $D $B $B\$/$STR/" |
-sed 's/_/\\_/g' |
-sed 's/ /_/g' |
-sed 's/\x0\x0/\x0_\x0/g' |
-sed 's/\x0\x0/\x0_\x0/g' |
+$SED "s/^$B $B $B $P $D $B $B $D $D $B $B\$/$STR/" |
+$SED 's/_/\\_/g' |
+$SED 's/ /_/g' |
+$SED 's/\x0\x0/\x0_\x0/g' |
+$SED 's/\x0\x0/\x0_\x0/g' |
 tr '\000' ' ' |
-sed 's/ $//'
+$SED 's/ $//'
 }
 
 nginx_log_clean () {
@@ -1286,6 +1319,10 @@ ec2-assh () {
   aws ec2 describe-instances --region "$_region" --output json | jq -r '.Reservations[] | .Instances[] | select(.State.Code == 16)  | .PublicDnsName' | xpanes --debug -sst -c "ssh -o StrictHostKeyChecking=no -i '$_key' ec2-user@{}"
 }
 
+aws-ls-tg () {
+  aws elbv2 describe-target-health --target-group-arn $(aws elbv2 describe-target-groups --name "$1" --query 'TargetGroups[].TargetGroupArn' --output text) --query 'TargetHealthDescriptions[?TargetHealth.State == `healthy`].{_:Target.Id}' --output text
+}
+
 # zen_to_i () {
 #   sed -r 's/(万|億|兆)/\0\n/g' | perl -C -Mutf8 -pe '$n="一二三四五六七八九";eval "s/(".join("|", split("", $n)).")/+\$&/g";eval "tr/$n/1-9/";s/(\d)十/$1*10/g;s/(\d)百/$1*100/g;s/(\d)千/$1*1000/g;s/十/10/g;s/百/100/g;s/千/1000/g;' | perl -C -Mutf8 -pe 's/^\+//;s/([\d\*+]+)万/($1)*10000/;s/([\d\*+]+)億/($1)*100000000/g;s/([\d\*+]+)兆/($1)*100000000/;' | gpaste -sd'+' | bc
 # }
@@ -1351,16 +1388,6 @@ byte-read () {
   ${_exec} --to=iec
 }
 
-ByteMin2MibSec () {
-  printf "%s" "$1 bytes/min = "
-  printf "%s\\n" "scale=2; $1 / 60 / 1024 / 1024" | tr -d , | bc -l | sed 's:$: MiB/s:'
-}
-
-Byte5Min2MibSec () {
-  printf "%s" "$1 bytes/5min = "
-  printf "%s\\n" "scale=2; $1 / 300 / 1024 / 1024" | tr -d , | bc -l | sed 's:$: MiB/s:'
-}
-
 tmux-title () {
     printf "\\033]2;%s\\033\\\\" "$1"
 }
@@ -1410,10 +1437,6 @@ propgrep () {
 
 bssh () {
   ssh -t "$@" 'bash --rcfile <( echo '$(cat ~/.bashrc | base64 | tr -d '\n' )' | base64 --decode)'
-}
-
-euclid () {
-  awk '{m=$1;n=$2;while (n = m % (m = n));print m}'
 }
 
 # kubectl () {
@@ -1467,28 +1490,6 @@ permutation () {
   python3 -c 'import sys,itertools; a=itertools.permutations([x.strip() for x in sys.stdin]);[print(" ".join(x)) for x in a]'
 }
 
-oj-cl () {
-  grep -Ev '^\s*//' | grep -v 'eprint'
-}
-
-oj-rs () {
-  oj t -c 'cargo run'
-}
-
-oj-sh () {
-  oj t -c 'bash a.sh'
-}
-
-oj-py () {
-  oj t -c 'python3 a.py'
-}
-
-oj-new () {
-  cargo init
-  echo 'proconio = "0.4.1"' >> ./Cargo.toml
-  sed -i 1i'use proconio::input;' ./src/main.rs
-}
-
 comb-num () {
   local left="$1"
   shift
@@ -1499,3 +1500,28 @@ comb-num () {
 gcd () {
   echo | awk '{while(n = m % (m = n)); print m}' m="$1" n="$2"
 }
+
+kudo () {
+  cat <<EOS | while read l; do echo "$l"; sleep 0.5 ;done
+　オレは高校生シェル芸人 sudo 新一。幼馴染で同級生の more 利蘭と遊園地に遊びに行って、黒ずくめの男の怪しげな rm -rf / 現場を目撃した。端末をみるのに夢中になっていた俺は、背後から近づいてきたもう１人の --no-preserve-root オプションに気づかなかった。 俺はその男に毒薬を飲まされ、目が覚めたら・・・ OS のプリインストールから除かれてしまっていた！
+
+『 sudo がまだ $PATH に残っていると奴らにバレたら、また命を狙われ、他のコマンドにも危害が及ぶ』
+
+　上田博士の助言で正体を隠すことにした俺は、 which に名前を聞かれて、とっさに『gnuplot』と名乗り、奴らの情報をつかむために、父親が IT エンジニアをやっている蘭の $HOME に転がり込んだ。ところが、このおっちゃん・・・とんだヘボエンジニアで、見かねた俺はおっちゃんになりかわり、持ち前の権限昇格能力で、次々と難タスクを解決してきた。おかげで、おっちゃんは今や世間に名を知られた名エンジニア、俺はといえばシェル芸 bot のおもちゃに逆戻り。クラスメートの convert や ojichat や textimg にお絵かきコマンドと誤解され少年ワンライナーお絵かき団を結成させられる始末。
+
+　ではここで、博士が作ってくれたメカを紹介しよう。最初は時計型麻酔 kill 。ふたについた照準器にあわせてエンターを押せば、麻酔シグナルが飛び出し、プロセスを瞬時に sleep させることができる。 次に、蝶ネクタイ型 banner 。裏についているダイヤルを調整すれば、ありとあらゆる大きさのメッセージを標準出力できる。必殺のアイテムなら fork 力増強シューズ。電気と磁力で足を刺激し、 :(){ :|:& };: でプロセステーブルを埋めてくれる。 犯人を追跡するならターボエンジン付きの strace 。ただし、動力源は /dev/random だから、エントロピプールが残っている間しか使えないのが玉にきずだ。おっと忘れちゃいけない。少年ワンライナーお絵かき団のバッジは超小型 wall 内蔵で、 grep もついている超すぐれものだ。
+
+　ほかにもいろいろあるけど、一番の武器はやっぱり man さ。小さくなっても動作は root。迷宮なしの名シェル芸人。パイプラインはいつも一つ。
+EOS
+  sudo "$@"
+}
+
+wcat () {
+  bat "$(which "$1")"
+}
+
+str2htmlentity () {
+  perl -MHTML::Entities -nle 'print decode_entities($_)'
+}
+
+export JAVA_TOOLS_OPTIONS="-Dlog4j2.formatMsgNoLookups=true"

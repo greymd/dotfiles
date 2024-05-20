@@ -2,3 +2,7 @@ _cout-login
 .vim/eclim/
 .vim/plugin/
 .vim/workbench.xmi
+.vim/plugged/
+.vim/view/
+.config/coc/
+.config/github-copilot/versions.json

@@ -1,11 +1,14 @@
 " === Pulugins START ===
 call plug#begin('~/.vim/plugged')
+Plug 'ntpeters/vim-better-whitespace'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'vim-airline/vim-airline'
 Plug 'tomasr/molokai'
 Plug 'terryma/vim-multiple-cursors'
 Plug 'lambdalisue/pastefix.vim' " Workaround of bug of clipboard
 Plug 'Shougo/defx.nvim', { 'do': ':UpdateRemotePlugins' }
+Plug 'github/copilot.vim'
+Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && npx --yes yarn install' }
 call plug#end()
 " === Pulugins END ===
 "
@@ -31,6 +34,8 @@ noremap <leader>` i`<ESC>ea`<ESC>
 noremap <leader>( i(<ESC>ea)<ESC>
 noremap <leader>" i"<ESC>ea"<ESC>
 noremap <leader>' i'<ESC>ea'<ESC>
+" ma で a にマーク設定、'a で戻る
+noremap <leader>W mav?■■■■<cr>j0y'a:noh<cr>
 
 set clipboard=unnamedplus
 colorscheme molokai
@@ -47,6 +52,11 @@ set shiftwidth=2
 set expandtab
 set autoindent
 set copyindent
+
+" set indent and tabstop to 4 in C
+autocmd FileType c setlocal tabstop=4 shiftwidth=4 softtabstop=4 expandtab
+" set indent and tabstop to 4 in Java
+autocmd FileType java setlocal tabstop=4 shiftwidth=4 softtabstop=4 expandtab
 " }}} Spaces & Tabs
 
 " Use OS clipboard as the register when yank something
@@ -212,3 +222,16 @@ call defx#custom#option('_', {
       \ 'toggle': 1,
       \ 'resume': 1,
       \ })
+
+" Copilot v:false = disable, v:true = enable
+let g:copilot_filetypes = {
+      \ '*': v:true,
+      \ 'sh': v:true,
+      \ 'c' : v:true,
+      \ 'java' : v:true,
+      \ 'rs' : v:true,
+      \ 'py' : v:true,
+      \ 'go' : v:true,
+      \ 'cpp' : v:true,
+      \ 'js' : v:true,
+      \ }
