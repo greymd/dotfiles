@@ -1,6 +1,5 @@
-[user]
-	name = Yasuhiro Yamada
-  email = yamada@gr3.ie
+[includeIf "gitdir:~/repos/greymd"]
+  path = ~/.gitconfig_greymd
 [alias]
 	gr = log --graph --date=short --decorate=short --pretty=format:'%Cgreen%h %Creset%cd %Cblue%cn %Cred%d %Creset%s'
 	fpr = "!f() { git fetch origin pull/$1/head:pr/$1; }; f"
@@ -8,25 +7,12 @@
 	excludesfile = ~/.gitignore_global
 	autocrlf = input
 	safecrlf = false
-	editor = vim
+	editor = nvim
 	symlinks = true
 [push]
 	default = matching
-[difftool "sourcetree"]
-	cmd = opendiff \"$LOCAL\" \"$REMOTE\"
-	path = 
-[mergetool "sourcetree"]
-	cmd = /Applications/Sourcetree.app/Contents/Resources/opendiff-w.sh \"$LOCAL\" \"$REMOTE\" -ancestor \"$BASE\" -merge \"$MERGED\"
-	trustExitCode = true
 [filter "lfs"]
 	required = true
 	clean = git-lfs clean -- %f
 	smudge = git-lfs smudge -- %f
 	process = git-lfs filter-process
-[sendemail]
-	smtpencryption = tls
-	smtpserver = greymd.sakura.ne.jp
-	smtpuser = yamada@gr3.ie
-	smtpserverport = 587
-	smtpDomain = gr3.ie
-	smtpAuth = PLAIN LOGIN GSSAPI

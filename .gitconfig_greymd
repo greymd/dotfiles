@@ -1,0 +1,10 @@
+[user]
+	name = Yasuhiro Yamada
+  email = yamada@gr3.ie
+[sendemail]
+	smtpencryption = tls
+	smtpserver = greymd.sakura.ne.jp
+	smtpuser = yamada@gr3.ie
+	smtpserverport = 587
+	smtpDomain = gr3.ie
+	smtpAuth = PLAIN LOGIN GSSAPI
