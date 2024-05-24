@@ -1,4 +1,14 @@
-[includeIf "gitdir:~/repos/greymd"]
+[includeIf "gitdir:~/repos/"]
+  path = ~/.gitconfig_local
+[includeIf "gitdir:~/repos/greymd/"]
+  path = ~/.gitconfig_greymd
+[includeIf "gitdir:~/repos/PolaClub/"]
+  path = ~/.gitconfig_greymd
+[includeIf "gitdir:~/repos/egison/"]
+  path = ~/.gitconfig_greymd
+[includeIf "gitdir:~/repos/shellgei/"]
+  path = ~/.gitconfig_greymd
+[includeIf "gitdir:~/repos/unkontributors/"]
   path = ~/.gitconfig_greymd
 [alias]
 	gr = log --graph --date=short --decorate=short --pretty=format:'%Cgreen%h %Creset%cd %Cblue%cn %Cred%d %Creset%s'
