@@ -529,9 +529,9 @@ if [[ $fpath_before != $fpath_after ]] ;then
   compinit
 fi
 
-export OPENAI_API_KEY="$(<~/.local/openai_key)"
-source $HOME/.dotfiles/manai/manai.zsh
-bindkey '\eh' manai
+# export OPENAI_API_KEY="$(<~/.local/openai_key)"
+# source $HOME/.dotfiles/manai/manai.zsh
+# bindkey '\eh' manai
 
 # if (which zprof > /dev/null) ;then
 #       zprof | less
