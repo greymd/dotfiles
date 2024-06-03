@@ -7,7 +7,11 @@
 # inspired by https://github.com/kisqragi/dotfiles/blob/master/install.sh
 
 set -u
-shopt -s globstar
+
+if [[ -n ${BASH_VERSION/3*} ]]; then
+  # globstar is only supported by 4.x or later
+  shopt -s globstar
+fi
 
 readonly REPO_DIR="$HOME/repos"
 DOT_DIR="$REPO_DIR/greymd/dotfiles"
