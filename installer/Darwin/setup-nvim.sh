@@ -11,7 +11,7 @@ fi
 
 pip3 install -U neovim
 
-plugdir="$HOME/.local/share/nvim/site/autoload/"
+plugdir="${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/autoload/
 if [[ ! -d "$plugdir" ]] || [[ ! -e "$plugdir/plug.vim" ]] ; then
   mkdir -p "$plugdir"
   download_file "https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim" "$plugdir/plug.vim"
