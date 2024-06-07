@@ -7,7 +7,11 @@
 # inspired by https://github.com/kisqragi/dotfiles/blob/master/install.sh
 
 set -u
-shopt -s globstar
+
+if [[ -n ${BASH_VERSION/3*} ]]; then
+  # globstar is only supported by 4.x or later
+  shopt -s globstar
+fi
 
 readonly REPO_DIR="$HOME/repos"
 DOT_DIR="$REPO_DIR/greymd/dotfiles"
@@ -142,10 +146,15 @@ main() {
   do
     [[ "$f" == ".DS_Store" ]] && continue
     [[ "$f" == ".git" ]] && continue
+    [[ "$f" == ".config" ]] && continue
     ln -snf "$DOT_DIR"/"$f" "$HOME"/"$f"
     msg_info "Create symlink to $f"
   done
-
+  for f in .config/*
+  do
+    ln -snf "$DOT_DIR"/"$f" "$HOME"/"$f"
+    msg_info "Create symlink to $f"
+  done
   if [[ ! -d "$BIN_DIR" ]]; then
     msg_info "Creating $BIN_DIR"
     mkdir -p "$BIN_DIR"
