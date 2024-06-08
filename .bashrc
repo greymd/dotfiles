@@ -228,6 +228,7 @@ fi
 #--------------------
 __add_path "/usr/local/bin"
 __add_path "$HOME/bin"
+__add_path "$HOME/bin/open-usp-tukubai"
 __add_path "$HOME/tmux/bin"
 __add_path "$HOME/.config/tmuxvm/bin" # Activate tmuxvm
 __add_path "$HOME/.embulk/bin"
@@ -1479,7 +1480,7 @@ makerepo () { mkdir "$1" && cd "$1" && echo "# $1" > README.md && git init && gi
 # source "$HOME/.cargo/env"
 
 calc () {
-  printf '%s\n' "$*" | bc -l
+  printf '%s\n' "$*" | tr 'x' '*' | tr -d ',' | bc -l
 }
 
 permutation () {
@@ -1518,6 +1519,67 @@ wcat () {
 
 str2htmlentity () {
   perl -MHTML::Entities -nle 'print decode_entities($_)'
+}
+
+#--------------------
+# Simple worklog manager
+#--------------------
+export __DRIVE_HOME="$HOME/My Drive"
+export __NOTE_HOME="${__DRIVE_HOME}/notes"
+export __TICKET_HOME="${__DRIVE_HOME}/tickets"
+note () {
+  local note_id="$1"
+  local target=
+  if [[ -n "$note_id" ]]; then
+    target="$__NOTE_HOME"/"$note_id".txt
+    if [[ ! -f "$target" ]]; then
+      echo "'$target' does not exist" >&2
+      return 1
+    fi
+  else
+    target="$__NOTE_HOME"/"$(date +%F)".txt
+  fi
+  "$EDITOR" "$target"
+}
+
+note-cd () {
+  cd "$__NOTE_HOME"
+}
+
+note-ls () {
+  ls "$__NOTE_HOME"
+}
+
+ti-cd () {
+  set -eu
+  local ticket_id="$1"
+  set +eu
+  cd "${__TICKET_HOME}/${ticket_id}"
+}
+
+ti-ls () {
+  ls "${__TICKET_HOME}"
+}
+
+ti () {
+  set -eu
+  local ticket_id="$1"
+  set +eu
+  if [[ ! -d "${__TICKET_HOME}/${ticket_id}" ]]; then
+    mkdir -p "${__TICKET_HOME}/${ticket_id}"
+  fi
+  ti-cd "$ticket_id"
+  "$EDITOR" "${__TICKET_HOME}/${ticket_id}/worklog.txt"
+}
+
+ti-grep () {
+  local query="$1"
+  pt -G '.*.txt' -i "$query" "${__NOTE_HOME}"
+  pt -G '.*.txt' -i "$query" "${__TICKET_HOME}"
+}
+
+ti-find () {
+  find "${__TICKET_HOME}" -type f
 }
 
 export JAVA_TOOLS_OPTIONS="-Dlog4j2.formatMsgNoLookups=true"
