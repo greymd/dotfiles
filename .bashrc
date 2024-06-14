@@ -1546,6 +1546,15 @@ note () {
   "$EDITOR" "$target"
 }
 
+note-new () {
+  local note_id="$1"
+  local target=
+  if [[ -n "$note_id" ]]; then
+    target="$__NOTE_HOME"/${note_id}.txt
+  fi
+  "$EDITOR" "$target"
+}
+
 note-cd () {
   cd "$__NOTE_HOME"
 }
