@@ -529,12 +529,12 @@ if [[ $fpath_before != $fpath_after ]] ;then
   compinit
 fi
 
-if [[ -e ~/.local/openai_key ]]; then
-  export OPENAI_API_KEY="$(<~/.local/openai_key)"
-  source $HOME/repos/mecab/manai/manai.zsh
-  zle -N manai
-  bindkey '\eh' manai
-fi
+# if [[ -e ~/.local/openai_key ]]; then
+#   export OPENAI_API_KEY="$(<~/.local/openai_key)"
+#   source $HOME/repos/mecab/manai/manai.zsh
+#   zle -N manai
+#   bindkey '\eh' manai
+# fi
 
 # if (which zprof > /dev/null) ;then
 #       zprof | less
