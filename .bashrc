@@ -1524,7 +1524,7 @@ str2htmlentity () {
 #--------------------
 # Simple worklog manager
 #--------------------
-export __DRIVE_HOME="$HOME/My Drive"
+export __DRIVE_HOME="$HOME/Drive"
 export __NOTE_HOME="${__DRIVE_HOME}/notes"
 export __TICKET_HOME="${__DRIVE_HOME}/tickets"
 note () {
@@ -1538,6 +1538,15 @@ note () {
     fi
   else
     target="$__NOTE_HOME"/"$(date +%F)".txt
+  fi
+  "$EDITOR" "$target"
+}
+
+note-new () {
+  local note_id="$1"
+  local target=
+  if [[ -n "$note_id" ]]; then
+    target="$__NOTE_HOME"/${note_id}.txt
   fi
   "$EDITOR" "$target"
 }
@@ -1564,6 +1573,8 @@ ti-ls () {
 ti () {
   set -eu
   local ticket_id="$1"
+  # Extract ticket id from URL (i.e example.com/ticket-id-123)
+  ticket_id="$(echo "$ticket_id" | awk -F/ '{print $NF}')"
   set +eu
   if [[ ! -d "${__TICKET_HOME}/${ticket_id}" ]]; then
     mkdir -p "${__TICKET_HOME}/${ticket_id}"
