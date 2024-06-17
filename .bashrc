@@ -1592,7 +1592,7 @@ ti-find () {
 #--------------------
 # Simple EC2 manager
 #--------------------
-ec2make-al2023 () {
+ec2run-al2023 () {
   local image_id="${1-}"
   local instance_type="${2:-m5.large}"
   image_id="$(aws --profile $__AWS_PROFILE ec2 describe-images \
@@ -1619,12 +1619,28 @@ ec2start () {
   aws --profile $__AWS_PROFILE ec2 start-instances --instance-ids "$@"
 }
 
-ssm () {
-  aws --profile $__AWS_PROFILE ssm start-session --target "$1"
+ec2stop () {
+  aws --profile $__AWS_PROFILE ec2 stop-instances --instance-ids "$@"
 }
 
 ec2ls () {
   aws --profile $__AWS_PROFILE ec2 describe-instances --query 'Reservations[].Instances[].[InstanceId,(Tags[?Key == `Name`].Value)[0],PrivateIpAddress,State.Name]' --output text | column -t
+}
+
+ssm () {
+  aws --profile $__AWS_PROFILE ssm start-session --target "$1"
+}
+
+ssmport () {
+  set -u
+  local target="$1"
+  local port="$2"
+  local localPort="$3"
+  set +u
+  aws --profile $__AWS_PROFILE ssm start-session \
+  --target "$target" \
+  --document-name AWS-StartPortForwardingSession \
+  --parameters "portNumber=$port,localPortNumber=$localPort"
 }
 
 export JAVA_TOOLS_OPTIONS="-Dlog4j2.formatMsgNoLookups=true"
