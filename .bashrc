@@ -1389,10 +1389,6 @@ tmux-title () {
     printf "\\033]2;%s\\033\\\\" "$1"
 }
 
-ssm () {
-  aws ssm start-session --target "$1"
-}
-
 shellgeibot () {
   local _name
   local _exefile="$1"
@@ -1591,6 +1587,44 @@ ti-grep () {
 
 ti-find () {
   find "${__TICKET_HOME}" -type f
+}
+
+#--------------------
+# Simple EC2 manager
+#--------------------
+ec2make-al2023 () {
+  local image_id="${1-}"
+  local instance_type="${2:-m5.large}"
+  image_id="$(aws --profile $__AWS_PROFILE ec2 describe-images \
+    --filters "Name=name,Values=al2023-ami-2*x86_64" \
+    --query 'sort_by(Images, &CreationDate)[*].[CreationDate,Name,ImageId]' \
+    --output text | awk 'END{print $NF}')"
+  name_tag=$(whoami)-$(date +%s)
+  aws --profile $__AWS_PROFILE ec2 run-instances \
+    --image-id $image_id \
+    --instance-type $instance_type \
+    --security-group-ids $__AWS_SECURITY_GROUP \
+    --subnet-id $__AWS_SUBNET \
+    --iam-instance-profile Name=$__AWS_INSTANCE_PROFILE \
+    --tag-specifications "ResourceType=instance,Tags=[{Key=Name,Value=$name_tag}]" \
+    --query 'Instances[0].{_:InstanceId}' \
+    --output text
+}
+
+ec2term () {
+  aws --profile $__AWS_PROFILE ec2 terminate-instances --instance-ids "$@"
+}
+
+ec2start () {
+  aws --profile $__AWS_PROFILE ec2 start-instances --instance-ids "$@"
+}
+
+ssm () {
+  aws --profile $__AWS_PROFILE ssm start-session --target "$1"
+}
+
+ec2ls () {
+  aws --profile $__AWS_PROFILE ec2 describe-instances --query 'Reservations[].Instances[].[InstanceId,(Tags[?Key == `Name`].Value)[0],PrivateIpAddress,State.Name]' --output text | column -t
 }
 
 export JAVA_TOOLS_OPTIONS="-Dlog4j2.formatMsgNoLookups=true"
