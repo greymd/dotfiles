@@ -1624,7 +1624,7 @@ ec2stop () {
 }
 
 ec2ls () {
-  aws --profile $__AWS_PROFILE ec2 describe-instances --query 'Reservations[].Instances[].[InstanceId,(Tags[?Key == `Name`].Value)[0],PrivateIpAddress,State.Name]' --output text | column -t
+  aws --profile $__AWS_PROFILE ec2 describe-instances --filters "Name=vpc-id,Values=$__AWS_VPC" --query 'Reservations[].Instances[].[InstanceId,(Tags[?Key == `Name`].Value)[0],PrivateIpAddress,State.Name]' --output text | column -t
 }
 
 ssm () {
