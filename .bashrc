@@ -227,15 +227,14 @@ fi
 # Import various commands
 #--------------------
 __add_path "/usr/local/bin"
-__add_path "$HOME/bin"
-__add_path "$HOME/bin/open-usp-tukubai"
-__add_path "$HOME/tmux/bin"
 __add_path "$HOME/.config/tmuxvm/bin" # Activate tmuxvm
 __add_path "$HOME/.embulk/bin"
 __add_path "$HOME/.cabal/bin"
 __add_path "$HOME/.composer/vendor/bin"
 __add_path "$HOME/.egison/bin"
 __add_path "$HOME/.local/bin"
+__add_path "$HOME/repos/greymd/bin"
+__add_path "$HOME/repos/greymd/bin/open-usp-tukubai"
 __add_path "$HOME/repos/greymd/joplin-utils/cli"
 if [[ -e "$HOME/.nodenv/version" ]]; then
   __add_path "$HOME/.nodenv/shims"
