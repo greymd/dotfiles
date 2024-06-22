@@ -1581,8 +1581,7 @@ ti () {
 
 ti-grep () {
   local query="$1"
-  pt -G '.*.txt' -i "$query" "${__NOTE_HOME}"
-  pt -G '.*.txt' -i "$query" "${__TICKET_HOME}"
+  pt -G '.*.txt' -i "$query" "${__DRIVE_HOME}"
 }
 
 ti-find () {
