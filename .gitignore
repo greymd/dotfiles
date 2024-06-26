@@ -7,3 +7,4 @@ _cout-login
 .config/coc/
 .config/github-copilot/versions.json
 .config/github-copilot
+venv

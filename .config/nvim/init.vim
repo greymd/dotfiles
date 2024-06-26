@@ -127,6 +127,7 @@ if os=="mac"
   " Workaround for opening browser since g:netrw_http_cmd does not work (see https://github.com/vim/vim/issues/4738 ) 
   noremap <silent> gx :execute 'silent! !open -a Google\ Chrome ' . shellescape(expand('<cWORD>'), 1)<cr>
   " noremap <silent> gx :execute 'silent! !open -a Firefox ' . shellescape(expand('<cWORD>'), 1)<cr>
+  let g:python3_host_prog = expand('~/repos/greymd/dotfiles/venv/bin/python3')
 endif
 
 " Scroll popup window -- see :h coc#float#has_scroll()
