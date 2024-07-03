@@ -130,6 +130,7 @@ alias gr='grep'
 alias gm='git commit -m '
 alias gpom='git push origin master'
 # alias xpanes='xpanes -B "stty \`tmux display-message -p \"rows #{pane_height} cols #{pane_width}\"\`"'
+alias tf=terraform
 
 #remove control character
 alias rmcc='perl -pe '"'"'s/\e([^\[\]]|\[.*?[a-zA-Z]|\].*?\a)//g'"'"' | col -b'
@@ -1593,12 +1594,12 @@ ti-find () {
 ec2run-al2023 () {
   local image_id="${1-}"
   local instance_type="${2:-m5.large}"
-  image_id="$(aws --profile $__AWS_PROFILE ec2 describe-images \
+  image_id="$(aws ec2 describe-images \
     --filters "Name=name,Values=al2023-ami-2*x86_64" \
     --query 'sort_by(Images, &CreationDate)[*].[CreationDate,Name,ImageId]' \
     --output text | awk 'END{print $NF}')"
   name_tag=$(whoami)-$(date +%s)
-  aws --profile $__AWS_PROFILE ec2 run-instances \
+  aws ec2 run-instances \
     --image-id $image_id \
     --instance-type $instance_type \
     --security-group-ids $__AWS_SECURITY_GROUP \
@@ -1610,23 +1611,23 @@ ec2run-al2023 () {
 }
 
 ec2term () {
-  aws --profile $__AWS_PROFILE ec2 terminate-instances --instance-ids "$@"
+  aws ec2 terminate-instances --instance-ids "$@"
 }
 
 ec2start () {
-  aws --profile $__AWS_PROFILE ec2 start-instances --instance-ids "$@"
+  aws ec2 start-instances --instance-ids "$@"
 }
 
 ec2stop () {
-  aws --profile $__AWS_PROFILE ec2 stop-instances --instance-ids "$@"
+  aws ec2 stop-instances --instance-ids "$@"
 }
 
 ec2ls () {
-  aws --profile $__AWS_PROFILE ec2 describe-instances --filters "Name=vpc-id,Values=$__AWS_VPC" --query 'Reservations[].Instances[].[InstanceId,(Tags[?Key == `Name`].Value)[0],PrivateIpAddress,State.Name]' --output text | column -t
+  aws ec2 describe-instances --filters "Name=vpc-id,Values=$__AWS_VPC" --query 'Reservations[].Instances[].[InstanceId,(Tags[?Key == `Name`].Value)[0],PrivateIpAddress,State.Name]' --output text | column -t
 }
 
 ssm () {
-  aws --profile $__AWS_PROFILE ssm start-session --target "$1"
+  aws ssm start-session --target "$1"
 }
 
 ssmport () {
@@ -1635,7 +1636,7 @@ ssmport () {
   local port="$2"
   local localPort="$3"
   set +u
-  aws --profile $__AWS_PROFILE ssm start-session \
+  aws ssm start-session \
   --target "$target" \
   --document-name AWS-StartPortForwardingSession \
   --parameters "portNumber=$port,localPortNumber=$localPort"

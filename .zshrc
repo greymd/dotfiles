@@ -353,6 +353,15 @@ function vcs_echo {
   echo "%{$color%}%F{5}[git:%f%{$branch%}%{$reset_color%}%F{5}]%f" | sed -e s/@/"%F{yellow}@%f%{$color%}"/
 }
 
+function aws_prof_echo {
+  if [[ -z "$AWS_DEFAULT_PROFILE" ]]; then
+    return
+  else
+    color=${fg[yellow]}
+    echo "%{$color%}%F{5}[aws:%f%{$AWS_DEFAULT_PROFILE%}%{$reset_color%}%F{5}]%f"
+  fi
+}
+
 #  Disable as of 2017/05/08
 #  ###################################
 #  ####### Vi related Settings #######
@@ -433,7 +442,7 @@ if [[ $unamestr == 'Darwin' ]]; then
   # Shows emoji "END" at the end of the result.
   END_MARK=$'\xf0\x9f\x94\x9a'
   export PROMPT_EOL_MARK="%K{3}$END_MARK %K%{$reset_color%}"
-  PROMPT='${new_line}%{$fg[green]%}%B%~%b $(vcs_echo)${new_line}%(!.%F{red}#%f.$)%b %{$reset_color%}'
+  PROMPT='${new_line}%{$fg[green]%}%B%~%b $(vcs_echo)$(aws_prof_echo)${new_line}%(!.%F{red}#%f.$)%b %{$reset_color%}'
   # RPROMPT="git:"
 elif [[ $unamestr == 'CYGWIN' ]]; then
   # Simple one
@@ -441,10 +450,10 @@ elif [[ $unamestr == 'CYGWIN' ]]; then
   PROMPT='%F{5}%f%{$fg[green]%}%B%~%b%F{5}%f%(!.%F{red}#%f.$)%b '
 elif [[ $unamestr == 'Linux' ]]; then
   if grep -q Microsoft /proc/version 2> /dev/null ;then
-    PROMPT='${new_line}%{$fg[green]%}%B%~%b $(vcs_echo)${new_line}%(!.%F{red}#%f.$)%b '
+    PROMPT='${new_line}%{$fg[green]%}%B%~%b $(vcs_echo)$(aws_prof_echo)${new_line}%(!.%F{red}#%f.$)%b '
   else
     # Simple one
-    PROMPT='${new_line}%F{${_UNIQ_FGCOLOR}}%B%~%b%f $(vcs_echo)${new_line}%(!.%F{red}#%f.$)%b '
+    PROMPT='${new_line}%F{${_UNIQ_FGCOLOR}}%B%~%b%f $(vcs_echo)$(aws_prof_echo)${new_line}%(!.%F{red}#%f.$)%b '
   fi
 fi
 
