@@ -13,6 +13,16 @@
 		}
 	},
 	"languageserver": {
+	  "terraform": {
+			"command": "terraform-ls",
+			"args": ["serve"],
+			"filetypes": [
+				"terraform",
+				"tf"
+			],
+			"initializationOptions": {},
+			"settings": {}
+		},
 		"clangd": {
 			"command": "clangd",
 			"rootPatterns": ["compile_flags.txt", "compile_commands.json"],

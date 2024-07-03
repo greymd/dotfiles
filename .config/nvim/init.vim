@@ -9,9 +9,22 @@ Plug 'lambdalisue/pastefix.vim' " Workaround of bug of clipboard
 Plug 'Shougo/defx.nvim', { 'do': ':UpdateRemotePlugins' }
 Plug 'github/copilot.vim'
 Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && npx --yes yarn install' }
+Plug 'hashivim/vim-terraform'
 call plug#end()
 " === Pulugins END ===
-"
+
+" === Set for terraform syntax highlight ===
+let g:PaperColor_Theme_Options = {
+  \   'theme': {
+  \     'default': {
+  \       'override' : {
+  \         'spellbad':   ['#000000', '0'],
+  \         'spellcap':   ['#000000', '0'],
+  \       }
+  \     }
+  \   }
+  \ }
+
 " === Check OS ===
 function! GetRunningOS()
   if has("win32")
@@ -168,6 +181,8 @@ function! s:defx_my_settings() abort
   \ defx#do_action('drop', 'pedit')
   nnoremap <silent><buffer><expr> o
   \ defx#do_action('open_or_close_tree')
+  nnoremap <silent><buffer><expr> O
+  \ defx#do_action('open_tree_recursive')
   nnoremap <silent><buffer><expr> K
   \ defx#do_action('new_directory')
   nnoremap <silent><buffer><expr> N
