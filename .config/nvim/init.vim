@@ -10,20 +10,10 @@ Plug 'Shougo/defx.nvim', { 'do': ':UpdateRemotePlugins' }
 Plug 'github/copilot.vim'
 Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && npx --yes yarn install' }
 Plug 'hashivim/vim-terraform'
+" Plug 'romgrk/barbar.nvim'
+" Plug 'nvim-tree/nvim-web-devicons' " required for barbar.nvim
 call plug#end()
 " === Pulugins END ===
-
-" === Set for terraform syntax highlight ===
-let g:PaperColor_Theme_Options = {
-  \   'theme': {
-  \     'default': {
-  \       'override' : {
-  \         'spellbad':   ['#000000', '0'],
-  \         'spellcap':   ['#000000', '0'],
-  \       }
-  \     }
-  \   }
-  \ }
 
 " === Check OS ===
 function! GetRunningOS()
@@ -49,6 +39,11 @@ noremap <leader>" i"<ESC>ea"<ESC>
 noremap <leader>' i'<ESC>ea'<ESC>
 " ma で a にマーク設定、'a で戻る
 noremap <leader>W mav?■■■■<cr>j0y'a:noh<cr>
+
+" バッファの移動
+" nnoremap <silent> <leader>n :bprev<CR>
+" nnoremap <silent> <leader>p :bnext<CR>
+" nnoremap <silent> <leader>d :bdelete
 
 set clipboard=unnamedplus
 colorscheme molokai
@@ -240,8 +235,10 @@ call defx#custom#option('_', {
       \ })
 
 " Copilot v:false = disable, v:true = enable
+"      \ '*': v:true,
 let g:copilot_filetypes = {
-      \ '*': v:true,
+      \ 'txt': v:true,
+      \ 'tf': v:true,
       \ 'sh': v:true,
       \ 'c' : v:true,
       \ 'java' : v:true,
