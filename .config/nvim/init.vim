@@ -10,7 +10,7 @@ Plug 'Shougo/defx.nvim', { 'do': ':UpdateRemotePlugins' }
 Plug 'github/copilot.vim'
 Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && npx --yes yarn install' }
 Plug 'hashivim/vim-terraform'
-" Plug 'romgrk/barbar.nvim'
+Plug 'romgrk/barbar.nvim'
 " Plug 'nvim-tree/nvim-web-devicons' " required for barbar.nvim
 call plug#end()
 " === Pulugins END ===
@@ -40,10 +40,10 @@ noremap <leader>' i'<ESC>ea'<ESC>
 " ma で a にマーク設定、'a で戻る
 noremap <leader>W mav?■■■■<cr>j0y'a:noh<cr>
 
-" バッファの移動
-" nnoremap <silent> <leader>n :bprev<CR>
-" nnoremap <silent> <leader>p :bnext<CR>
-" nnoremap <silent> <leader>d :bdelete
+" Moving buffers
+nnoremap <silent> <leader>n :bprev<CR>
+nnoremap <silent> <leader>p :bnext<CR>
+nnoremap <silent> <leader>d :bdelete<CR>
 
 set clipboard=unnamedplus
 colorscheme molokai
@@ -77,6 +77,19 @@ set fileformats=unix,mac,dos
 " Enable mouse
 set mouse=a
 " === Common Configures END ===
+
+" === barbar ===
+let g:barbar_auto_setup = v:false " disable auto-setup
+lua << EOF
+  require'barbar'.setup {
+    icons = {
+      button = '☒',
+      filetype = {
+        enabled = false,
+      }
+    }
+  }
+EOF
 
 " === coc-snippets ====
 " Use TAB for select elements under the pop up window
@@ -248,3 +261,4 @@ let g:copilot_filetypes = {
       \ 'cpp' : v:true,
       \ 'js' : v:true,
       \ }
+
