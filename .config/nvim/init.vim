@@ -7,6 +7,7 @@ Plug 'tomasr/molokai'
 Plug 'terryma/vim-multiple-cursors'
 Plug 'lambdalisue/pastefix.vim' " Workaround of bug of clipboard
 Plug 'Shougo/defx.nvim', { 'do': ':UpdateRemotePlugins' }
+Plug 'Shougo/denite.nvim', { 'do': ':UpdateRemotePlugins' }
 Plug 'github/copilot.vim'
 Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && npx --yes yarn install' }
 Plug 'hashivim/vim-terraform'
@@ -30,6 +31,13 @@ function! GetRunningOS()
 endfunction
 let os=GetRunningOS()
 
+" === Defx search ===
+" Ref: https://qiita.com/aratana_tamutomo/items/1958527fc49dc916c04d
+function! DefxDeniteGrep(context) abort
+  let dirpath = fnamemodify(a:context.targets[0], ':p:h')
+  exec 'Denite grep -path=' . dirpath ' -start-filter'
+endfunction
+
 " === Common Configures START ===
 let mapleader = "\<Space>"
 noremap <leader>[ i[<ESC>ea]<ESC>
@@ -41,8 +49,8 @@ noremap <leader>' i'<ESC>ea'<ESC>
 noremap <leader>W mav?■■■■<cr>j0y'a:noh<cr>
 
 " Moving buffers
-nnoremap <silent> <leader>n :bprev<CR>
-nnoremap <silent> <leader>p :bnext<CR>
+nnoremap <silent> <leader>n :bnext<CR>
+nnoremap <silent> <leader>p :bprev<CR>
 nnoremap <silent> <leader>d :bdelete<CR>
 
 set clipboard=unnamedplus
@@ -236,6 +244,8 @@ function! s:defx_my_settings() abort
   \ defx#do_action('print')
   nnoremap <silent><buffer><expr> cd
   \ defx#do_action('change_vim_cwd')
+  nnoremap <silent><buffer><expr> <SPACE>fg
+    \ defx#do_action('call', 'DefxDeniteGrep')
 endfunction
 call defx#custom#option('_', {
       \ 'winwidth': 40,
