@@ -48,5 +48,11 @@
 			"filetypes": ["c", "cc", "cpp", "c++", "objc", "objcpp"]
 		}
   },
+  "python.formatting.provider": "black",
+  "pyright.disableOrganizeImports": true,
+  "pyright.inlayHints.variableTypes": false,
+  "pyright.inlayHints.functionReturnTypes": false,
+  "pyright.inlayHints.parameterNames": false,
+  "pyright.inlayHints.parameterTypes": false,
   "snippets.ultisnips.pythonPrompt": false
 }
