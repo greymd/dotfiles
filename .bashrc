@@ -1642,4 +1642,68 @@ ssmport () {
   --parameters "portNumber=$port,localPortNumber=$localPort"
 }
 
+## Set credentials provided by AWS Profile SSO access tokens as environment variables
+awsp () {
+  ## Usage: awsp <profile_name>
+  local profile="$1"
+  local config_file="$HOME/.aws/config"
+  local sso_session_name="$(awk -F= "/$profile/,/sso_session/{print \$2}" "${config_file}" | tr -d ' ' | awk NF)"
+  if [[ -z "$sso_session_name" ]]; then
+    echo "sso_session_name is not found in profile $profile" >&2
+    return 1
+  fi
+  local sso_start_url="$(awk -F= "/sso-session.*${sso_session_name}/,/sso_start_url/{print \$2}" "${config_file}" | tr -d ' \n')"
+  if [[ -z "$sso_start_url" ]]; then
+    echo "sso_start_url is not found in profile $profile" >&2
+    return 1
+  fi
+  local token=
+  while [[ -z "$token" ]]; do
+    token="$(
+      cat "$HOME"/.aws/sso/cache/*.json |
+      jq -r -s 'select(.[].startUrl == "'$sso_start_url'") |
+      sort_by(.expiresAt) |
+      reverse |
+      map( select(.accessToken != null))[0] |
+      .accessToken'
+    )"
+    if [[ -z "$token" ]]; then
+      echo "Token is not found in $HOME/.aws/sso/cache/*.json" >&2
+      aws sso login --sso-session "$sso_session_name"
+      continue
+    fi
+    local role_name="$(awk -F= "/$profile/,/sso_role_name/{print \$2}" "${config_file}" | tr -d ' ' | awk NF | tail -n 1)"
+    if [[ -z "$role_name" ]]; then
+      echo "role_name is not found in profile $profile" >&2
+      return 1
+    fi
+    local account_id="$(awk -F= "/$profile/,/sso_account_id/{print \$2}" "${config_file}" | tr -d ' ' | awk NF | tail -n 1)"
+    if [[ -z "$account_id" ]]; then
+      echo "account_id is not found in profile $profile" >&2
+      return 1
+    fi
+    local creds=
+    creds="$(aws sso get-role-credentials \
+      --role-name "$role_name" \
+      --account-id "$account_id" \
+      --access-token "$token" \
+      --query 'roleCredentials |
+        [
+          join(``,[`export AWS_ACCESS_KEY_ID=`,accessKeyId]),
+          join(``,[`export AWS_SECRET_ACCESS_KEY=`,secretAccessKey]),
+          join(``,[`export AWS_SESSION_TOKEN=`,sessionToken])
+        ]'
+      )"
+    if [[ $? -ne 0 ]]; then
+      echo "Refreshing token..." >&2
+      aws sso login --sso-session "$sso_session_name"
+      continue
+    fi
+  done
+  eval "$(echo "$creds" | jq -r '.[]')"
+  export AWS_DEFAULT_PROFILE="$profile"
+  echo "Updated environment varibles:" >&2
+  echo "AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_SESSION_TOKEN, AWS_DEFAULT_PROFILE" >&2
+}
+
 export JAVA_TOOLS_OPTIONS="-Dlog4j2.formatMsgNoLookups=true"

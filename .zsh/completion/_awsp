@@ -1,0 +1,15 @@
+#compdef awsp
+
+# Function to retrieve AWS profiles from the config file
+_get_aws_profiles() {
+    awk '/profile/{gsub(" *]$", "", $0); print $NF}' "$HOME"/.aws/config
+}
+
+# Completion function for awsp command
+_awsp() {
+    local -a profiles
+    profiles=($(_get_aws_profiles))
+    _describe 'profile' profiles
+}
+
+compdef _awsp awsp
