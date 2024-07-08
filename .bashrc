@@ -1661,10 +1661,9 @@ awsp () {
   while [[ -z "$token" ]]; do
     token="$(
       cat "$HOME"/.aws/sso/cache/*.json |
-      jq -r -s 'select(.[].startUrl == "'$sso_start_url'") |
-      sort_by(.expiresAt) |
+      jq -r -s 'sort_by(.expiresAt) |
       reverse |
-      map( select(.accessToken != null))[0] |
+      map( select(.accessToken != null and .startUrl == "'$sso_start_url'"))[0] |
       .accessToken'
     )"
     if [[ -z "$token" ]]; then
