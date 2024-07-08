@@ -1569,6 +1569,10 @@ ti-ls () {
 ti () {
   set -eu
   local ticket_id="$1"
+  if [[ "$ticket_id" == "grep" ]]; then
+    ti-grep "${@:2}"
+    return
+  fi
   # Extract ticket id from URL (i.e example.com/ticket-id-123)
   ticket_id="$(echo "$ticket_id" | awk -F/ '{print $NF}')"
   set +eu
@@ -1576,6 +1580,10 @@ ti () {
     mkdir -p "${__TICKET_HOME}/${ticket_id}"
   fi
   ti-cd "$ticket_id"
+  # If ticket id is URL, keep the URL in the url.txt
+  if [[ "$1" =~ ^http ]]; then
+    echo "$1" > "${__TICKET_HOME}/${ticket_id}/url.txt"
+  fi
   "$EDITOR" "${__TICKET_HOME}/${ticket_id}/worklog.txt"
 }
 
