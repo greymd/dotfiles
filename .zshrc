@@ -495,17 +495,8 @@ function zload {
 
 [[ $commands[kubectl] ]] && source <(kubectl completion zsh)
 
-# プラグインを読み込む
-# antigen などのプラグインマネージャは勝手にいろんな設定を盛り込んでくるので使わない
-__hub-clone () {
-  local _arg="$(echo "$1" | awk -F/ '{if(/github.com/){gsub(".git","",$NF);print $(NF-1)"/"$NF}else{print}}')"
-  local _user="${_arg%/*}"
-  local _repo="${_arg##*/}"
-  local _repo_path="$HOME/repos"
-  mkdir -p "$_repo_path/$_user"
-  git clone "git@github.com:$_user/$_repo.git" "$_repo_path/$_user/$_repo"
-}
-
+# == stupid zsh plugin manager ==
+local __stupid_zpm_repo_path="$HOME/.config/stupid-zpm/repos"
 repositories=(
   "b4b4r07/enhancd"
   "zsh-users/zsh-syntax-highlighting"
@@ -517,24 +508,28 @@ repositories=(
   "greymd/zsh-sdkman"
   # "unkontributors/super_unko"
 )
-
 fpath_before="$fpath"
 for entry in "${repositories[@]}"; do
   _user="${entry%/*}"
   _repo="${entry##*/}"
-  _plugin_file="$HOME/repos/${_user}/${_repo}/${_repo}.plugin.zsh"
-  # ファイルがない場合、リポジトリをクローンする
+  _plugin_file="$__stupid_zpm_repo_path/${_user}/${_repo}/${_repo}.plugin.zsh"
+  # If the plugin file does not exist, clone the repository
   if ! [[ -f "$_plugin_file" ]]; then
-    __hub-clone "$entry"
+    mkdir -p "$__stupid_zpm_repo_path/$_user"
+    git clone "git@github.com:$_user/$_repo.git" "$__stupid_zpm_repo_path/$_user/$_repo"
+    if [[ $? -ne 0 ]]; then
+      git clone "https://gitub.com/$_user/$_repo.git" "$__stupid_zpm_repo_path/$_user/$_repo"
+      return
+    fi
   fi
-  # プラグインファイルがあれば読み込む
+  # If the plugin file exists, source it
   if [[ -f "$_plugin_file" ]]; then
     source "$_plugin_file"
   fi
 done
 fpath_after="$fpath"
 if [[ $fpath_before != $fpath_after ]] ;then
-  # 補完が更新されたはずなので更新する
+  # If the fpath has been changed, rehash
   compinit
 fi
 
@@ -548,4 +543,3 @@ fi
 # if (which zprof > /dev/null) ;then
 #       zprof | less
 # fi
-
