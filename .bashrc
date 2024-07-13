@@ -1602,8 +1602,9 @@ ti-find () {
 ec2run-al2023 () {
   local image_id="${1-}"
   local instance_type="${2:-m5.large}"
+  local arch="${3:-x86_64}"
   image_id="$(aws ec2 describe-images \
-    --filters "Name=name,Values=al2023-ami-2*x86_64" \
+    --filters "Name=name,Values=al2023-ami-2*${arch}" \
     --query 'sort_by(Images, &CreationDate)[*].[CreationDate,Name,ImageId]' \
     --output text | awk 'END{print $NF}')"
   name_tag=$(whoami)-$(date +%s)
@@ -1616,6 +1617,10 @@ ec2run-al2023 () {
     --tag-specifications "ResourceType=instance,Tags=[{Key=Name,Value=$name_tag}]" \
     --query 'Instances[0].{_:InstanceId}' \
     --output text
+}
+
+ec2run-arm-al2023 () {
+  ec2run-al2023 "" "m6g.large" "arm64"
 }
 
 ec2term () {
