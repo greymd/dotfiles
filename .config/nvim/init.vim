@@ -31,12 +31,19 @@ function! GetRunningOS()
 endfunction
 let os=GetRunningOS()
 
-" === Defx search ===
+" === Defx ===
+" Search
 " Ref: https://qiita.com/aratana_tamutomo/items/1958527fc49dc916c04d
 function! DefxDeniteGrep(context) abort
   let dirpath = fnamemodify(a:context.targets[0], ':p:h')
   exec 'Denite grep -path=' . dirpath ' -start-filter'
 endfunction
+" Open Defx by default if the current buffer is a directory
+autocmd VimEnter * if isdirectory(expand('%')) | execute 'Defx' | endif
+" Open Defx with <leader>f
+nnoremap <silent> <Leader>f :<C-u> Defx <CR>
+
+
 
 " === Common Configures START ===
 let mapleader = "\<Space>"
