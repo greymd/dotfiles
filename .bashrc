@@ -1704,13 +1704,40 @@ awsp () {
     if [[ $? -ne 0 ]]; then
       echo "Refreshing token..." >&2
       aws sso login --sso-session "$sso_session_name"
+      token=""
       continue
     fi
   done
-  eval "$(echo "$creds" | jq -r '.[]')"
+  creds="$(echo "$creds" | jq -r '.[]')"
+  eval "$creds"
   export AWS_DEFAULT_PROFILE="$profile"
-  echo "Updated environment varibles:" >&2
-  echo "AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_SESSION_TOKEN, AWS_DEFAULT_PROFILE" >&2
+  echo "Environment varibles were updated as follows:" >&2
+  echo "== profile:$profile ==" >&2
+  echo "$creds"
+  echo "AWS_DEFAULT_PROFILE=$profile"
+}
+
+# Inspired by: https://qiita.com/kajitack/items/792a09995d25e7fe86bb
+ks () {
+  local selection=`kubectl get pods --all-namespaces | fzf --header-lines=1 --query="$*" --select-1 -e `
+  if [[ $selection == "" ]]; then
+    return 0
+  fi
+  local namespace=`echo $selection | awk '{ print $1 }'`
+  local pod=`echo $selection | awk '{ print $2 }'`
+  local containers=`kubectl -n $namespace get pods $pod -o jsonpath='{range .spec.containers[*]}{@.name}{"\n"}{end}'`
+  if [[ $containers == "" ]]; then
+    return 0
+  fi
+  local container_count=$((`echo "$containers" | wc -l`))
+
+  if [[ ${container_count} -gt "1" ]]; then
+    container=`echo "$containers" | fzf --header "Select a container..."`
+  else
+    container=$containers
+  fi
+
+  kubectl exec -n $namespace -it $pod -c $container sh
 }
 
 export JAVA_TOOLS_OPTIONS="-Dlog4j2.formatMsgNoLookups=true"
