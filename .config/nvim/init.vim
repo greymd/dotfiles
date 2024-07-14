@@ -43,8 +43,6 @@ autocmd VimEnter * if isdirectory(expand('%')) | execute 'Defx' | endif
 " Open Defx with <leader>f
 nnoremap <silent> <Leader>f :<C-u> Defx <CR>
 
-
-
 " === Common Configures START ===
 let mapleader = "\<Space>"
 noremap <leader>[ i[<ESC>ea]<ESC>
@@ -60,7 +58,7 @@ nnoremap <silent> <leader>n :bnext<CR>
 nnoremap <silent> <leader>p :bprev<CR>
 nnoremap <silent> <leader>d :bdelete<CR>
 
-set clipboard=unnamedplus
+set clipboard=unnamed
 colorscheme molokai
 set number
 set relativenumber

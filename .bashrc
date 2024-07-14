@@ -67,7 +67,7 @@ if [[ $unamestr == 'Darwin' ]]; then
   }
 
   mdpwd(){
-    mdfind -onlyin $(pwd) "(kMDItemDisplayName == '*')"
+    mdfind -onlyin "$(pwd)" "(kMDItemDisplayName == '*')"
   }
 
   alias nvim='TERM=xterm-256color nvim'
