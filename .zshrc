@@ -518,7 +518,7 @@ for entry in "${repositories[@]}"; do
     mkdir -p "$__stupid_zpm_repo_path/$_user"
     git clone "git@github.com:$_user/$_repo.git" "$__stupid_zpm_repo_path/$_user/$_repo"
     if [[ $? -ne 0 ]]; then
-      git clone "https://gitub.com/$_user/$_repo.git" "$__stupid_zpm_repo_path/$_user/$_repo"
+      git clone "https://github.com/$_user/$_repo.git" "$__stupid_zpm_repo_path/$_user/$_repo"
       return
     fi
   fi
