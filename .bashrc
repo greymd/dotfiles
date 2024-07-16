@@ -1660,7 +1660,7 @@ awsp () {
   ## Usage: awsp <profile_name>
   local profile="$1"
   local config_file="$HOME/.aws/config"
-  local sso_session_name="$(awk -F= "/$profile/,/sso_session/{print \$2}" "${config_file}" | tr -d ' ' | awk NF)"
+  local sso_session_name="$(awk -F= "/$profile *\]/,/sso_session/{print \$2}" "${config_file}" | tr -d ' ' | awk NF)"
   if [[ -z "$sso_session_name" ]]; then
     echo "sso_session_name is not found in profile $profile" >&2
     return 1
@@ -1684,12 +1684,12 @@ awsp () {
       aws sso login --sso-session "$sso_session_name"
       continue
     fi
-    local role_name="$(awk -F= "/$profile/,/sso_role_name/{print \$2}" "${config_file}" | tr -d ' ' | awk NF | tail -n 1)"
+    local role_name="$(awk -F= "/$profile *\]/,/sso_role_name/{print \$2}" "${config_file}" | tr -d ' ' | awk NF | tail -n 1)"
     if [[ -z "$role_name" ]]; then
       echo "role_name is not found in profile $profile" >&2
       return 1
     fi
-    local account_id="$(awk -F= "/$profile/,/sso_account_id/{print \$2}" "${config_file}" | tr -d ' ' | awk NF | tail -n 1)"
+    local account_id="$(awk -F= "/$profile *\]/,/sso_account_id/{print \$2}" "${config_file}" | tr -d ' ' | awk NF | tail -n 1)"
     if [[ -z "$account_id" ]]; then
       echo "account_id is not found in profile $profile" >&2
       return 1
@@ -1721,6 +1721,17 @@ awsp () {
   echo "$creds"
   echo "AWS_DEFAULT_PROFILE=$profile"
 }
+
+# AWS account number to account alias
+awsna () {
+  local target="${1-}"
+  local _exec="cat"
+  if [[ -n "$target" ]]; then
+    _exec="grep -w $target"
+  fi
+  cat "$HOME/.aws/config" | awk '/\[profile /{gsub(/[\[\]]/,"",$0);prof=$NF}{print prof,$0}' | grep account_id | awk '{print $1,$NF}' | $_exec
+}
+
 
 # Inspired by: https://qiita.com/kajitack/items/792a09995d25e7fe86bb
 ks () {
