@@ -1668,9 +1668,9 @@ awsrole () {
         ])' --output text)"
   eval "$creds"
   echo "== Updated environment variables =="
-  echo "$creds"
+  echo "$creds" | cut -c 1-45 | awk '{print $0"..."}'
   export AWS_DEFAULT_PROFILE="$profile"
-  echo "AWS_DEFAULT_PROFILE=$profile"
+  echo "export AWS_DEFAULT_PROFILE=$profile"
 }
 
 ## Set credentials provided by AWS Profile SSO access tokens as environment variables
