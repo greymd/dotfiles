@@ -276,4 +276,4 @@ let g:copilot_filetypes = {
       \ 'cpp' : v:true,
       \ 'js' : v:true,
       \ }
-
+let g:copilot_no_tab_map = v:false

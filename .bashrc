@@ -1476,7 +1476,7 @@ makerepo () { mkdir "$1" && cd "$1" && echo "# $1" > README.md && git init && gi
 # source "$HOME/.cargo/env"
 
 calc () {
-  printf '%s\n' "$*" | tr 'x' '*' | tr -d ',' | bc -l
+  printf "%'f\n" "$(printf '%s\n' "$*" | tr 'x' '*' | tr -d ',' | bc -l)"
 }
 
 permutation () {
@@ -1601,7 +1601,7 @@ ti-find () {
 #--------------------
 ec2run-al2023 () {
   local image_id="${1-}"
-  local instance_type="${2:-m5.large}"
+  local instance_type="${2:-t3.micro}"
   local arch="${3:-x86_64}"
   image_id="$(aws ec2 describe-images \
     --filters "Name=name,Values=al2023-ami-2*${arch}" \
@@ -1620,7 +1620,7 @@ ec2run-al2023 () {
 }
 
 ec2run-arm-al2023 () {
-  ec2run-al2023 "" "m6g.large" "arm64"
+  ec2run-al2023 "" "t3a.micro" "arm64"
 }
 
 ec2term () {
