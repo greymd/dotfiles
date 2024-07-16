@@ -519,7 +519,6 @@ for entry in "${repositories[@]}"; do
     git clone "git@github.com:$_user/$_repo.git" "$__stupid_zpm_repo_path/$_user/$_repo"
     if [[ $? -ne 0 ]]; then
       git clone "https://github.com/$_user/$_repo.git" "$__stupid_zpm_repo_path/$_user/$_repo"
-      return
     fi
   fi
   # If the plugin file exists, source it
