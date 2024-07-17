@@ -1661,6 +1661,24 @@ ssmport () {
   --parameters "portNumber=$port,localPortNumber=$localPort"
 }
 
+awsrole () {
+  local profile="$1"
+  local config_file="$HOME/.aws/config"
+  local role_arn=
+  role_arn="$(awk -F= "/$profile *\]/,/role_arn/{print \$2}" "${config_file}" | tr -d ' ' | awk NF)"
+  creds="$(aws sts assume-role --role-arn "$role_arn" --role-session-name "$profile-$(date +%s)" --query 'Credentials |
+        join(`\n`,[
+          join(``,[`export AWS_ACCESS_KEY_ID=`,AccessKeyId]),
+          join(``,[`export AWS_SECRET_ACCESS_KEY=`,SecretAccessKey]),
+          join(``,[`export AWS_SESSION_TOKEN=`,SessionToken])
+        ])' --output text)"
+  eval "$creds"
+  echo "== Updated environment variables =="
+  echo "$creds" | cut -c 1-45 | awk '{print $0"..."}'
+  export AWS_DEFAULT_PROFILE="$profile"
+  echo "export AWS_DEFAULT_PROFILE=$profile"
+}
+
 ## Set credentials provided by AWS Profile SSO access tokens as environment variables
 awsp () {
   ## Usage: awsp <profile_name>
@@ -1706,11 +1724,11 @@ awsp () {
       --account-id "$account_id" \
       --access-token "$token" \
       --query 'roleCredentials |
-        [
+        join(`\n`,[
           join(``,[`export AWS_ACCESS_KEY_ID=`,accessKeyId]),
           join(``,[`export AWS_SECRET_ACCESS_KEY=`,secretAccessKey]),
           join(``,[`export AWS_SESSION_TOKEN=`,sessionToken])
-        ]'
+        ])'
       )"
     if [[ $? -ne 0 ]]; then
       echo "Refreshing token..." >&2
@@ -1719,7 +1737,6 @@ awsp () {
       continue
     fi
   done
-  creds="$(echo "$creds" | jq -r '.[]')"
   eval "$creds"
   export AWS_DEFAULT_PROFILE="$profile"
   echo "Environment varibles were updated as follows:" >&2
