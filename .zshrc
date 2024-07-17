@@ -493,7 +493,13 @@ function zload {
     done
 }
 
+# == kubectl ==
 [[ $commands[kubectl] ]] && source <(kubectl completion zsh)
+# k alias and completion
+alias k=kubectl
+if type kubectl &>/dev/null; then
+  compdef __start_kubectl k
+fi
 
 # == stupid zsh plugin manager ==
 local __stupid_zpm_repo_path="$HOME/.config/stupid-zpm/repos"

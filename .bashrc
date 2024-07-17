@@ -183,10 +183,6 @@ rot90() {
   transpose "$_ifs" | rev_field "$_ifs"
 }
 
-k () {
-  kubectl "$@"
-}
-
 oj-cl () {
   grep -Ev '^\s*//' | grep -v 'eprint'
 }
