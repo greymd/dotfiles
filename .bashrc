@@ -1527,15 +1527,21 @@ note () {
   local note_id="$1"
   local target=
   if [[ -n "$note_id" ]]; then
-    target="$__NOTE_HOME"/"$note_id".txt
-    if [[ ! -f "$target" ]]; then
-      echo "'$target' does not exist" >&2
-      return 1
+    target="$note_id"
+    if type fzf &> /dev/null; then
+      local selection="$( ls -1 "${__NOTE_HOME}" | fzf --query="$target")"
+      target="$selection"
     fi
   else
-    target="$__NOTE_HOME"/"$(date +%F)".txt
+    local today="$(date +%F)".txt
+    if type fzf &> /dev/null; then
+      local selection="$( { echo "$today"; ls -1 "${__NOTE_HOME}";} | sort -u | fzf --query="$today")"
+      target="$selection"
+    else
+      target="$today"
+    fi
   fi
-  "$EDITOR" "$target"
+  "$EDITOR" "${__NOTE_HOME}/${target}"
 }
 
 note-new () {
