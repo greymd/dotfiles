@@ -2,7 +2,7 @@
 
 # Function to retrieve AWS profiles from the config file
 _get_aws_profiles() {
-    awk '/profile/{gsub(" *]$", "", $0); print $NF}' "$HOME"/.aws/config
+    aws-vault ls --profiles
 }
 
 # Completion function for av command
