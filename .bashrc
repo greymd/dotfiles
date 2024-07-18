@@ -1657,24 +1657,6 @@ ssmport () {
   --parameters "portNumber=$port,localPortNumber=$localPort"
 }
 
-awsrole () {
-  local profile="$1"
-  local config_file="$HOME/.aws/config"
-  local role_arn=
-  role_arn="$(awk -F= "/$profile *\]/,/role_arn/{print \$2}" "${config_file}" | tr -d ' ' | awk NF)"
-  creds="$(aws sts assume-role --role-arn "$role_arn" --role-session-name "$profile-$(date +%s)" --query 'Credentials |
-        join(`\n`,[
-          join(``,[`export AWS_ACCESS_KEY_ID=`,AccessKeyId]),
-          join(``,[`export AWS_SECRET_ACCESS_KEY=`,SecretAccessKey]),
-          join(``,[`export AWS_SESSION_TOKEN=`,SessionToken])
-        ])' --output text)"
-  eval "$creds"
-  echo "== Updated environment variables =="
-  echo "$creds"
-  export AWS_DEFAULT_PROFILE="$profile"
-  echo "export AWS_DEFAULT_PROFILE=$profile"
-}
-
 ## Set credentials provided by AWS Profile SSO access tokens as environment variables
 av () {
   local profile="$1"
