@@ -277,3 +277,5 @@ let g:copilot_filetypes = {
       \ 'js' : v:true,
       \ }
 let g:copilot_no_tab_map = v:false
+noremap <leader>D :Copilot disable<CR>
+noremap <leader>E :Copilot enable<CR>
