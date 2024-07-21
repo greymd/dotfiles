@@ -1622,7 +1622,7 @@ ec2run-al2023 () {
 }
 
 ec2run-arm-al2023 () {
-  ec2run-al2023 "" "t3a.micro" "arm64"
+  ec2run-al2023 "" "t4g.micro" "arm64"
 }
 
 ec2term () {
