@@ -4,7 +4,7 @@
 #  - python3 python3-pip are required for coc (:pyc)
 if ! has nvim; then
     msg_info "nvim not found, installing"
-    download_file "https://github.com/neovim/neovim/releases/download/v0.6.1/nvim-linux64.tar.gz" "nvim-linux64.tar.gz"
+    download_file "https://github.com/neovim/neovim/releases/download/v0.10.0/nvim-linux64.tar.gz" "nvim-linux64.tar.gz"
     tar -xzf nvim-linux64.tar.gz
     rsync -av nvim-linux64/ "$LOCAL_DIR"
 else

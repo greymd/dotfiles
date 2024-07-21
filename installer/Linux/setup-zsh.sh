@@ -10,12 +10,12 @@ else
   msg_info "zsh is already installed"
 fi
 
-if [[ ! -d "$REPO_DIR"/zsh-users/antigen ]]; then
-  msg_info "Cloning antigen"
-  download_github_repo "zsh-users/antigen"
-else
-  msg_info "Antigen already cloned"
-fi
+# if [[ ! -d "$REPO_DIR"/zsh-users/antigen ]]; then
+#   msg_info "Cloning antigen"
+#   download_github_repo "zsh-users/antigen"
+# else
+#   msg_info "Antigen already cloned"
+# fi
 
 ## if .zshrc exists
 if [[ -f "$HOME"/.zshrc ]]; then
