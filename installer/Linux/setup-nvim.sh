@@ -11,6 +11,11 @@ else
     msg_info "nvim is already installed"
 fi
 
+venv_home="${REPO_DIR}/greymd/dotfiles/venv"
+python3 -m venv "$venv_home"
+"$venv_home"/bin/pip3 install -U pyvim
+"$venv_home"/bin/pip3 install -U neovim
+
 pip3 install -U neovim
 
 plugdir="$HOME/.local/share/nvim/site/autoload/"
