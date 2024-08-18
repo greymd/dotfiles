@@ -18,7 +18,7 @@ install_package() {
 }
 
 npm_global_install () {
-  _node_version="$HOME/.nvm/alias/default"
+  _node_version="$(ls -1 "$HOME/.nvm/versions/node/" | sort -V | head -n 1)"
   if [ -s "$_node_version" ];then
     local node_bindir=
     node_bindir="$HOME/.nvm/versions/node/$(cat "$_node_version")/bin"
