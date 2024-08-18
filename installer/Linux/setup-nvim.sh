@@ -16,8 +16,6 @@ python3 -m venv "$venv_home"
 "$venv_home"/bin/pip3 install -U pyvim
 "$venv_home"/bin/pip3 install -U neovim
 
-pip3 install -U neovim
-
 plugdir="$HOME/.local/share/nvim/site/autoload/"
 if [[ ! -d "$plugdir" ]] || [[ ! -e "$plugdir/plug.vim" ]] ; then
   mkdir -p "$plugdir"
