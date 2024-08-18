@@ -416,20 +416,24 @@ function adjustcolor() {
   printf '%d\n' "$_bgval_dec"
 }
 
-function getfgcolor () {
-  local _bgval_dec
-  local _bgval_hex
-  local _host=${HOST:-"$(hostname)"}
-  local _hash_exec
-  if type sha1sum &> /dev/null; then
-    _hash_exec=sha1sum
-  elif type shasum &> /dev/null; then
-    _hash_exec=shasum
-  fi
-  _bgval_hex=$(printf "%s\\n" "$_host" | eval "$_hash_exec" | cut -c1-2)
-  _bgval_dec=$(adjustcolor "$((16#$_bgval_hex))")
-  printf "%s" "$_bgval_dec"
-}
+# If the prompt color is not expected one,
+# Define getfgcolor in ~/.local.zsh and override the one
+if ! type getfgcolor &> /dev/null; then
+  function getfgcolor () {
+    local _bgval_dec
+    local _bgval_hex
+    local _host=${HOST:-"$(hostname)"}
+    local _hash_exec
+    if type sha1sum &> /dev/null; then
+      _hash_exec=sha1sum
+    elif type shasum &> /dev/null; then
+      _hash_exec=shasum
+    fi
+    _bgval_hex=$(printf "%s\\n" "$_host" | eval "$_hash_exec" | cut -c1-2)
+    _bgval_dec=$(adjustcolor "$((16#$_bgval_hex))")
+    printf "%s" "$_bgval_dec"
+  }
+fi
 
 _UNIQ_FGCOLOR=$(getfgcolor)
 
