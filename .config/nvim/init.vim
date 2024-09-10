@@ -73,6 +73,7 @@ set shiftwidth=2
 set expandtab
 set autoindent
 set copyindent
+set invlist
 
 " set indent and tabstop to 4 in C
 autocmd FileType c setlocal tabstop=4 shiftwidth=4 softtabstop=4 expandtab
@@ -279,3 +280,34 @@ let g:copilot_filetypes = {
 let g:copilot_no_tab_map = v:false
 noremap <leader>D :Copilot disable<CR>
 noremap <leader>E :Copilot enable<CR>
+
+" === Markdown Outline ===
+function! s:markdown_outline() abort
+  let fname = @%
+  let current_win_id = win_getid()
+
+  " # heading
+  execute 'vimgrep /^#\{1,6} .*$/j' fname
+
+  " heading
+  " ===
+  execute 'vimgrepadd /\zs\S\+\ze\n[=-]\+$/j' fname
+
+  let qflist = getqflist()
+  if len(qflist) == 0
+    cclose
+    return
+  endif
+
+  " make sure to focus original window because synID works only in current window
+  call win_gotoid(current_win_id)
+  call filter(qflist,
+        \ 'synIDattr(synID(v:val.lnum, v:val.col, 1), "name") != "markdownCodeBlock"'
+        \ )
+  call sort(qflist, {a,b -> a.lnum - b.lnum})
+  call setqflist(qflist)
+  call setqflist([], 'r', {'title': fname .. ' TOC'})
+  copen
+endfunction
+
+nnoremap <buffer> gO <Cmd>call <sid>markdown_outline()<CR>
