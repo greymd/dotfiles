@@ -1513,6 +1513,12 @@ str2htmlentity () {
   perl -MHTML::Entities -nle 'print decode_entities($_)'
 }
 
+join-video-audio () {
+  local _video="$1"
+  local _audio="$2"
+  ffmpeg -i "$_video" -i "$_audio" -c:v copy -c:a aac -map 0:v:0 -map 1:a:0 "output_${_video/.*/}.mp4"
+}
+
 #--------------------
 # Simple worklog manager
 #--------------------
@@ -1643,6 +1649,20 @@ ec2ls () {
 
 ssm () {
   aws ssm start-session --target "$1"
+}
+
+mispost () {
+  local msg="$1"
+  curl -so- -X POST -H "Content-Type: application/json" \
+    -d "{ \"i\": \"$__MI_TOKEN\", \"text\": \"$msg\", \"visibility\": \"public\" }" \
+    https://misskey.io/api/notes/create | jq -r '.createdNote.text'
+}
+
+curepost () {
+  while true; do
+    read -r msg
+    mispost "$msg #precure"
+  done
 }
 
 ssmport () {
