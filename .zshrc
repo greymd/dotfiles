@@ -505,6 +505,13 @@ if type kubectl &>/dev/null; then
   compdef __start_kubectl k
 fi
 
+# tf alias and completion
+alias tf=terraform
+if type terraform &>/dev/null; then
+  autoload -U +X bashcompinit && bashcompinit
+  complete -o nospace -C "$(which terraform)" terraform
+fi
+
 # == stupid zsh plugin manager ==
 local __stupid_zpm_repo_path="$HOME/.config/stupid-zpm/repos"
 repositories=(

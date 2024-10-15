@@ -54,5 +54,6 @@
   "pyright.inlayHints.functionReturnTypes": false,
   "pyright.inlayHints.parameterNames": false,
   "pyright.inlayHints.parameterTypes": false,
-  "snippets.ultisnips.pythonPrompt": false
+  "snippets.ultisnips.pythonPrompt": false,
+  "java.import.gradle.java.home": "/Users/yasuhiro.yamada/.sdkman/candidates/java/17.0.12-amzn"
 }

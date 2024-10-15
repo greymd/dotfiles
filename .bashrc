@@ -751,7 +751,7 @@ urlenc() {
 
 urldec() {
   # tr -d '\n' | sed 's/%/\\\\x/g' | xargs -I@ bash -c "printf \"%s\" $'@'"
-  python -c "import sys; from urllib.parse import unquote; print(unquote(sys.stdin.read()));"
+  python3 -c "import sys; from urllib.parse import unquote; print(unquote(sys.stdin.read()));"
 }
 
 # Numeric character refernce to string
@@ -906,11 +906,11 @@ eapnd () {
 }
 
 recrep () {
-  pt "$1" | awk -F: '{print $1}' | sort | uniq | xargs sed "s/$1/$2/g"
+  pt "$1" | awk -F: '{print $1}' | sort | uniq | xargs perl -pe "s/$1/$2/g"
 }
 
 recrep-i () {
-  pt "$1" | awk -F: '{print $1}' | sort | uniq | xargs sed -i "s/$1/$2/g"
+  pt "$1" | awk -F: '{print $1}' | sort | uniq | xargs perl -i -pe "s/$1/$2/g"
 }
 
 sazae-janken () {
@@ -1519,6 +1519,31 @@ join-video-audio () {
   ffmpeg -i "$_video" -i "$_audio" -c:v copy -c:a aac -map 0:v:0 -map 1:a:0 "output_${_video/.*/}.mp4"
 }
 
+byte2tib () {
+  local _byte="$1"
+  calc "$_byte/(2^40)"
+}
+
+byte2gib () {
+  local _byte="$1"
+  calc "$_byte/(2^30)"
+}
+
+byte2mib () {
+  local _byte="$1"
+  calc "$_byte/(2^20)"
+}
+
+byte5m2mibps () {
+  local _byte="$1"
+  calc "($_byte/(60*5))/(2^20)"
+}
+
+byte1d2mibps () {
+  local _byte="$1"
+  calc "($_byte/(60*60*24))/(2^20)"
+}
+
 #--------------------
 # Simple worklog manager
 #--------------------
@@ -1528,16 +1553,17 @@ export __TICKET_HOME="${__DRIVE_HOME}/tickets"
 note () {
   local note_id="$1"
   local target=
+  local selection=
   if [[ -n "$note_id" ]]; then
     target="$note_id"
     if type fzf &> /dev/null; then
-      local selection="$( ls -1 "${__NOTE_HOME}" | fzf --query="$target")"
+      selection="$( ls -1 "${__NOTE_HOME}" | fzf --query="$target" --print-query | tail -1)"
       target="$selection"
     fi
   else
     local today="$(date +%F)".txt
     if type fzf &> /dev/null; then
-      local selection="$( { echo "$today"; ls -1 "${__NOTE_HOME}";} | sort -u | fzf --query="$today")"
+      selection="$( { echo "$today"; ls -1 "${__NOTE_HOME}";} | sort -u | fzf --query="$today" --print-query | tail -1)"
       target="$selection"
     else
       target="$today"
@@ -1597,11 +1623,20 @@ ti () {
 
 ti-grep () {
   local query="$1"
-  pt -G '.*.txt' -i "$query" "${__DRIVE_HOME}"
+  pt -C 1 -G '.*.txt' -i "$query" "${__DRIVE_HOME}"
 }
 
 ti-find () {
   find "${__TICKET_HOME}" -type f
+}
+
+word () {
+  local word="$1"
+  if [[ -z "$word" ]]; then
+    "$EDITOR" "${__DRIVE_HOME}/words.txt"
+  else
+    grep -i "$word" "${__DRIVE_HOME}/words.txt"
+  fi
 }
 
 #--------------------
@@ -1611,6 +1646,7 @@ ec2run-al2023 () {
   local image_id="${1-}"
   local instance_type="${2:-t3.micro}"
   local arch="${3:-x86_64}"
+  local userdata="${4:-}"
   image_id="$(aws ec2 describe-images \
     --filters "Name=name,Values=al2023-ami-2*${arch}" \
     --query 'sort_by(Images, &CreationDate)[*].[CreationDate,Name,ImageId]' \
@@ -1624,6 +1660,8 @@ ec2run-al2023 () {
     --iam-instance-profile Name=$__AWS_INSTANCE_PROFILE \
     --tag-specifications "ResourceType=instance,Tags=[{Key=Name,Value=$name_tag}]" \
     --query 'Instances[0].{_:InstanceId}' \
+    --user-data file://<(printf '%s\n' "$userdata";) \
+    --associate-public-ip-address \
     --output text
 }
 
@@ -1642,6 +1680,12 @@ ec2start () {
 ec2stop () {
   aws ec2 stop-instances --instance-ids "$@"
 }
+
+ec2reboot () {
+  aws ec2 reboot-instances --instance-ids "$@"
+}
+
+
 
 ec2ls () {
   aws ec2 describe-instances --filters "Name=vpc-id,Values=$__AWS_VPC" --query 'Reservations[].Instances[].[InstanceId,(Tags[?Key == `Name`].Value)[0],PrivateIpAddress,State.Name]' --output text | column -t
@@ -1686,7 +1730,7 @@ av () {
 }
 
 # AWS account number to account alias
-awsna () {
+_awsna () {
   local target="${1-}"
   local _exec="cat"
   if [[ -n "$target" ]]; then
@@ -1695,6 +1739,11 @@ awsna () {
   cat "$HOME/.aws/config" | awk '/\[profile /{gsub(/[\[\]]/,"",$0);prof=$NF}{print prof,$0}' | grep account_id | awk '{print $1,$NF}' | $_exec
 }
 
+awsna () {
+  for _arg in "$@"; do
+    _awsna "$_arg"
+  done
+}
 
 # Inspired by: https://qiita.com/kajitack/items/792a09995d25e7fe86bb
 ks () {
