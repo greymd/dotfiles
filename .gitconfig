@@ -23,6 +23,8 @@
 	# delete untracked files
 	lsu-rm = "!git ls-files --others --exclude-standard -z | xargs -0 rm --"
 	ac = !git-auto-commit
+	res = restore -s HEAD
+	resall = reset --hard HEAD
 
 [core]
 	excludesfile = ~/.gitignore_global

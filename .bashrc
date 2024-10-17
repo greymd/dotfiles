@@ -514,11 +514,17 @@ docker-clean () {
 }
 
 docker-rmnone() {
-  docker images --filter "dangling=true" -q | xargs docker rmi
+  # shellcheck disable=SC2046
+  docker rmi $(docker images -q -f dangling=true)
 }
 
 docker-killall () {
   docker ps -q | xargs docker kill
+}
+
+docker-kill () {
+  # shellcheck disable=SC2046
+  docker rm $(docker ps -aq -f status=exited)
 }
 
 docker-ex () {
