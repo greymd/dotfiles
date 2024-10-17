@@ -13,6 +13,15 @@
 [alias]
 	gr = log --graph --date=short --decorate=short --pretty=format:'%Cgreen%h %Creset%cd %Cblue%cn %Cred%d %Creset%s'
 	fpr = "!f() { git fetch origin pull/$1/head:pr/$1; }; f"
+	pom = "!git push origin $(git symbolic-ref refs/remotes/origin/HEAD | sed 's@^refs/remotes/origin/@@')"
+	co = checkout
+	st = status
+	ls = ls-files
+	# check untracked files
+	lsu = ls-files --others --exclude-standard
+	# delete untracked files
+	lsu-rm = "!git ls-files --others --exclude-standard -z | xargs -0 rm --"
+
 [core]
 	excludesfile = ~/.gitignore_global
 	autocrlf = input
