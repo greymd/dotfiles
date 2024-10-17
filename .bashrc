@@ -906,11 +906,11 @@ eapnd () {
 }
 
 recrep () {
-  pt "$1" | awk -F: '{print $1}' | sort | uniq | xargs perl -pe "s/$1/$2/g"
+  pt -l "$1" | xargs sd -p "$1" "$2"
 }
 
 recrep-i () {
-  pt "$1" | awk -F: '{print $1}' | sort | uniq | xargs perl -i -pe "s/$1/$2/g"
+  pt -l "$1" | xargs sd "$1" "$2"
 }
 
 sazae-janken () {
