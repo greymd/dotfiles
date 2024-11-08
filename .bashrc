@@ -33,6 +33,7 @@ if [[ $unamestr == 'Darwin' ]]; then
   alias vscode="/Applications/Visual\ Studio\ Code.app/Contents/Resources/app/bin/code"
   alias vlc="/Applications/VLC.app/Contents/MacOS/VLC"
   alias ldd="otool -L"
+  alias docker="finch"
   export ECLIPSE_HOME="$HOME/eclipse"
   export PATH="/usr/local/opt/zip/bin:$PATH"
   export PATH="$HOME/Library/Python/3.9/bin:$PATH"
