@@ -1497,6 +1497,21 @@ gcd () {
   echo | awk '{while(n = m % (m = n)); print m}' m="$1" n="$2"
 }
 
+ratios() {
+  num1=$1
+  num2=$2
+  divisor=$(gcd $num1 $num2)
+  ratio1=$((num1 / divisor))
+  ratio2=$((num2 / divisor))
+  for ((i = 1; i * ratio1 <= num1 && i * ratio2 <= num2; i++)); do
+    echo "$((i * ratio1)) $((i * ratio2))"
+  done
+}
+
+ratios_64() {
+  ratios "$@" | awk '$1%64 == 0 && $2 % 64 == 0'
+}
+
 kudo () {
   cat <<EOS | while read l; do echo "$l"; sleep 0.5 ;done
 　オレは高校生シェル芸人 sudo 新一。幼馴染で同級生の more 利蘭と遊園地に遊びに行って、黒ずくめの男の怪しげな rm -rf / 現場を目撃した。端末をみるのに夢中になっていた俺は、背後から近づいてきたもう１人の --no-preserve-root オプションに気づかなかった。 俺はその男に毒薬を飲まされ、目が覚めたら・・・ OS のプリインストールから除かれてしまっていた！
@@ -1549,6 +1564,25 @@ byte5m2mibps () {
 byte1d2mibps () {
   local _byte="$1"
   calc "($_byte/(60*60*24))/(2^20)"
+}
+
+sed-fold () {
+  local _begin="$1"
+  local _end="$2"
+  $SED "/${_begin//\//\\/}/{:loop;N;/${_end//\//\\/}/ !b loop;s/\n//g}"
+}
+
+mov2gif () {
+  local _input="$1"
+  local _output="${2:-${_input/.*/.gif}}"
+  local _scale="${3:-1}"
+  local _default_size=
+  local _width=
+  _default_size=$(ffprobe -v error -select_streams v:0 -show_entries stream=width,height -of csv=s=x:p=0) # get video size with WxH format
+  _width="${_default_size%x*}"
+  _scaled_width=$(( _width * _scale ))
+  # ref: https://qiita.com/yusuga/items/ba7b5c2cac3f2928f040
+  ffmpeg -i "$_input" -filter_complex "[0:v] fps=10,scale=$_scaled_width:-1,split [a][b];[a] palettegen [p];[b][p] paletteuse" "$_output"
 }
 
 #--------------------
