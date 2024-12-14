@@ -1649,7 +1649,9 @@ ti () {
     return
   fi
   # Extract ticket id from URL (i.e example.com/ticket-id-123)
-  ticket_id="$(echo "$ticket_id" | awk -F/ '{print $NF}')"
+  ticket_id="${ticket_id##*/}"
+  # Remove query string from ticket id (i.e ticket-id-123?query=xxx)
+  ticket_id="${ticket_id//\?*}"
   set +eu
   if [[ ! -d "${__TICKET_HOME}/${ticket_id}" ]]; then
     mkdir -p "${__TICKET_HOME}/${ticket_id}"
@@ -1690,6 +1692,30 @@ ec2run-al2023 () {
   local userdata="${4:-}"
   image_id="$(aws ec2 describe-images \
     --filters "Name=name,Values=al2023-ami-2*${arch}" \
+    --query 'sort_by(Images, &CreationDate)[*].[CreationDate,Name,ImageId]' \
+    --output text | awk 'END{print $NF}')"
+  name_tag=$(whoami)-$(date +%s)
+  aws ec2 run-instances \
+    --image-id $image_id \
+    --instance-type $instance_type \
+    --security-group-ids $__AWS_SECURITY_GROUP \
+    --subnet-id $__AWS_SUBNET \
+    --iam-instance-profile Name=$__AWS_INSTANCE_PROFILE \
+    --tag-specifications "ResourceType=instance,Tags=[{Key=Name,Value=$name_tag}]" \
+    --query 'Instances[0].{_:InstanceId}' \
+    --user-data file://<(printf '%s\n' "$userdata";) \
+    --associate-public-ip-address \
+    --output text
+}
+
+ec2run-ub () {
+  local image_id="${1-}"
+  local instance_type="${2:-t3.micro}"
+  local arch="${3:-amd64}"
+  local userdata="${4:-}"
+  image_id="$(aws ec2 describe-images \
+    --owners 099720109477 \
+    --filters "Name=name,Values=ubuntu/images/hvm-ssd/ubuntu-*-${arch}*" \
     --query 'sort_by(Images, &CreationDate)[*].[CreationDate,Name,ImageId]' \
     --output text | awk 'END{print $NF}')"
   name_tag=$(whoami)-$(date +%s)
@@ -1806,7 +1832,7 @@ ks () {
     container=$containers
   fi
 
-  kubectl exec -n $namespace -it $pod -c $container sh
+  kubectl exec -n $namespace -it $pod -c $container -- /bin/sh
 }
 
 export JAVA_TOOLS_OPTIONS="-Dlog4j2.formatMsgNoLookups=true"
