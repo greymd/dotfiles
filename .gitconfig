@@ -24,7 +24,7 @@
 	# delete untracked files
 	lsu-rm = "!git ls-files --others --exclude-standard -z | xargs -0 rm --"
 	# Add modified files
-	lsmad = "!git ls-files -m -z | xargs -0 git add"
+	addmo = "!git ls-files -m -z | xargs -0 git add"
 	ac = !git-auto-commit
 	res = restore -s HEAD
 	resall = reset --hard HEAD
