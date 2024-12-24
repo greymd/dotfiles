@@ -13,8 +13,9 @@
 [alias]
 	gr = log --graph --date=short --decorate=short --pretty=format:'%Cgreen%h %Creset%cd %Cblue%cn %Cred%d %Creset%s'
 	fpr = "!f() { git fetch origin pull/$1/head:pr/$1; }; f"
-	pom = "!git push origin $(basename $(git symbolic-ref refs/remotes/origin/HEAD || git remote set-head origin --auto | git symbolic-ref refs/remotes/origin/HEAD))"
-	puom = "!git pull origin $(basename $(git symbolic-ref refs/remotes/origin/HEAD || git remote set-head origin --auto | git symbolic-ref refs/remotes/origin/HEAD))"
+	pushm = "!git push origin $(basename $(git symbolic-ref refs/remotes/origin/HEAD || git remote set-head origin --auto | git symbolic-ref refs/remotes/origin/HEAD))"
+	pullm = "!git pull origin $(basename $(git symbolic-ref refs/remotes/origin/HEAD || git remote set-head origin --auto | git symbolic-ref refs/remotes/origin/HEAD))"
+	rebm = "!git fetch origin $(basename $(git symbolic-ref refs/remotes/origin/HEAD || git remote set-head origin --auto | git symbolic-ref refs/remotes/origin/HEAD)) && git rebase FETCH_HEAD"
 	co = checkout
 	ci = commit
 	st = status
