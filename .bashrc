@@ -1592,7 +1592,7 @@ export __DRIVE_HOME="$HOME/Drive"
 export __NOTE_HOME="${__DRIVE_HOME}/notes"
 export __TICKET_HOME="${__DRIVE_HOME}/tickets"
 note () {
-  local note_id="$1"
+  local note_id="${1-}"
   local target=
   local selection=
   if [[ -n "$note_id" ]]; then
