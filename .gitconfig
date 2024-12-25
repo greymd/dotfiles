@@ -20,6 +20,8 @@
 	ci = commit
 	st = status
 	ls = ls-files
+	# check modified files
+	lsm = ls-files --modified
 	# check untracked files
 	lsu = ls-files --others --exclude-standard
 	# delete untracked files
