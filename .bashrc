@@ -1835,4 +1835,27 @@ ks () {
   kubectl exec -n $namespace -it $pod -c $container -- /bin/sh
 }
 
+# Separate repeated word
+# Example:
+#   separate_repeated_word "squeezesqueezesqueeze"
+#   returns ... "squeeze-squeeze-squeeze"
+separate_repeated_word () {
+  local phrase="$1"
+  # Then repeat_word is "squeezesqueeze"
+  repeat_word=$(grep -oE '^(.+)\1'<<< "$phrase")
+  if [ -n "$repeat_word" ]; then
+    # Then repeat_word is "squeeze"
+    repeat_word=${repeat_word:0:${#repeat_word}/2}
+    local result=$phrase
+    local last=
+    while [[ "$result" != "$last" ]]; do
+      last=$result
+      result="${result//${repeat_word}${repeat_word}/${repeat_word}-${repeat_word}}"
+    done
+    printf '%s\n'  "$result"
+  else
+    printf '%s\n'  "$phrase"
+  fi
+}
+
 export JAVA_TOOLS_OPTIONS="-Dlog4j2.formatMsgNoLookups=true"
