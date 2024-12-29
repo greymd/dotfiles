@@ -514,6 +514,10 @@ docker-clean () {
   docker ps -a -q | xargs docker rm
 }
 
+docker-prune () {
+  docker system prune
+}
+
 docker-rmnone() {
   # shellcheck disable=SC2046
   docker rmi $(docker images -q -f dangling=true)
