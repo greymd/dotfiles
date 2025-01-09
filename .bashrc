@@ -1736,6 +1736,31 @@ ec2run-ub () {
     --output text
 }
 
+ec2run-win () {
+  local image_id="${1-}"
+  local instance_type="${2:-t3.micro}"
+  local arch="${3:-amd64}"
+  local userdata="${4:-}"
+  image_id="$(aws ec2 describe-images --owners amazon \
+    --filters "Name=name,Values=Windows_Server-2016-Japanese-*-Base*" \
+    --query 'sort_by(Images, &CreationDate)[*].[CreationDate,Name,ImageId]' \
+    --output text | awk 'END{print $NF}')"
+  name_tag=$(whoami)-$(date +%s)
+  aws ec2 run-instances \
+    --image-id "$image_id" \
+    --instance-type "$instance_type" \
+    --security-group-ids "$__AWS_SECURITY_GROUP" \
+    --subnet-id "$__AWS_SUBNET" \
+    --iam-instance-profile "Name=$__AWS_INSTANCE_PROFILE" \
+    --tag-specifications "ResourceType=instance,Tags=[{Key=Name,Value=$name_tag}]" \
+    --query 'Instances[0].{_:InstanceId}' \
+    --user-data file://<(printf '%s\n' "$userdata";) \
+    --associate-public-ip-address \
+    --output text
+}
+
+
+
 ec2run-arm-al2023 () {
   ec2run-al2023 "" "t4g.micro" "arm64"
 }
