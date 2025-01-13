@@ -8,3 +8,9 @@
 	smtpserverport = 587
 	smtpDomain = gr3.ie
 	smtpAuth = PLAIN LOGIN GSSAPI
+[gpg]
+        program = gpg
+[user]
+        signingKey = 53AFAD8415A16CC5
+[commit]
+        gpgsign = true
