@@ -7,6 +7,7 @@ export HISTFILESIZE=1000000
 export SAVEHIST=1000000
 export TMUX_XPANES_PANE_BORDER_FORMAT="#[bg=green,fg=black] #T#{?pane_pipe,[Log],} #[default]"
 export EDITOR=nvim
+export JAVA_TOOLS_OPTIONS="-Dlog4j2.formatMsgNoLookups=true"
 
 # __GRE_REPOSITORY_DIR environment variable is defined on .profile.
 export PS1="\W \$ "
@@ -1887,4 +1888,30 @@ separate_repeated_word () {
   fi
 }
 
-export JAVA_TOOLS_OPTIONS="-Dlog4j2.formatMsgNoLookups=true"
+# How Sign:
+#   gpg-sign file.txt > signed_file.txt
+# How Verify:
+#   gpg --verify signed_file.txt
+gpg-sign () {
+  local _file="$1"
+  gpg --detach-sign --armor --output - "$_file"
+}
+
+# How Sign:
+#   gpg-sign-inlign file.txt > signed_file.txt
+# How Verify:
+#   gpg --verify signed_file.txt
+gpg-sign-inlign () {
+  local _file="$1"
+  gpg --clearsign --armor --output - "$_file"
+}
+
+# How Encrypt:
+#   gpg-sign-encrypt file.txt > signed_file.gpg
+# How Decrypt:
+#   gpg --decrypt signed_file.gpg
+gpg-sign-encrypt () {
+  local _file="$1"
+  gpg --sign --armor --output - "$_file"
+}
+
