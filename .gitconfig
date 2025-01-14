@@ -16,6 +16,9 @@
 	pushm = "!git push origin $(basename $(git symbolic-ref refs/remotes/origin/HEAD || git remote set-head origin --auto | git symbolic-ref refs/remotes/origin/HEAD))"
 	pushc = "!git push origin $(git branch --show-current)" # push current branch
 	pullm = "!git pull origin $(basename $(git symbolic-ref refs/remotes/origin/HEAD || git remote set-head origin --auto | git symbolic-ref refs/remotes/origin/HEAD))"
+	pullc = "!git pull origin $(git branch --show-current)"
+	fem = "!git fetch origin $(basename $(git symbolic-ref refs/remotes/origin/HEAD || git remote set-head origin --auto | git symbolic-ref refs/remotes/origin/HEAD))"
+	fec = "!git fetch origin $(git branch --show-current)"
 	rebm = "!git fetch origin $(basename $(git symbolic-ref refs/remotes/origin/HEAD || git remote set-head origin --auto | git symbolic-ref refs/remotes/origin/HEAD)) && git rebase FETCH_HEAD"
 	co = checkout
 	ci = commit
