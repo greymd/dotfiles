@@ -1915,3 +1915,6 @@ gpg-sign-encrypt () {
   gpg --sign --armor --output - "$_file"
 }
 
+gpg-ls () {
+  gpg -k --keyid-format long
+}
