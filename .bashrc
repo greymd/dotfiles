@@ -11,6 +11,8 @@ export JAVA_TOOLS_OPTIONS="-Dlog4j2.formatMsgNoLookups=true"
 
 # __GRE_REPOSITORY_DIR environment variable is defined on .profile.
 export PS1="\W \$ "
+# Allow gpg to work with tmux
+export GPG_TTY="$TTY"
 
 if [ -s "$HOME/.local.bash" ]; then
     source "$HOME/.local.bash"

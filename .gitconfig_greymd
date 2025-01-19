@@ -9,8 +9,8 @@
 	smtpDomain = gr3.ie
 	smtpAuth = PLAIN LOGIN GSSAPI
 [gpg]
-        program = gpg
+	program = gpg
 [user]
-        signingKey = 049E0D3BADB33EC1
+	signingKey = 049E0D3BADB33EC1
 [commit]
-        gpgsign = true
+	gpgsign = true
