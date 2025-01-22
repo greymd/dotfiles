@@ -35,7 +35,7 @@
 	ac = !git-auto-commit
 	res = restore -s HEAD
 	resall = reset --hard HEAD
-	go = "!gh browse ."
+	op = "!f() { gh browse ${1:-.}; }; f" # open
 
 [core]
 	excludesfile = ~/.gitignore_global
