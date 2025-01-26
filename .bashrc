@@ -1715,6 +1715,19 @@ ec2run-al2023 () {
     --output text
 }
 
+ec2run-al2023-docker () {
+  local userdata="#!/bin/bash
+sudo dnf update
+sudo dnf install -y docker git
+sudo systemctl start docker
+sudo gpasswd -a ssm-user docker
+sudo chgrp docker /var/run/docker.sock
+sudo service docker restart
+sudo systemctl enable docker
+  "
+  ec2run-al2023 "" "" "" "$userdata"
+}
+
 ec2run-ub () {
   local image_id="${1-}"
   local instance_type="${2:-t3.micro}"
@@ -1737,6 +1750,25 @@ ec2run-ub () {
     --user-data file://<(printf '%s\n' "$userdata";) \
     --associate-public-ip-address \
     --output text
+}
+
+ec2run-ub-docker () {
+  local userdata="#!/bin/bash
+sudo apt-get update
+sudo apt-get install -y ca-certificates curl
+sudo install -m 0755 -d /etc/apt/keyrings
+sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+sudo chmod a+r /etc/apt/keyrings/docker.asc
+
+echo \
+  \"deb [arch=\$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
+  \$(. /etc/os-release && echo \"\$VERSION_CODENAME\") stable\" | \
+  sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+sudo apt-get update
+sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+sudo apt-get install -y nmap hydra
+"
+  ec2run-ub "" "" "" "$userdata"
 }
 
 ec2run-win () {
@@ -1824,7 +1856,7 @@ ssmport () {
 av () {
   local profile="$1"
   creds="$(aws-vault exec "$profile" -- env | grep -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_SESSION_TOKEN | sed 's/^/export /')"
-  export AWS_DEFAULT_PROFILE="$profile"
+  # export AWS_DEFAULT_PROFILE="$profile"
   eval $creds
 }
 
@@ -1919,4 +1951,8 @@ gpg-sign-encrypt () {
 
 gpg-ls () {
   gpg -k --keyid-format long
+}
+
+openssl-pem-dump() {
+  while openssl x509 -noout -text; do :; done < "$1"
 }
