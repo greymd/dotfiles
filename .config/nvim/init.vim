@@ -3,7 +3,6 @@ call plug#begin('~/.vim/plugged')
 Plug 'ntpeters/vim-better-whitespace'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'vim-airline/vim-airline'
-Plug 'tomasr/molokai'
 Plug 'terryma/vim-multiple-cursors'
 Plug 'lambdalisue/pastefix.vim' " Workaround of bug of clipboard
 Plug 'Shougo/defx.nvim', { 'do': ':UpdateRemotePlugins' }
@@ -12,6 +11,9 @@ Plug 'github/copilot.vim'
 Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && npx --yes yarn install' }
 Plug 'hashivim/vim-terraform'
 Plug 'romgrk/barbar.nvim'
+Plug 'sainnhe/everforest' " colorscheme
+Plug 'sainnhe/sonokai' " colorscheme
+Plug 'nvim-treesitter/nvim-treesitter'
 " Plug 'nvim-tree/nvim-web-devicons' " required for barbar.nvim
 call plug#end()
 " === Pulugins END ===
@@ -59,7 +61,13 @@ nnoremap <silent> <leader>p :bprev<CR>
 nnoremap <silent> <leader>d :bdelete<CR>
 
 set clipboard=unnamed
-colorscheme molokai
+" let g:everforest_better_performance = 1
+" let g:everforest_background = 'hard'
+" colorscheme everforest
+let g:sonokai_style = 'andromeda'
+colorscheme sonokai
+let g:molokai_original = 1
+let g:rehash256 = 1
 set number
 set relativenumber
 set updatetime=300
@@ -103,6 +111,25 @@ lua << EOF
       }
     }
   }
+EOF
+
+" === treesitter ===
+lua <<EOF
+require'nvim-treesitter.configs'.setup {
+  highlight = {
+    enable = true,
+    disable = {
+      'lua',
+      'ruby',
+      'toml',
+      'vue',
+      'bash',
+      'terraform',
+      'rust',
+      'clang',
+    }
+  }
+}
 EOF
 
 " === coc-snippets ====
