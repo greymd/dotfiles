@@ -1956,3 +1956,17 @@ gpg-ls () {
 openssl-pem-dump() {
   while openssl x509 -noout -text; do :; done < "$1"
 }
+
+docker-nsenter () {
+  if ! type fzf &> /dev/null; then
+    echo "fzf required" >&2
+  fi
+  local p
+  p="$(sudo ctr -n moby task list \
+    | sed 1d \
+    | awk '{print $2}' \
+    | xargs ps -o pid,command -p \
+    | fzf --header-lines=1 \
+    | awk '{print $1}')"
+  [ -n "$p" ] && nsenter -t "$p" -n "${@:-/bin/sh}"
+}
