@@ -1968,5 +1968,5 @@ docker-nsenter () {
     | xargs ps -o pid,command -p \
     | fzf --header-lines=1 \
     | awk '{print $1}')"
-  [ -n "$p" ] && nsenter -t "$p" -n "${@:-/bin/sh}"
+  [ -n "$p" ] && sudo nsenter -t "$p" -n "${@:-/bin/sh}"
 }
