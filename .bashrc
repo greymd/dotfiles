@@ -1826,6 +1826,35 @@ ssm () {
   aws ssm start-session --target "$1"
 }
 
+myeks-create () {
+  local default_name="cluster-$(date +%s)"
+  local cluster_name="${1:-$default_name}"
+  cat << EOF > /tmp/cluster-config.yaml
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+metadata:
+  name: $cluster_name
+  region: ap-northeast-1
+managedNodeGroups:
+  - name: eks-mng
+    instanceType: t3.medium
+    desiredCapacity: 2
+vpc:
+  id: vpc-06d07cd85bfbcddf5
+  subnets:
+#    private:
+#      ap-northeast-1a: { id: subnet-xxxxxxxxxxxxxxxxx }
+#      ap-northeast-1c: { id: subnet-xxxxxxxxxxxxxxxxx }
+    public:
+      ap-northeast-1a: { id: $__AWS_SUBNET }
+EOF
+  eksctl create cluster -f /tmp/cluster-config.yaml
+  rm /tmp/cluster-config.yaml
+  aws eks update-kubeconfig --name "$cluster_name"
+  ## When delete cluster
+  # eksctl delete cluster --name "$cluster_name"
+}
+
 mispost () {
   local msg="$1"
   curl -so- -X POST -H "Content-Type: application/json" \
