@@ -11,7 +11,7 @@ Plug 'github/copilot.vim'
 Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && npx --yes yarn install' }
 Plug 'hashivim/vim-terraform'
 Plug 'romgrk/barbar.nvim'
-Plug 'sainnhe/everforest' " colorscheme
+Plug 'tomasr/molokai' " colorscheme
 Plug 'sainnhe/sonokai' " colorscheme
 Plug 'nvim-treesitter/nvim-treesitter'
 " Plug 'nvim-tree/nvim-web-devicons' " required for barbar.nvim
@@ -61,13 +61,8 @@ nnoremap <silent> <leader>p :bprev<CR>
 nnoremap <silent> <leader>d :bdelete<CR>
 
 set clipboard=unnamed
-" let g:everforest_better_performance = 1
-" let g:everforest_background = 'hard'
-" colorscheme everforest
 let g:sonokai_style = 'andromeda'
 colorscheme sonokai
-let g:molokai_original = 1
-let g:rehash256 = 1
 set number
 set relativenumber
 set updatetime=300
@@ -123,10 +118,6 @@ require'nvim-treesitter.configs'.setup {
       'ruby',
       'toml',
       'vue',
-      'bash',
-      'terraform',
-      'rust',
-      'clang',
     }
   }
 }
