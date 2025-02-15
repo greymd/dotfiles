@@ -580,6 +580,12 @@ docker-php () {
   docker run -d -p 8080:80 -v "$(pwd)":/var/www/html php:7.0-apache
 }
 
+docker-gh-login () {
+  gh auth token | docker login ghcr.io -u "$(gh config get -h github.com user)" --password-stdin
+  # docker tag 12346790abc ghcr.io/<username>/<repo_name>/<image_name>:latest
+  # docker push ghcr.io/<username>/<repo_name>/<image_name>:latest
+}
+
 runche() {
   docker run -ti -e CHE_DOCKER_MACHINE_HOST=192.168.99.100 --net=host -v /var/run/docker.sock:/var/run/docker.sock -v /home/user/che/lib:/home/user/che/lib-copy -v /home/user/che/workspaces:/home/user/che/workspaces -v /home/user/che/tomcat/temp/local-storage:/home/user/che/tomcat/temp/local-storage codenvy/che
 }
