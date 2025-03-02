@@ -8,7 +8,6 @@ Plug 'lambdalisue/pastefix.vim' " Workaround of bug of clipboard
 Plug 'Shougo/defx.nvim', { 'do': ':UpdateRemotePlugins' }
 Plug 'Shougo/denite.nvim', { 'do': ':UpdateRemotePlugins' }
 Plug 'github/copilot.vim'
-Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && npx --yes yarn install' }
 Plug 'hashivim/vim-terraform'
 Plug 'romgrk/barbar.nvim'
 Plug 'tomasr/molokai' " colorscheme
@@ -329,3 +328,4 @@ function! s:markdown_outline() abort
 endfunction
 
 nnoremap <buffer> gO <Cmd>call <sid>markdown_outline()<CR>
+command! Markdown silent !grip % &
