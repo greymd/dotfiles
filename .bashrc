@@ -2005,3 +2005,7 @@ docker-nsenter () {
     | awk '{print $1}')"
   [ -n "$p" ] && sudo nsenter -t "$p" -n "${@:-/bin/sh}"
 }
+
+str2langtag () {
+  perl -C -pe '$_=join"",map{chr(0xE0000+ord$_)}split//'
+}
