@@ -1703,17 +1703,18 @@ ec2run-al2023 () {
   local instance_type="${2:-t3.micro}"
   local arch="${3:-x86_64}"
   local userdata="${4:-}"
-  image_id="$(aws ec2 describe-images \
+  local default_image_id=
+  default_image_id="$(aws ec2 describe-images \
     --filters "Name=name,Values=al2023-ami-2*${arch}" \
     --query 'sort_by(Images, &CreationDate)[*].[CreationDate,Name,ImageId]' \
     --output text | awk 'END{print $NF}')"
   name_tag=$(whoami)-$(date +%s)
   aws ec2 run-instances \
-    --image-id $image_id \
-    --instance-type $instance_type \
-    --security-group-ids $__AWS_SECURITY_GROUP \
-    --subnet-id $__AWS_SUBNET \
-    --iam-instance-profile Name=$__AWS_INSTANCE_PROFILE \
+    --image-id "${image_id:-$default_image_id}" \
+    --instance-type "$instance_type" \
+    --security-group-ids "$__AWS_SECURITY_GROUP" \
+    --subnet-id "$__AWS_SUBNET" \
+    --iam-instance-profile Name="$__AWS_INSTANCE_PROFILE" \
     --tag-specifications "ResourceType=instance,Tags=[{Key=Name,Value=$name_tag}${__AWS_ADDITIONAL_TAGS}]" \
     --query 'Instances[0].{_:InstanceId}' \
     --user-data file://<(printf '%s\n' "$userdata";) \
@@ -1739,14 +1740,15 @@ ec2run-ub () {
   local instance_type="${2:-t3.micro}"
   local arch="${3:-amd64}"
   local userdata="${4:-}"
-  image_id="$(aws ec2 describe-images \
+  local default_image_id=
+  default_image_id="$(aws ec2 describe-images \
     --owners 099720109477 \
     --filters "Name=name,Values=ubuntu/images/hvm-ssd/ubuntu-*-${arch}*" \
     --query 'sort_by(Images, &CreationDate)[*].[CreationDate,Name,ImageId]' \
     --output text | awk 'END{print $NF}')"
   name_tag=$(whoami)-$(date +%s)
   aws ec2 run-instances \
-    --image-id $image_id \
+    --image-id "${image_id:-$default_image_id}" \
     --instance-type $instance_type \
     --security-group-ids $__AWS_SECURITY_GROUP \
     --subnet-id $__AWS_SUBNET \
@@ -1782,13 +1784,14 @@ ec2run-win () {
   local instance_type="${2:-t3.micro}"
   local arch="${3:-amd64}"
   local userdata="${4:-}"
-  image_id="$(aws ec2 describe-images --owners amazon \
+  local default_image_id=
+  default_image_id="$(aws ec2 describe-images --owners amazon \
     --filters "Name=name,Values=Windows_Server-2016-Japanese-*-Base*" \
     --query 'sort_by(Images, &CreationDate)[*].[CreationDate,Name,ImageId]' \
     --output text | awk 'END{print $NF}')"
   name_tag=$(whoami)-$(date +%s)
   aws ec2 run-instances \
-    --image-id "$image_id" \
+    --image-id "${image_id:-$default_image_id}" \
     --instance-type "$instance_type" \
     --security-group-ids "$__AWS_SECURITY_GROUP" \
     --subnet-id "$__AWS_SUBNET" \
@@ -1821,8 +1824,6 @@ ec2stop () {
 ec2reboot () {
   aws ec2 reboot-instances --instance-ids "$@"
 }
-
-
 
 ec2ls () {
   aws ec2 describe-instances --filters "Name=vpc-id,Values=$__AWS_VPC" --query 'Reservations[].Instances[].[InstanceId,(Tags[?Key == `Name`].Value)[0],PrivateIpAddress,State.Name]' --output text | column -t
