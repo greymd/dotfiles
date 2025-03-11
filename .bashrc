@@ -1714,7 +1714,7 @@ ec2run-al2023 () {
     --security-group-ids $__AWS_SECURITY_GROUP \
     --subnet-id $__AWS_SUBNET \
     --iam-instance-profile Name=$__AWS_INSTANCE_PROFILE \
-    --tag-specifications "ResourceType=instance,Tags=[{Key=Name,Value=$name_tag}]" \
+    --tag-specifications "ResourceType=instance,Tags=[{Key=Name,Value=$name_tag}${__AWS_ADDITIONAL_TAGS}]" \
     --query 'Instances[0].{_:InstanceId}' \
     --user-data file://<(printf '%s\n' "$userdata";) \
     --associate-public-ip-address \
@@ -1751,7 +1751,7 @@ ec2run-ub () {
     --security-group-ids $__AWS_SECURITY_GROUP \
     --subnet-id $__AWS_SUBNET \
     --iam-instance-profile Name=$__AWS_INSTANCE_PROFILE \
-    --tag-specifications "ResourceType=instance,Tags=[{Key=Name,Value=$name_tag}]" \
+    --tag-specifications "ResourceType=instance,Tags=[{Key=Name,Value=$name_tag}${__AWS_ADDITIONAL_TAGS}]" \
     --query 'Instances[0].{_:InstanceId}' \
     --user-data file://<(printf '%s\n' "$userdata";) \
     --associate-public-ip-address \
@@ -1793,7 +1793,7 @@ ec2run-win () {
     --security-group-ids "$__AWS_SECURITY_GROUP" \
     --subnet-id "$__AWS_SUBNET" \
     --iam-instance-profile "Name=$__AWS_INSTANCE_PROFILE" \
-    --tag-specifications "ResourceType=instance,Tags=[{Key=Name,Value=$name_tag}]" \
+    --tag-specifications "ResourceType=instance,Tags=[{Key=Name,Value=$name_tag}${__AWS_ADDITIONAL_TAGS}]" \
     --query 'Instances[0].{_:InstanceId}' \
     --user-data file://<(printf '%s\n' "$userdata";) \
     --associate-public-ip-address \
@@ -2008,4 +2008,8 @@ docker-nsenter () {
 
 str2langtag () {
   perl -C -pe '$_=join"",map{chr(0xE0000+ord$_)}split//'
+}
+
+aws-assume-role-json-eval () {
+  jq -r '.Credentials | "export AWS_ACCESS_KEY_ID=" + .AccessKeyId, "export AWS_SECRET_ACCESS_KEY=" + .SecretAccessKey, "export AWS_SESSION_TOKEN=" + .SessionToken'
 }
