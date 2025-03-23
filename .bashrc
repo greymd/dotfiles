@@ -2014,3 +2014,7 @@ str2langtag () {
 aws-assume-role-json-eval () {
   jq -r '.Credentials | "export AWS_ACCESS_KEY_ID=" + .AccessKeyId, "export AWS_SECRET_ACCESS_KEY=" + .SecretAccessKey, "export AWS_SESSION_TOKEN=" + .SessionToken'
 }
+
+img-upline () {
+  sh -c 'docker run -it --rm --gpus all --user "$(id -u):$(id -g)" -v "$PWD":/output ghcr.io/greymd/img-upline:v0.1 -s 2 -l 1024 "$1"' _ "$@"
+}
