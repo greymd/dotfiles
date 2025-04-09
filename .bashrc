@@ -8,6 +8,8 @@ export SAVEHIST=1000000
 export TMUX_XPANES_PANE_BORDER_FORMAT="#[bg=green,fg=black] #T#{?pane_pipe,[Log],} #[default]"
 export EDITOR=nvim
 export JAVA_TOOLS_OPTIONS="-Dlog4j2.formatMsgNoLookups=true"
+export TF_LOG=TRACE
+export TF_LOG_PATH='/tmp/terraform.log'
 
 # __GRE_REPOSITORY_DIR environment variable is defined on .profile.
 export PS1="\W \$ "
@@ -1677,6 +1679,25 @@ ti () {
   "$EDITOR" "${__TICKET_HOME}/${ticket_id}/worklog.txt"
 }
 
+# Already defined in /bin since I want to use it from Vim
+# tiop () {
+#   local ticket_id="${1-}"
+#   # if ticket_id is not empty, open browser
+#   if [[ -n "$ticket_id" ]]; then
+#     open "${__TICKET_URL}/${ticket_id}"
+#     return
+#   fi
+#   if [[ -z "$ticket_id" ]] && [[ -f worklog.txt ]]; then
+#     # check the parent directory name
+#     local parent_dir=
+#     parent_dir="$(basename "$PWD")"
+#     parent_dir="${parent_dir##*/}"
+#     open "${__TICKET_URL}/${parent_dir}"
+#   else
+#     echo "worklog.txt is not found in the current directory" >&2
+#   fi
+# }
+
 ti-grep () {
   local query="$1"
   pt -C 1 -G '.*.txt' -i "$query" "${__DRIVE_HOME}"
@@ -1933,6 +1954,28 @@ ks () {
   fi
 
   kubectl exec -n $namespace -it $pod -c $container -- /bin/sh
+}
+
+ky () {
+  local selection=`kubectl get pods --all-namespaces | fzf --header-lines=1 --query="$*" --select-1 -e `
+  if [[ $selection == "" ]]; then
+    return 0
+  fi
+  local namespace=`echo $selection | awk '{ print $1 }'`
+  local pod=`echo $selection | awk '{ print $2 }'`
+  local containers=`kubectl -n $namespace get pods $pod -o jsonpath='{range .spec.containers[*]}{@.name}{"\n"}{end}'`
+  if [[ $containers == "" ]]; then
+    return 0
+  fi
+  local container_count=$((`echo "$containers" | wc -l`))
+
+  if [[ ${container_count} -gt "1" ]]; then
+    container=`echo "$containers" | fzf --header "Select a container..."`
+  else
+    container=$containers
+  fi
+
+  kubectl get pod -n $namespace $pod -o yaml
 }
 
 # Separate repeated word
