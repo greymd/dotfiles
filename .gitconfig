@@ -37,7 +37,8 @@
 	res = restore -s HEAD
 	resall = reset --hard HEAD
 	br = branch
-	op = "!f() { gh browse ${1:-.}; }; f" # open
+	br-clean = "!f() { git branch --merged | grep -v '\\*' | xargs -n 1 git branch -d; }; f"
+	op = "!f() { gh browse \"$GIT_PREFIX/${1:-.}\"; }; f" # open
 
 [core]
 	excludesfile = ~/.gitignore_global
