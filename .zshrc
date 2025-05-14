@@ -515,7 +515,7 @@ fi
 # == stupid zsh plugin manager ==
 local __stupid_zpm_repo_path="$HOME/.config/stupid-zpm/repos"
 repositories=(
-  "b4b4r07/enhancd"
+  # "b4b4r07/enhancd"
   "zsh-users/zsh-syntax-highlighting"
   "zsh-users/zsh-completions"
   "greymd/cureutils"
