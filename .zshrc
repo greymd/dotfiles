@@ -354,9 +354,7 @@ function vcs_echo {
 }
 
 function aws_prof_echo {
-  if [[ -z "$AWS_DEFAULT_PROFILE" ]]; then
-    return
-  else
+  if [[ -s "${AWS_DEFAULT_PROFILE:-}" ]]; then
     color=${fg[yellow]}
     echo "%{$color%}%F{5}[aws:%f%{$AWS_DEFAULT_PROFILE%}%{$reset_color%}%F{5}]%f"
   fi

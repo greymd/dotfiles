@@ -45,6 +45,8 @@ if [[ $unamestr == 'Darwin' ]]; then
   export PATH="/opt/homebrew/bin:$PATH"
   export PATH="/Applications/Wireshark.app/Contents/MacOS/:$PATH" # for tshark
   export PATH="/Applications/Xcode.app/Contents/Developer/usr/bin:$PATH"
+  export TFENV_ARCH=arm64
+  export TF_PLUGIN_CACHE_DIR="$HOME/.terraform.d/plugin-cache"
 
   # Use brew in multi-user system
   unalias brew 2>/dev/null
@@ -2060,4 +2062,44 @@ aws-assume-role-json-eval () {
 
 img-upline () {
   sh -c 'docker run -it --rm --gpus all --user "$(id -u):$(id -g)" -v "$PWD":/output ghcr.io/greymd/img-upline:v0.1 -s 2 -l 1024 "$1"' _ "$@"
+}
+
+terraform-provider-aws-install () {
+  local version="$1"
+  local os arch
+  os="$(uname -s | tr '[:upper:]' '[:lower:]')"
+  arch="$(uname -m | sed 's/x86_64/amd64/;s/aarch64/arm64/')"
+  local osarch="${os}_${arch}"
+  local install_dir="$HOME/.terraform.d/plugins/registry.terraform.io/hashicorp/aws/${version}/${osarch}"
+  {
+    hub-clone hashicorp/terraform-provider-aws
+    git checkout "v$version"
+    go build && {
+      mkdir -p "$install_dir"
+      cp ./terraform-provider-aws "$install_dir/terraform-provider-aws_v${version}_x5"
+    }
+  }
+}
+
+tfver () {
+  tfenv use "$(grep -m 1 -h 'required_version' *.tf | tr -dc '[.0-9]')"
+}
+
+__aws-env-tfstate_get () {
+  local tfstate="${1:-terraform.tfstate}"
+  local type_name="${2}"
+  < "$tfstate" jq -r ".resources[] | select (.type == \"$type_name\") | .instances[0].attributes.id"
+}
+
+aws-env-tfstate () {
+  local tfstate="${1:-terraform.tfstate}"
+  local aws_vpc aws_subnet aws_security_group aws_instance_profile
+  aws_vpc="$(__aws-env-tfstate_get "$tfstate" "aws_vpc")"
+  aws_subnet="$(__aws-env-tfstate_get "$tfstate" "aws_subnet")"
+  aws_security_group="$(__aws-env-tfstate_get "$tfstate" "aws_security_group")"
+  aws_instance_profile="$(__aws-env-tfstate_get "$tfstate" "aws_iam_role")"
+  export __AWS_VPC="$aws_vpc"
+  export __AWS_SUBNET="$aws_subnet"
+  export __AWS_SECURITY_GROUP="$aws_security_group"
+  export __AWS_INSTANCE_PROFILE="$aws_instance_profile"
 }
