@@ -2,6 +2,8 @@
   path = ~/.gitconfig_local
 [includeIf "gitdir:~/repos/greymd/"]
   path = ~/.gitconfig_greymd
+[includeIf "gitdir:~/repos/hakuro/"]
+  path = ~/.gitconfig_greymd
 [includeIf "gitdir:~/repos/PolaClub/"]
   path = ~/.gitconfig_greymd
 [includeIf "gitdir:~/repos/egison/"]
