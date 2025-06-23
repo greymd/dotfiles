@@ -127,6 +127,7 @@ fi
 #--------------------
 alias l='ls -CF'
 alias ll='ls -al'
+alias c=cd
 alias grep='grep --color=auto'
 alias ..="cd .."
 alias ..2="cd ../.."
@@ -241,6 +242,7 @@ __add_path "$HOME/.local/bin"
 __add_path "$HOME/repos/greymd/bin"
 __add_path "$HOME/repos/greymd/bin/open-usp-tukubai"
 __add_path "$HOME/repos/greymd/joplin-utils/cli"
+__add_path "$HOME/.basher/bin"
 if [[ -e "$HOME/.nodenv/version" ]]; then
   __add_path "$HOME/.nodenv/shims"
   __add_path "$HOME/.nodenv/versions/$(<"$HOME/.nodenv/version")/bin"
