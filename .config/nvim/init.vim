@@ -32,13 +32,7 @@ function! GetRunningOS()
 endfunction
 let os=GetRunningOS()
 
-" === Defx ===
-" Search
-" Ref: https://qiita.com/aratana_tamutomo/items/1958527fc49dc916c04d
-function! DefxDeniteGrep(context) abort
-  let dirpath = fnamemodify(a:context.targets[0], ':p:h')
-  exec 'Denite grep -path=' . dirpath ' -start-filter'
-endfunction
+
 " Open Defx by default if the current buffer is a directory
 autocmd VimEnter * if isdirectory(expand('%')) | execute 'Defx' | endif
 " Open Defx with <leader>f
@@ -76,6 +70,9 @@ set expandtab
 set autoindent
 set copyindent
 set invlist
+
+" Detect file changes and reload
+set autoread
 
 " set indent and tabstop to 4 in C
 autocmd FileType c setlocal tabstop=4 shiftwidth=4 softtabstop=4 expandtab
@@ -267,11 +264,9 @@ function! s:defx_my_settings() abort
   \ defx#do_action('print')
   nnoremap <silent><buffer><expr> cd
   \ defx#do_action('change_vim_cwd')
-  nnoremap <silent><buffer><expr> <SPACE>fg
-    \ defx#do_action('call', 'DefxDeniteGrep')
 endfunction
 call defx#custom#option('_', {
-      \ 'winwidth': 40,
+      \ 'winwidth': 30,
       \ 'split': 'vertical',
       \ 'direction': 'topleft',
       \ 'show_ignored_files': 1,
@@ -279,6 +274,53 @@ call defx#custom#option('_', {
       \ 'toggle': 1,
       \ 'resume': 1,
       \ })
+
+" --- ripgrep を :grep に使う（入っていれば自動で使う） ---
+if executable('rg')
+  set grepprg=rg\ --vimgrep\ --no-heading\ --smart-case
+  set grepformat=%f:%l:%c:%m
+endif
+
+" A = ファイル
+" B = Defx
+" C = quickfix
+" +-----+-------------+
+" |     |             |
+" |  B  |      A      |
+" |     |             |
+" +-----+-------------+
+" |        C          |
+" +-------------------+
+" --- Defx から quickfix 検索を起動 ---
+function! DefxRipgrep(context) abort
+  " Defxで選んでいるエントリのディレクトリ
+  let l:dir = fnamemodify(a:context.targets[0], ':p:h')
+  " 検索語を入力
+  let l:pat = input('grep> ')
+  if empty(l:pat)
+    echo 'Canceled'
+    return
+  endif
+  " 検索語を “最後の検索パターン” にセット（リテラル一致）
+  call setreg('/', '\V' . escape(l:pat, '\'))
+  set hlsearch
+  " 1) 直前ウィンドウを A にしておく（B→Aへ）
+  execute 'wincmd p'
+  " 2) A から quickfix を作る（C を開く）
+  execute 'silent grep! ' . shellescape(l:pat) . ' ' . fnameescape(l:dir)
+  copen
+  " ここで quickfix（C）にフォーカスが移るので、<CR> で A に開く（デフォルト挙動）ようになる。
+endfunction
+" Defxバッファから上の関数を呼ぶ（Denite用の既存バインドを差し替え）
+autocmd FileType defx nnoremap <silent><buffer><expr> <SPACE>fg
+      \ defx#do_action('call', 'DefxRipgrep')
+" （任意）quickfixの操作を少し快適に
+" qで閉じる
+autocmd FileType qf nnoremap <silent><buffer> q :cclose<CR>
+" oでAに開いてリストは開いたまま
+autocmd FileType qf nnoremap <silent><buffer> o <CR>
+" OでAに開いてリストを閉じる
+autocmd FileType qf nnoremap <silent><buffer> O <CR>:cclose<CR>
 
 " Copilot v:false = disable, v:true = enable
 "      \ '*': v:true,
