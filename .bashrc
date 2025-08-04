@@ -2062,6 +2062,14 @@ aws-assume-role-json-eval () {
   jq -r '.Credentials | "export AWS_ACCESS_KEY_ID=" + .AccessKeyId, "export AWS_SECRET_ACCESS_KEY=" + .SecretAccessKey, "export AWS_SESSION_TOKEN=" + .SessionToken'
 }
 
+aws-assume-role () {
+  local role_arn="$1"
+  local session_name=
+  session_name="$(basename "$role_arn")-$(date +%s)"
+  # shellcheck disable=SC2046
+  eval $(aws sts assume-role --role-arn "$role_arn" --role-session-name "$session_name" | aws-assume-role-json-eval)
+}
+
 img-upline () {
   sh -c 'docker run -it --rm --gpus all --user "$(id -u):$(id -g)" -v "$PWD":/output ghcr.io/greymd/img-upline:v0.1 -s 2 -l 1024 "$1"' _ "$@"
 }
