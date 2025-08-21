@@ -36,6 +36,7 @@
 	# Add modified files
 	addmo = "!git ls-files -m -z | xargs -0 git add"
 	ac = !git-auto-commit
+	q = !gitq
 	res = restore -s HEAD
 	resall = reset --hard HEAD
 	br = branch
