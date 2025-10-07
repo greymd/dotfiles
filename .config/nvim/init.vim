@@ -13,6 +13,7 @@ Plug 'romgrk/barbar.nvim'
 Plug 'tomasr/molokai' " colorscheme
 Plug 'sainnhe/sonokai' " colorscheme
 Plug 'nvim-treesitter/nvim-treesitter'
+Plug 'lewis6991/gitsigns.nvim'
 " Plug 'nvim-tree/nvim-web-devicons' " required for barbar.nvim
 call plug#end()
 " === Pulugins END ===
