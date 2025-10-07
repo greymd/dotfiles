@@ -1181,7 +1181,24 @@ hub-get () {
 }
 
 fnd () {
-  find "$PWD" | grep "${1-}"
+  find "$PWD" \( -path '*/.git' -o -path '*/node_modules' \) -prune -o -type f -print | grep "${1-}"
+}
+
+vnd () {
+  local _file=
+  _file="$(fnd "${1-}")"
+  if [ -z "$_file" ]; then
+    echo "No file found." >&2
+    return 1
+  fi
+  vim -p $_file
+}
+
+# fnd for Claude Code
+cnd () {
+  local git_root
+  git_root="$(git rev-parse --show-toplevel 2> /dev/null)"
+  find "$PWD" \( -path '*/.git' -o -path '*/node_modules' \) -prune -o -type f -print | sed "s:^$git_root::" | grep -i "${1-}" | sed -E 's:^/?:@:'
 }
 
 mail-sweeper () {
