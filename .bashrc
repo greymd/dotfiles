@@ -38,7 +38,14 @@ if [[ $unamestr == 'Darwin' ]]; then
   alias vscode="/Applications/Visual\ Studio\ Code.app/Contents/Resources/app/bin/code"
   alias vlc="/Applications/VLC.app/Contents/MacOS/VLC"
   alias ldd="otool -L"
-  alias docker="finch"
+  docker () {
+    if type finch &> /dev/null ; then
+      finch "$@"
+    else
+      command docker "$@"
+    fi
+  }
+
   export ECLIPSE_HOME="$HOME/eclipse"
   export PATH="/usr/local/opt/zip/bin:$PATH"
   export PATH="$HOME/Library/Python/3.9/bin:$PATH"
@@ -520,7 +527,13 @@ alias dockviz="docker run -it --rm -v /var/run/docker.sock:/var/run/docker.sock 
 #  fi
 
 docker-clean () {
-  docker ps -a -q | xargs docker rm
+  # shellcheck disable=SC2046
+  docker rm $(docker ps -a -q)
+}
+
+container-clean () {
+  # shellcheck disable=SC2046
+  container rm $(container ls -a -q)
 }
 
 docker-prune () {
@@ -533,7 +546,13 @@ docker-rmnone() {
 }
 
 docker-killall () {
-  docker ps -q | xargs docker kill
+  # shellcheck disable=SC2046
+  docker kill $(docker ps -a -q)
+}
+
+container-killall () {
+  # shellcheck disable=SC2046
+  container kill $(container ls -a -q)
 }
 
 docker-kill () {
@@ -2112,4 +2131,8 @@ aws-env-tfstate () {
   export __AWS_SUBNET="$aws_subnet"
   export __AWS_SECURITY_GROUP="$aws_security_group"
   export __AWS_INSTANCE_PROFILE="$aws_instance_profile"
+}
+
+ipwho () {
+  curl -so- 'https://ipwho.is/?fields=success,country,country_code'
 }
