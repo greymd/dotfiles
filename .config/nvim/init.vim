@@ -90,6 +90,10 @@ set fileencodings=utf-8,iso-2022-jp,euc-jp,sjis
 set fileformats=unix,mac,dos
 " Enable mouse
 set mouse=a
+" In Terraform, kebab case variable is regarded as a word
+autocmd FileType terraform setlocal iskeyword+=-
+autocmd FileType yaml setlocal iskeyword+=-
+
 " === Common Configures END ===
 
 " === barbar ===

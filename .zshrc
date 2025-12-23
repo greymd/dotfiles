@@ -547,6 +547,15 @@ if [[ $fpath_before != $fpath_after ]] ;then
   compinit
 fi
 
+# # fzf history
+# function fzf-select-history() {
+#     BUFFER=$(history -n -r 1 | fzf --query "$LBUFFER")
+#     CURSOR=$#BUFFER
+#     zle reset-prompt
+# }
+# zle -N fzf-select-history
+# bindkey '^r' fzf-select-history
+
 # if [[ -e ~/.local/openai_key ]]; then
 #   export OPENAI_API_KEY="$(<~/.local/openai_key)"
 #   source $HOME/repos/mecab/manai/manai.zsh
