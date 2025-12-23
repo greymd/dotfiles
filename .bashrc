@@ -1993,6 +1993,7 @@ ks () {
     container=$containers
   fi
 
+  echo "kubectl exec -n $namespace -it $pod -c $container -- /bin/sh" 2>&1
   kubectl exec -n $namespace -it $pod -c $container -- /bin/sh
 }
 
@@ -2152,4 +2153,18 @@ aws-env-tfstate () {
 
 ipwho () {
   curl -so- 'https://ipwho.is/?fields=success,country,country_code'
+}
+
+kubectl-install () {
+  local version="v${1:-1.36}"
+  local target_tag=
+  pushd
+  hub-clone kubernetes/kubernetes
+  git switch master
+  git pull origin master --tags
+  target_tag=$(git tag -l "${version}.*" | tail -n 1)
+  git checkout "$target_tag"
+  make WHAT=cmd/kubectl/
+  cp ./_output/bin/kubectl "$HOME/.local/bin/kubectl${version/v/}"
+  popd
 }
