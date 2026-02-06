@@ -38,6 +38,7 @@ if [[ $unamestr == 'Darwin' ]]; then
   alias vscode="/Applications/Visual\ Studio\ Code.app/Contents/Resources/app/bin/code"
   alias vlc="/Applications/VLC.app/Contents/MacOS/VLC"
   alias ldd="otool -L"
+  alias cursor="/Applications/Cursor.app/Contents/Resources/app/bin/cursor"
   docker () {
     if type finch &> /dev/null ; then
       finch "$@"
@@ -187,6 +188,10 @@ alias vim='nvim'
 transpose() {
   local _ifs="${1:-$IFS}"
   awk '{for(i=1;i<=NF;i++)a[i][NR]=$i}END{for(i in a)for(j in a[i])printf"%s"(j==NR?"\n":FS),a[i][j]}' FS="$_ifs"
+}
+
+mean() {
+  awk '{s+=$1}END{print s/NR}'
 }
 
 rev_field() {

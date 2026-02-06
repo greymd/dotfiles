@@ -43,6 +43,10 @@
 	br = branch
 	br-clean = "!f() { git branch --merged | grep -v '\\*' | xargs -n 1 git branch -d; }; f"
 	op = "!f() { gh browse \"$GIT_PREFIX/${1:-.}\"; }; f" # open
+	brc = "!f() { \
+    branch=$(git branch --format='%(refname:short)' | fzf); \
+    [ -n \"$branch\" ] && git checkout \"$branch\"; \
+  }; f"
 
 [core]
 	excludesfile = ~/.gitignore_global
