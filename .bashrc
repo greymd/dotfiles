@@ -2173,3 +2173,30 @@ kubectl-install () {
   cp ./_output/bin/kubectl "$HOME/.local/bin/kubectl${version/v/}"
   popd
 }
+
+kubectl-irsa-exec () {
+  local pod_substr="${1:-}"   # substring to identify the target pod
+  shift
+  local cmd="${1:/bin/bash}"
+  local session_name
+  local ns_name pod_name container_name web_identity_token iam_role_arn auth_exports
+  session_name="kubectl-irsa-exec-$(date +%s)"
+  read -r ns_name pod_name <<<"$(kubectl get pod -A --no-headers | grep -m 1 "$pod_substr" | awk '{print $1,$2}')"
+  container_name="$(kubectl get pod -n "$ns_name" "$pod_name" -o jsonpath="{.spec.containers[*].name}" | head -n 1)"
+  web_identity_token="$(kubectl exec -it -n "$ns_name" "$pod_name" -c "$container_name" -- cat /var/run/secrets/eks.amazonaws.com/serviceaccount/token)"
+  iam_role_arn="$(kubectl exec -n "$ns_name" "$pod_name" -c "$container_name" -- sh -c 'env | grep -E "^AWS_ROLE_ARN=" | cut -d= -f2 | tr -d "\r"')"
+  auth_exports="$(aws sts assume-role-with-web-identity --duration-seconds 3600 --role-session-name "$session_name" --role-arn "$iam_role_arn" --web-identity-token "$web_identity_token" | jq -r '.Credentials | "export AWS_ACCESS_KEY_ID=" + .AccessKeyId, "export AWS_SECRET_ACCESS_KEY=" + .SecretAccessKey, "export AWS_SESSION_TOKEN=" + .SessionToken')"
+  kubectl exec -it -n "$ns_name" "$pod_name" -c "$container_name" -- /bin/bash -c "$auth_exports;$cmd"
+}
+
+kubectl-pod-identity-exec () {
+  local pod_substr="${1:-}"   # substring to identify the target pod
+  shift
+  local cmd="${1:/bin/bash}"
+  local ns_name pod_name container_name web_identity_token iam_role_arn auth_exports
+  read -r ns_name pod_name <<<"$(kubectl get pod -A --no-headers | grep -m 1 "$pod_substr" | awk '{print $1,$2}')"
+  container_name="$(kubectl get pod -n "$ns_name" "$pod_name" -o jsonpath="{.spec.containers[*].name}" | head -n 1)"
+  # shellcheck disable=SC2016
+  auth_exports="$(kubectl exec -n "$ns_name" "$pod_name" -c "$container_name" -- /bin/bash -c 'curl -so- -H "Authorization: $(cat $AWS_CONTAINER_AUTHORIZATION_TOKEN_FILE)" "$AWS_CONTAINER_CREDENTIALS_FULL_URI"' | jq -r '"export AWS_ACCESS_KEY_ID=" + .AccessKeyId, "export AWS_SECRET_ACCESS_KEY=" + .SecretAccessKey, "export AWS_SESSION_TOKEN=" + .Token' | paste -s -d ';' -)"
+  kubectl exec -it -n "$ns_name" "$pod_name" -c "$container_name" -- /bin/bash -c "$auth_exports;$cmd"
+}
