@@ -47,6 +47,8 @@
     branch=$(git branch --format='%(refname:short)' | fzf); \
     [ -n \"$branch\" ] && git checkout \"$branch\"; \
   }; f"
+	wt = "!git-wt"
+	df = diff --color-words
 
 [core]
 	excludesfile = ~/.gitignore_global

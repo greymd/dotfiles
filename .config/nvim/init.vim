@@ -2,7 +2,7 @@
 call plug#begin('~/.vim/plugged')
 Plug 'ntpeters/vim-better-whitespace'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
-Plug 'vim-airline/vim-airline'
+" Plug 'vim-airline/vim-airline' " it good, but frequently breaks layout, disabled
 Plug 'terryma/vim-multiple-cursors'
 Plug 'lambdalisue/pastefix.vim' " Workaround of bug of clipboard
 Plug 'Shougo/defx.nvim', { 'do': ':UpdateRemotePlugins' }
@@ -179,7 +179,8 @@ command! -nargs=0 Format :call CocAction('format')
 
 if os=="mac"
   " Workaround for opening browser since g:netrw_http_cmd does not work (see https://github.com/vim/vim/issues/4738 ) 
-  noremap <silent> gx :execute 'silent! !open -a Google\ Chrome ' . shellescape(expand('<cWORD>'), 1)<cr>
+  " noremap <silent> gx :execute 'silent! !open -a Google\ Chrome ' . shellescape(expand('<cWORD>'), 1)<cr>
+  noremap <silent> gx :execute 'silent! !open -a Brave\ Browser ' . shellescape(expand('<cWORD>'), 1)<cr>
   " noremap <silent> gx :execute 'silent! !open -a Firefox ' . shellescape(expand('<cWORD>'), 1)<cr>
 endif
 let g:python3_host_prog = expand('~/repos/greymd/dotfiles/venv/bin/python3')
@@ -317,7 +318,7 @@ function! DefxRipgrep(context) abort
   " ここで quickfix（C）にフォーカスが移るので、<CR> で A に開く（デフォルト挙動）ようになる。
 endfunction
 " Defxバッファから上の関数を呼ぶ（Denite用の既存バインドを差し替え）
-autocmd FileType defx nnoremap <silent><buffer><expr> <SPACE>fg
+autocmd FileType defx nnoremap <silent><buffer><expr> <SPACE>gr
       \ defx#do_action('call', 'DefxRipgrep')
 " （任意）quickfixの操作を少し快適に
 " qで閉じる

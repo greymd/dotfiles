@@ -51,6 +51,7 @@ if [[ $unamestr == 'Darwin' ]]; then
   export PATH="/usr/local/opt/zip/bin:$PATH"
   export PATH="$HOME/Library/Python/3.9/bin:$PATH"
   export PATH="/opt/homebrew/bin:$PATH"
+  export PATH="/opt/homebrew/opt/libpq/bin:$PATH"
   export PATH="/Applications/Wireshark.app/Contents/MacOS/:$PATH" # for tshark
   export PATH="/Applications/Xcode.app/Contents/Developer/usr/bin:$PATH"
   export TFENV_ARCH=arm64
@@ -137,11 +138,6 @@ alias l='ls -CF'
 alias ll='ls -al'
 alias c=cd
 alias grep='grep --color=auto'
-alias ..="cd .."
-alias ..2="cd ../.."
-alias ..3="cd ../../.."
-alias ..4="cd ../../../.."
-alias ..5="cd ../../../../.."
 alias g='git'
 alias gr='grep'
 alias gm='git commit -m '
@@ -1938,7 +1934,7 @@ mispost () {
 curepost () {
   while true; do
     read -r msg
-    mispost "$msg #precure"
+    mispost "$msg #precure #たんプリ"
   done
 }
 
@@ -2160,6 +2156,7 @@ ipwho () {
   curl -so- 'https://ipwho.is/?fields=success,country,country_code'
 }
 
+<<<<<<< HEAD
 kubectl-install () {
   local version="v${1:-1.36}"
   local target_tag=
@@ -2172,6 +2169,33 @@ kubectl-install () {
   make WHAT=cmd/kubectl/
   cp ./_output/bin/kubectl "$HOME/.local/bin/kubectl${version/v/}"
   popd
+=======
+# git modified file edit
+ge() {
+  git rev-parse --is-inside-work-tree >/dev/null 2>&1 || {
+    echo "Not a git repository" >&2
+    return 1
+  }
+  local editor="${EDITOR:-vi}"
+  local files
+  files="$(git ls-files --modified | fzf -m --exit-0 --prompt='ge> ')" || return 0
+  [ -n "$files" ] || return 0
+  "$editor" "$files"
+}
+
+# cd -N means go up N directories
+cd() {
+    if [[ "$1" =~ ^-[0-9]+$ ]]; then
+        local n=${1#-}
+        local path=""
+        for ((i=0; i<n; i++)); do
+            path="${path}../"
+        done
+        builtin cd "$path"
+    else
+        builtin cd "$@"
+    fi
+>>>>>>> 5c37e58 (update)
 }
 
 kubectl-irsa-exec () {
