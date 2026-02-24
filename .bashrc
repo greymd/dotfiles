@@ -2156,7 +2156,6 @@ ipwho () {
   curl -so- 'https://ipwho.is/?fields=success,country,country_code'
 }
 
-<<<<<<< HEAD
 kubectl-install () {
   local version="v${1:-1.36}"
   local target_tag=
@@ -2169,7 +2168,8 @@ kubectl-install () {
   make WHAT=cmd/kubectl/
   cp ./_output/bin/kubectl "$HOME/.local/bin/kubectl${version/v/}"
   popd
-=======
+}
+
 # git modified file edit
 ge() {
   git rev-parse --is-inside-work-tree >/dev/null 2>&1 || {
@@ -2195,7 +2195,6 @@ cd() {
     else
         builtin cd "$@"
     fi
->>>>>>> 5c37e58 (update)
 }
 
 kubectl-irsa-exec () {
