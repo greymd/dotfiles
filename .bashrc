@@ -254,6 +254,8 @@ __add_path "$HOME/.local/bin"
 __add_path "$HOME/repos/greymd/bin"
 __add_path "$HOME/repos/greymd/bin/open-usp-tukubai"
 __add_path "$HOME/repos/greymd/joplin-utils/cli"
+__add_path "$HOME/repos/greymd/ai-agent-config/bin"
+__add_path "$HOME/.moon/bin"
 __add_path "$HOME/.basher/bin"
 if [[ -e "$HOME/.nodenv/version" ]]; then
   __add_path "$HOME/.nodenv/shims"
