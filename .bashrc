@@ -241,6 +241,10 @@ fi
 # Import various commands
 #--------------------
 __add_path "/usr/local/bin"
+if [[ -e "$HOME/.goenv" ]]; then
+  export GOENV_ROOT=$HOME/.goenv
+  __add_path "$GOENV_ROOT/bin"
+fi
 __add_path "$HOME/.config/tmuxvm/bin" # Activate tmuxvm
 __add_path "$HOME/.embulk/bin"
 __add_path "$HOME/.cabal/bin"
@@ -520,6 +524,7 @@ fi
 #--------------------
 alias docker-cure="docker run -e LANG=ja_JP.UTF-8 -it --rm cureutils/ruby2.2.0 cure"
 alias dockviz="docker run -it --rm -v /var/run/docker.sock:/var/run/docker.sock nate/dockviz"
+alias tmw='tmux rename-window $(basename $PWD)'
 
 # For Bash on Windows
 #  if (grep -q Microsoft /proc/version 2> /dev/null ) ;then
@@ -2114,9 +2119,17 @@ img-upline () {
 
 terraform-provider-aws-install () {
   local version="$1"
-  local os arch
+  local os arch gopath
   os="$(uname -s | tr '[:upper:]' '[:lower:]')"
   arch="$(uname -m | sed 's/x86_64/amd64/;s/aarch64/arm64/')"
+  if [[ -e "$HOME/.goenv/versions/1.23.10/bin/go" ]]; then
+    gopath="$HOME/.goenv/versions/1.23.10/bin/go"
+  elif type go &> /dev/null; then
+    gopath="$(which go)"
+  else
+    echo "Go not found" >&2
+    return 1
+  fi
   local osarch="${os}_${arch}"
   local install_dir="$HOME/.terraform.d/plugins/registry.terraform.io/hashicorp/aws/${version}/${osarch}"
   {
