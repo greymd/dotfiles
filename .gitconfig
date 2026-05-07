@@ -18,9 +18,12 @@
 	pushm = "!git push origin $(basename $(git symbolic-ref refs/remotes/origin/HEAD || git remote set-head origin --auto | git symbolic-ref refs/remotes/origin/HEAD))"
 	# push current branch
 	pushc = "!git push origin $(git branch --show-current)"
+	pc = "!git push origin $(git branch --show-current)"
 	pullm = "!git pull origin $(basename $(git symbolic-ref refs/remotes/origin/HEAD || git remote set-head origin --auto | git symbolic-ref refs/remotes/origin/HEAD))"
+	pm = "!git pull origin $(basename $(git symbolic-ref refs/remotes/origin/HEAD || git remote set-head origin --auto | git symbolic-ref refs/remotes/origin/HEAD))"
 	pullc = "!git pull origin $(git branch --show-current)"
 	fetchc = "!git fetch origin $(git branch --show-current)"
+	fc = "!git fetch origin $(git branch --show-current)"
 	fetchm = "!git fetch origin $(basename $(git symbolic-ref refs/remotes/origin/HEAD || git remote set-head origin --auto | git symbolic-ref refs/remotes/origin/HEAD))"
 	rebasem = "!git fetch origin $(basename $(git symbolic-ref refs/remotes/origin/HEAD || git remote set-head origin --auto | git symbolic-ref refs/remotes/origin/HEAD)) && git rebase FETCH_HEAD"
 	co = checkout
