@@ -526,7 +526,8 @@ fi
 #--------------------
 alias docker-cure="docker run -e LANG=ja_JP.UTF-8 -it --rm cureutils/ruby2.2.0 cure"
 alias dockviz="docker run -it --rm -v /var/run/docker.sock:/var/run/docker.sock nate/dockviz"
-alias tmw='tmux rename-window $(basename $PWD)'
+# alias tmw='tmux rename-window $(basename $PWD)'
+alias tmw='tmux rename-window'
 
 # For Bash on Windows
 #  if (grep -q Microsoft /proc/version 2> /dev/null ) ;then
@@ -1727,24 +1728,14 @@ ti () {
   "$EDITOR" "${__TICKET_HOME}/${ticket_id}/worklog.txt"
 }
 
-# Already defined in /bin since I want to use it from Vim
-# tiop () {
-#   local ticket_id="${1-}"
-#   # if ticket_id is not empty, open browser
-#   if [[ -n "$ticket_id" ]]; then
-#     open "${__TICKET_URL}/${ticket_id}"
-#     return
-#   fi
-#   if [[ -z "$ticket_id" ]] && [[ -f worklog.txt ]]; then
-#     # check the parent directory name
-#     local parent_dir=
-#     parent_dir="$(basename "$PWD")"
-#     parent_dir="${parent_dir##*/}"
-#     open "${__TICKET_URL}/${parent_dir}"
-#   else
-#     echo "worklog.txt is not found in the current directory" >&2
-#   fi
-# }
+## ti-cd & execute LLM command in the ticket directory
+til () {
+  local command="${__TICKET_LLM:-llm}"
+  local ticket_id="$1"
+  shift
+  ti-cd "$ticket_id"
+  "$command"
+}
 
 ti-grep () {
   local query="$1"
