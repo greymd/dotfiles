@@ -136,7 +136,6 @@ fi
 #--------------------
 alias l='ls -CF'
 alias ll='ls -al'
-alias c=cd
 alias grep='grep --color=auto'
 alias g='git'
 alias gr='grep'
@@ -1650,6 +1649,19 @@ mov2gif () {
 }
 
 #--------------------
+# LLM for ticket
+#--------------------
+c () {
+  # shellcheck disable=SC2090
+  $SHELL -c "$__TICKET_LLM"
+}
+
+cr () {
+  # shellcheck disable=SC2090
+  $SHELL -c "$__TICKET_LLM_RESUME"
+}
+
+#--------------------
 # Simple worklog manager
 #--------------------
 export __DRIVE_HOME=${__OVERRIDE_DRIVE_HOME:-"$HOME/Drive"}
@@ -1697,6 +1709,8 @@ note-ls () {
 ti-cd () {
   set -eu
   local ticket_id="$1"
+  ticket_id="${ticket_id##*/}"
+  ticket_id="${ticket_id//\?*}"
   set +eu
   cd "${__TICKET_HOME}/${ticket_id}"
 }
@@ -1730,11 +1744,11 @@ ti () {
 
 ## ti-cd & execute LLM command in the ticket directory
 til () {
-  local command="${__TICKET_LLM:-llm}"
   local ticket_id="$1"
-  shift
+  ticket_id="${ticket_id##*/}"
+  ticket_id="${ticket_id//\?*}"
   ti-cd "$ticket_id"
-  "$command"
+  cr
 }
 
 ti-grep () {
