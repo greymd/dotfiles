@@ -1721,9 +1721,28 @@ ti-ls () {
 
 ti () {
   set -eu
-  local ticket_id="$1"
+  local ticket_input="${1-}"
+  local ticket_id=
+  if [[ -z "$ticket_input" ]]; then
+    if type fzf &> /dev/null; then
+      ticket_input="$(ti-ls | fzf --prompt='ti> ')" || {
+        set +eu
+        return 0
+      }
+      if [[ -z "$ticket_input" ]]; then
+        set +eu
+        return 0
+      fi
+    else
+      echo "Usage: ti <ticket-id-or-url>" >&2
+      set +eu
+      return 1
+    fi
+  fi
+  ticket_id="$ticket_input"
   if [[ "$ticket_id" == "grep" ]]; then
     ti-grep "${@:2}"
+    set +eu
     return
   fi
   # Extract ticket id from URL (i.e example.com/ticket-id-123)
@@ -1736,8 +1755,8 @@ ti () {
   fi
   ti-cd "$ticket_id"
   # If ticket id is URL, keep the URL in the url.txt
-  if [[ "$1" =~ ^http ]]; then
-    echo "$1" > "${__TICKET_HOME}/${ticket_id}/url.txt"
+  if [[ "$ticket_input" =~ ^http ]]; then
+    echo "$ticket_input" > "${__TICKET_HOME}/${ticket_id}/url.txt"
   fi
   "$EDITOR" "${__TICKET_HOME}/${ticket_id}/worklog.txt"
 }
