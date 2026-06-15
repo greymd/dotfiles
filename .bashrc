@@ -1725,7 +1725,7 @@ ti () {
   local ticket_id=
   if [[ -z "$ticket_input" ]]; then
     if type fzf &> /dev/null; then
-      ticket_input="$(ti-ls | fzf --prompt='ti> ')" || {
+      ticket_input="$(ti-ls | fzf --prompt='ti> ' --print-query | tail -n 1)" || {
         set +eu
         return 0
       }
