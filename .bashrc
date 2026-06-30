@@ -145,7 +145,8 @@ alias gpom='git push origin master'
 alias tf=terraform
 
 #remove control character
-alias rmcc='perl -pe '"'"'s/\e([^\[\]]|\[.*?[a-zA-Z]|\].*?\a)//g'"'"' | col -b'
+# alias rmcc='perl -pe '"'"'s/\e([^\[\]]|\[.*?[a-zA-Z]|\].*?\a)//g'"'"' | col -b'
+alias rmcc="perl -pe 's/\e\[[0-9;?]*[ -\/]*[@-~]//g; s/\r/\n/g; s/\x08//g; s/\x07//g'"
 alias rmccal='ls *.log | while read f;do cat "$f" | rmcc > /tmp/tmpfile && cat /tmp/tmpfile > "$f" ;done && rm /tmp/tmpfile'
 
 #git add modified files
